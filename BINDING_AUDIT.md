@@ -227,7 +227,7 @@ Inactive-host Shutdown skips gameplay time/cooldown calculation during teardown.
 ## Point impact bridge
 
 The sample's interface now carries `CollisionHit` alongside the target Actor.
-`ue_arg_collision_hit` writes its detached public fields into checked call frames.
+`ue_arg(call, "Hit", hit)` packs its detached public fields into checked call frames.
 `ue_apply_point_damage` invokes a small native UDasCollisionLibrary adapter which
 reconstructs FHitResult and calls UGameplayStatics::ApplyPointDamage. All damage
 selection, physical simulation checks, impulse magnitude and on-hit effects stay

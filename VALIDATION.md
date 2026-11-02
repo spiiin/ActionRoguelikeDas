@@ -538,3 +538,12 @@ typed-calls-final-20261102: Foundation, generic parents, native catalogue freshn
 interface contracts, interaction, projectile attack and Overwhelm PASS. Parallel
 LINQ/formatting edits in the working tree were preserved and were not part of
 the typed-call source change.
+
+## Generic argument macro - 2026-11-02
+
+DasForUE's point-damage helper now packs CollisionHit with ue_arg(call,"Hit",hit).
+The specialized ue_arg_collision_hit function was deleted without an alias.
+generic-ue-arg-v3-20261102: compiler/runtime macro checks PASS (47); real-PIE point
+impact PASS (59 s, three groups). generic-ue-arg-final-20261102: Foundation PASS
+(20 s), projectile attack PASS (55 s, seven groups), Overwhelm PASS (58 s, seven
+groups). Runtime/timer/teardown log checks remain clean after editor exit.
