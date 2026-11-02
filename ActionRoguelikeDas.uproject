@@ -29,6 +29,14 @@
     {
       "Name": "ContentBrowserAssetDataSource",
       "Enabled": true
+    },
+    {
+      "Name": "AnimationData",
+      "Enabled": true
+    },
+    {
+      "Name": "ControlRig",
+      "Enabled": true
     }
   ],
   "DisableEnginePluginsByDefault": true

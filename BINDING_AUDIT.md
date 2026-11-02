@@ -171,3 +171,17 @@ ClassValue ownership, GC roots and reinstancing remap. Restore preflights the
 declared metaclass and retained value. Scope/rollback rules remain those of the
 existing archive migration. The asset regression now covers a native actor class,
 a subclass override and null through remove, reopen, restore and reopen.
+
+
+## Local presentation resources — 2026-11-02
+
+Authored references now support DataAsset and PrimaryDataAsset hosts alongside
+the existing UObject hosts. The character retains its presentation profile in
+a reflected strong property. Generic LoadOptionalAsset resolves only valid
+/Game paths, returns null quietly for absent packages, and runs on the game thread.
+
+DasAnimationAssetLibrary builds a native UAnimInstance AnimGraph from the supplied
+skeleton/blend space and montage slot. This is presentation only: movement,
+actions, damage and projectile logic remain in daScript. Explicit reflected
+helpers configure existing Niagara and audio components without adding externs.
+AnimationData and ControlRig are enabled to deserialize the acquired animations.

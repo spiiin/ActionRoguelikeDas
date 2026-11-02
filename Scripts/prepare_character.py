@@ -53,6 +53,7 @@ assert [m.get_class().get_name() for m in saved[1].get_editor_property('modifier
 assert len(saved[3].get_editor_property('modifiers'))==2
 assert unreal.EditorLoadingAndSavingUtils.save_packages([x.get_outer() for x in [move,look,jump,hurt,sprint,mapping]],False)
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_presentation_profile.das /Game/DasRogue/Types/BP_RoguePresentationProfile rogue.RoguePresentationProfile')
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_attribute_component.das /Game/DasRogue/BP_RogueAttributeComponent rogue.RogueAttributeComponent')
 for command in [
     'Das.DSL.Interfaces.Apply rogue_action_host_interface.das /Game/DasRogue/Types',
@@ -103,6 +104,10 @@ else:
     unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_player_controller.das /Game/DasRogue/BP_RoguePlayerController rogue.RoguePlayerController')
 kind=unreal.load_class(None,'/Game/DasRogue/BP_RogueCharacter.BP_RogueCharacter_C')
 assert kind, 'Character import failed; inspect log'
+try:
+    unreal.get_default_object(kind).get_editor_property('Presentation')
+except Exception as error:
+    raise RuntimeError('New Character declaration failed to apply; inspect DAS_DSL_APPLY') from error
 game=unreal.load_asset('/Game/DasRogue/BP_RogueGameMode')
 game.modify(True)
 game_class=unreal.load_class(None,'/Game/DasRogue/BP_RogueGameMode.BP_RogueGameMode_C')

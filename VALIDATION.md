@@ -422,3 +422,32 @@ Receipts: Saved/Tests/rogue_actions_pie.json and
 Saved/Tests/rogue_projectile_attack_pie.json. The latter has passed=true and seven
 check groups. All 73 loaded DSL scripts compiled successfully. The harness
 removes its probe actor, saves editor assets and closes its editor process.
+
+
+## Local course presentation — 2026-11-02
+
+Shared-agent job rogue-presentation-v11-20261102: build PASS; presentation PASS,
+eight check groups, 87 s editor run. Verified Manny mesh/AnimInstance and muzzle
+socket; movement through the generated graph; active attack montage and attached
+course Niagara; projectile Niagara/audio/impact profile; explicit fallback and
+absent-profile fallback; cast cancellation; death montage in a compatible slot.
+The harness disables audio, so audible playback was not assessed.
+
+The initial animation load assertion was caused by disabled AnimationData and
+ControlRig plugins. Both are enabled, and preparation checks their classes before
+loading external animation assets. Test startup waits for the editor's initial
+DSL compile before PIE, preventing compilation during script callbacks.
+
+All selected external files are gitignored. Public candidate Blueprint/map files
+were checked for external serialized paths, allowing only the optional profile
+path string; the presentation regression also checks hard package dependencies.
+
+
+Final job rogue-presentation-final-20261102: build PASS; presentation PASS (72 s,
+eight groups), including AssetRegistry hard-package dependency audit of all
+/Game/DasRogue assets against excluded external roots. All 80 DSL scripts compiled
+successfully. No external package is required by a public gameplay asset.
+
+Job rogue-assets-regressions-20261102: Foundation PASS (41 s); interaction PASS
+(37 s); projectile PASS (42 s); actions PASS (75 s, ten groups); projectile-attack
+PASS (76 s, seven groups). Both editor harnesses closed their editor processes.

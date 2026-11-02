@@ -28,7 +28,8 @@ assert cast_effect and cast_sound
 attack.set_editor_property('CastingEffect',cast_effect)
 attack.set_editor_property('CastingSound',cast_sound)
 # Exercise the reflected montage call on the placeholder mesh (no AnimInstance => duration zero).
-attack.set_editor_property('AttackMontage',unreal.new_object(unreal.AnimMontage))
+if not p.get_editor_property('UsingExternalPresentation'):
+    attack.set_editor_property('AttackMontage',unreal.new_object(unreal.AnimMontage))
 inputs=max([v for v in unreal.ObjectIterator(unreal.EnhancedInputLocalPlayerSubsystem) if v.get_outer().get_class().get_name()=='LocalPlayer'],key=lambda v:int(v.get_outer().get_name().rsplit('_',1)[-1]))
 fire=unreal.load_asset('/Game/DasRogue/Input/IA_Fire')
 pc.set_control_rotation(unreal.Rotator(pitch=10,yaw=180,roll=0))

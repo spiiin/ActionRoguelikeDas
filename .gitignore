@@ -6,3 +6,13 @@ DerivedDataCache/
 *.sln
 __pycache__/
 *.pyc
+
+# Licensed resources and all generated assets referencing them stay local.
+/Content/ControlRig/
+/Content/Characters/
+/Content/ParagonGideon/
+/Content/ParagonMinions/
+/Content/tharlevfx_tutorials/
+/Content/SanderAudio/
+/Content/Troy/
+/Content/DasRogueExternal/

@@ -2,6 +2,7 @@ options gen2
 module rogue_character public
 require rogue_attribute_refs public
 require rogue_action_system_refs public
+require rogue_presentation public
 require math
 require ue_vector_math public
 
@@ -25,6 +26,8 @@ class RogueCharacter : Character {
     ActionSystem : RogueActionSystemComponentRef
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Input") {
+        var UseExternalPresentation : bool = true
+        var PresentationProfilePath : string = "/Game/DasRogueExternal/DA_Presentation.DA_Presentation"
         var WalkSpeed : float = 450.0f
         var JumpVelocity : float = 500.0f
         var AirControl : float = 0.2f
@@ -40,6 +43,8 @@ class RogueCharacter : Character {
     }
 
     state = ue_properties(BlueprintReadWrite) {
+        var Presentation : RoguePresentationProfileRef
+        var UsingExternalPresentation : bool = false
         var Dead : bool = false
         var DeathCount : int = 0
         var ControlsBound : bool = false
@@ -73,12 +78,21 @@ class RogueCharacter : Character {
     }
 
     def BeginPlay() : void {
+        if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) }
+        if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
+            rogue_apply_mesh(self.Mesh, self.Presentation)
+            self.Visual.SetHiddenInGame(true, false)
+            self.UsingExternalPresentation = true
+        }
         self.ActionSystem.SetBaseMoveSpeed(self.WalkSpeed)
         if (ue_class_valid(self.SprintActionClass)) {
             self.ActionSystem.GrantAction(self.SprintActionClass)
         }
         if (ue_class_valid(self.AttackActionClass)) {
-            self.ActionSystem.GrantAction(self.AttackActionClass)
+            let action = self.ActionSystem.GrantAction(self.AttackActionClass)
+            if (ue_is_valid(action) && ue_is_valid(self.Presentation)) {
+                rogue_apply_attack(ue_ref(type<RogueProjectileAttackRef>, action.handle), self.Presentation)
+            }
         }
         self.CharacterMovement.JumpZVelocity = self.JumpVelocity
         self.CharacterMovement.AirControl = self.AirControl
@@ -165,6 +179,9 @@ class RogueCharacter : Character {
             self.Dead = true
             self.DeathCount += 1
             self.ActionSystem.Shutdown()
+            if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.DeathMontage)) {
+                ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
+            }
             self.StopJumping()
             self.CharacterMovement.StopMovementImmediately()
             self.CharacterMovement.DisableMovement()

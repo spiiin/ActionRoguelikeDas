@@ -2,6 +2,7 @@
 import json
 import time
 import traceback
+import re
 from pathlib import Path
 import unreal
 
@@ -33,7 +34,7 @@ def tick(delta):
     try:
         editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
         level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem) or unreal.get_default_object(unreal.LevelEditorSubsystem)
-        if STATE['phase'] not in ('stop', 'cleanup') and time.perf_counter() - STATE['started'] > 150:
+        if STATE['phase'] not in ('stop', 'cleanup') and time.perf_counter() - STATE['started'] > (600 if globals().get('EXTERNAL_PRESENTATION') else 150):
             raise RuntimeError('Action test runner timed out in ' + STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
@@ -42,10 +43,29 @@ def tick(delta):
             unreal.SystemLibrary.execute_console_command(world, 't.IdleWhenNotForeground 0')
             interface = unreal.load_class(None, '/Game/DasRogue/Types/RogueActionHost.RogueActionHost_C')
             assert interface, 'ActionHost interface must exist before typed reference compilation'
+            if globals().get('EXTERNAL_PRESENTATION'):
+                run_script('Scripts/prepare_external_assets.py')
             run_script('Scripts/prepare_character.py')
             run_script('Scripts/prepare_action_tests.py')
+            if globals().get('EXTERNAL_PRESENTATION'):
+                run_script('Scripts/prepare_presentation_tests.py')
+            STATE['phase'] = 'wait_startup'
+            STATE['warm_ticks'] = 0
+            return
+        if STATE['phase'] == 'wait_startup':
+            # Map-open startup work runs on a core ticker after the Python setup
+            # callback. Starting PIE earlier can run that work during gameplay.
+            command=unreal.SystemLibrary.get_command_line()
+            match=re.search(r'-abslog=(?:"([^"]+)"|([^ ]+))',command,re.IGNORECASE)
+            assert match,'Harness requires an explicit log path'
+            logfile=Path(match.group(1) or match.group(2))
+            log=logfile.read_text(encoding='utf-8',errors='replace') if logfile.exists() else ''
+            if not re.search(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=0',log):
+                return
+            STATE['warm_ticks']+=1
+            if STATE['warm_ticks']<4:return
             level.editor_request_begin_play()
-            STATE['phase'] = 'wait_play'
+            STATE['phase']='wait_play'
             return
         if STATE['phase'] == 'wait_play':
             world = editor.get_game_world()

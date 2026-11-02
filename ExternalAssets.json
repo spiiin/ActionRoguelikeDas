@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "source": {
+    "repository": "https://github.com/tomlooman/ActionRoguelike.git",
+    "revision": "992f860922373d50db05eacc5e1fce952ed88c13",
+    "branch": "UE5.6-CourseProject",
+    "readme": "https://github.com/tomlooman/ActionRoguelike/blob/UE5.6-CourseProject/README.md",
+    "paragon_gideon": "https://www.fab.com/listings/51935254-f70f-400a-8ca5-91a3e1b83e3b"
+  },
+  "allowed_roots": [
+    "ControlRig",
+    "Characters",
+    "ParagonGideon",
+    "ParagonMinions",
+    "tharlevfx_tutorials",
+    "SanderAudio",
+    "Troy"
+  ],
+  "excluded_assets": [
+    "GideonManny_AnimBlueprint"
+  ],
+  "download_folders": [
+    "Content/ControlRig",
+    "Content/Characters",
+    "Content/tharlevfx_tutorials/CharacterFX",
+    "Content/SanderAudio"
+  ],
+  "assets": {
+    "CharacterMesh": "/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Manny_Simple",
+    "Locomotion": "/Game/ControlRig/Characters/Mannequins/Animations/Gideon/Run_Direction",
+    "AttackMontage": "/Game/ControlRig/Characters/Mannequins/Animations/Gideon/Primary_Attack_A_Medium_Montage",
+    "DeathMontage": "/Game/ControlRig/Characters/Mannequins/Animations/Gideon/Death_Montage"
+  },
+  "course_effects": {
+    "CastEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Portal_Cast",
+    "CastSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Cast-001",
+    "ProjectileEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_Projectile",
+    "ProjectileSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Loop",
+    "ImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_HitWorld",
+    "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Impact-001"
+  }
+}

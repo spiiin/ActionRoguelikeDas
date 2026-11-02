@@ -1,5 +1,6 @@
 options gen2
 require rogue_magic_projectile
+require rogue_presentation public
 
 [ue_class(module_id="roguedemo", Blueprintable)]
 class RogueMagicProjectileDemo : RogueMagicProjectile {
@@ -15,6 +16,18 @@ class RogueMagicProjectileDemo : RogueMagicProjectile {
     }
 
     def override BeginPlay() : void {
+        let presentation = rogue_load_presentation()
+        if (ue_is_valid(presentation)) {
+            if (ue_is_valid(presentation.ProjectileEffect)) {
+                ue_niagara_component_start(self.LoopedNiagaraComponent, presentation.ProjectileEffect)
+                self.Visual.SetHiddenInGame(true, false)
+            }
+            if (ue_is_valid(presentation.ProjectileSound)) {
+                ue_audio_component_play(self.LoopedAudioComponent, presentation.ProjectileSound)
+            }
+            if (ue_is_valid(presentation.ImpactEffect)) { self.ExplosionEffect = presentation.ImpactEffect }
+            if (ue_is_valid(presentation.ImpactSound)) { self.ExplosionSound = presentation.ImpactSound }
+        }
         self.Visual.SetCollisionProfileName(ue_name_value("NoCollision"), true)
         Super.BeginPlay()
     }
