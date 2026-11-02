@@ -238,3 +238,16 @@ The runtime owner validator recognizes the native DefaultToInstanced class rule;
 this fixes Overwhelm's borrowed ActorComponent reference after the explicit
 Instanced validation added by the owned-object work. GenericParents and real-PIE
 Overwhelm cover the regression; owned-objects remains green.
+
+## Typed-call cleanup
+
+Production `Content/Das/Scripts` has no manual call-frame blocks. Attribute tick,
+skeletal mesh and animation class setters use normal methods. Class inheritance
+uses the generated math API. Interaction, projectile impact and action-host methods
+use typed interface views; the impact's CollisionHit is packed by the wrapper.
+
+The wrapper now distinguishes interfaces from native method-catalogue receivers,
+generates interface member calls and validates the reflected signature at invocation.
+ActorComponent was added as a root of the native catalogue. Equivalent UE object
+views and typed class capabilities are converted through checked factories; mutable
+ref/out parameters are not implicitly converted. Low-level packing stays in DasForUE.

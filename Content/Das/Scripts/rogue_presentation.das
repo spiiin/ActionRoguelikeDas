@@ -1,6 +1,7 @@
 options gen2
 module rogue_presentation public
 require rogue_presentation_refs public
+require ue_native_gameplay public
 require ue_asset_optional public
 require ue_vector_math public
 
@@ -13,14 +14,8 @@ def rogue_load_presentation(path : string) : RoguePresentationProfileRef {
 }
 
 def rogue_apply_mesh(mesh : SkeletalMeshComponentRef; profile : RoguePresentationProfileRef) : void {
-    let setMesh = ue_begin_call(mesh.handle, "SetSkeletalMeshAsset")
-    ue_arg_object(setMesh, "newmesh", profile.CharacterMesh.handle)
-    ue_invoke_call(setMesh)
-    ue_release_call(setMesh)
-    let setAnimation = ue_begin_call(mesh.handle, "SetAnimInstanceClass")
-    ue_arg_class(setAnimation, "newclass", ue_class_handle(profile.AnimationClass))
-    ue_invoke_call(setAnimation)
-    ue_release_call(setAnimation)
+    mesh.SetSkeletalMeshAsset(profile.CharacterMesh)
+    mesh.SetAnimInstanceClass(profile.AnimationClass)
     ue_scene_set_relative_transform(ue_ref(type<SceneComponentRef>, mesh.handle),
         ue_transform(profile.MeshLocation, profile.MeshRotation, UE_VECTOR_ONE))
 }

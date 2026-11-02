@@ -25,10 +25,7 @@ class RogueAttributeComponent : ActorComponent {
     def BeginPlay() : void {
         self.HealthMax = max(self.HealthMax, 0.0f)
         self.Health = self.HealthMax
-        let call = ue_begin_call(ue_self_object(), "SetComponentTickEnabled")
-        ue_arg_bool(call, "bEnabled", false)
-        ue_invoke_call(call)
-        ue_release_call(call)
+        self.SetComponentTickEnabled(false)
     }
 
     [ue_function(BlueprintCallable, Category="Attributes")]

@@ -1,6 +1,7 @@
 options gen2
 module rogue_effect_helpers public
 require rogue_action_system_refs public
+require ue_api_math
 
 let ROGUE_EFFECT_BASE_CLASS = "/Game/DasRogue/Actions/BP_RogueActionEffect.BP_RogueActionEffect_C"
 
@@ -8,13 +9,7 @@ let ROGUE_EFFECT_BASE_CLASS = "/Game/DasRogue/Actions/BP_RogueActionEffect.BP_Ro
 def rogue_is_effect_class(kind : ObjectClass) : bool {
     if (!ue_class_valid(kind)) { return false }
     let base = ue_class_loaded(type<ObjectRef>, ROGUE_EFFECT_BASE_CLASS)
-    let call = ue_begin_static_call("/Script/Engine.KismetMathLibrary", "ClassIsChildOf", "")
-    ue_arg_class(call, "testclass", ue_class_handle(kind))
-    ue_arg_class(call, "parentclass", ue_class_handle(base))
-    ue_invoke_call(call)
-    let valid = ue_result_bool(call, "returnvalue")
-    ue_release_call(call)
-    return valid
+    return ue_static(KismetMathLibrary.ClassIsChildOf, kind, base)
 }
 
 def rogue_apply_hit_effect(other : ActorRef; kind : ObjectClass) : bool {

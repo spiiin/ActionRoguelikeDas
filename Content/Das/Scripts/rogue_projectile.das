@@ -2,6 +2,7 @@ options gen2
 module rogue_projectile public
 require ue_vector_math public
 require ue_projectile_components public
+require rogue_projectile_impact_refs public
 
 // Adapted from Tom Looman's ARogueProjectile, commit 992f860.
 // Publication permission and redistribution license are pending.
@@ -54,12 +55,8 @@ class RogueProjectile : Actor {
         if (self.HasImpacted) { return }
         self.HasImpacted = true
         self.ImpactCount += 1
-        let impact = ue_begin_interface_call(ue_self_object(),
-            "/Game/DasRogue/Types/RogueImpactHandler.RogueImpactHandler_C", "ApplyProjectileDamage")
-        ue_arg_object(impact, "other", other.handle)
-        ue_arg_collision_hit(impact, "hit", hit)
-        ue_invoke_call(impact)
-        ue_release_call(impact)
+        let impact = ue_ref(type<RogueImpactHandlerRef>, ue_self_object())
+        impact.ApplyProjectileDamage(other, hit)
         self.PlayExplodeEffects()
         // OnTakeAnyDamage is queued while this managed callback runs. Keep the
         // damage causer alive until its notifications have been delivered.

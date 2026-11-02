@@ -520,3 +520,21 @@ Final `rogue-point-final-regressions-20261102`: Foundation PASS (36 s), interact
 PASS (31 s), projectile PASS (31 s), projectile-attack PASS (50 s, seven groups),
 effects PASS (50 s, six groups). All editor processes exited and the strict
 post-exit runtime/timer checks remained clean.
+
+## Typed calls - 2026-11-02
+
+Manual call-frame blocks were removed from every production Content/Das/Scripts
+file, including action-host helpers. The wrapper emits interface member methods,
+automatically packs CollisionHit and handles checked native-view/class arguments.
+No serialized Blueprint signature/default changes were required for this cleanup.
+
+Shared-agent typed-interface-v4-20261102: 36 compiler/runtime checks PASS.
+typed-interface-port-v6-20261102: presentation PASS (35 s, eight groups), effects
+PASS (34 s, six groups), point impact PASS (33 s, three groups). Native tick,
+Mesh/AnimInstance, class inheritance, gameplay-tag interfaces and hit payloads
+execute through typed calls. Strict post-exit runtime checks remain clean.
+
+typed-calls-final-20261102: Foundation, generic parents, native catalogue freshness,
+interface contracts, interaction, projectile attack and Overwhelm PASS. Parallel
+LINQ/formatting edits in the working tree were preserved and were not part of
+the typed-call source change.

@@ -2,6 +2,9 @@ options gen2
 module rogue_interaction public
 require ue_object_types public
 
+[ue_interface_ref(path="/Game/DasRogue/Types/RogueInteractionInterface.RogueInteractionInterface_C", id="rogue.RogueInteractionInterface")]
+struct RogueInteractionRef { handle : UObjectHandle }
+
 let ROGUE_INTERACTION_INTERFACE = "/Game/DasRogue/Types/RogueInteractionInterface.RogueInteractionInterface_C"
 
 // Original interaction contract has no interactor argument.
@@ -14,8 +17,7 @@ def rogue_interact(target : ActorRef) : bool {
     if (!rogue_can_interact(target)) {
         return false
     }
-    let call = ue_begin_interface_call(target.handle, ROGUE_INTERACTION_INTERFACE, "Interact")
-    ue_invoke_call(call)
-    ue_release_call(call)
+    let interaction = ue_ref(type<RogueInteractionRef>, target.handle)
+    interaction.Interact()
     return true
 }
