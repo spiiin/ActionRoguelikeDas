@@ -251,3 +251,7 @@ generates interface member calls and validates the reflected signature at invoca
 ActorComponent was added as a root of the native catalogue. Equivalent UE object
 views and typed class capabilities are converted through checked factories; mutable
 ref/out parameters are not implicitly converted. Low-level packing stays in DasForUE.
+
+## Declarative input bindings
+
+`RogueCharacter` and `RoguePlayerController` use `[ue_input(action="Property", Trigger...)]` beside their handlers and `ue_bind_inputs()` in setup. The wrapper validates declarations and generates ordinary Enhanced Input bindings. Asset defaults, context priorities and readiness stay explicit in daScript. Jump/sprint retain Started/Completed/Canceled; E/LMB retain Started.

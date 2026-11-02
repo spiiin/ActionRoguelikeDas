@@ -547,3 +547,7 @@ generic-ue-arg-v3-20261102: compiler/runtime macro checks PASS (47); real-PIE po
 impact PASS (59 s, three groups). generic-ue-arg-final-20261102: Foundation PASS
 (20 s), projectile attack PASS (55 s, seven groups), Overwhelm PASS (58 s, seven
 groups). Runtime/timer/teardown log checks remain clean after editor exit.
+
+## Declarative input macro (2026-11-02)
+
+Shared-agent job `input-macro-v2-20261102`: PASS. Wrapper macro suite: 58 checks (11 new input cases); real-PIE interaction PASS, actions PASS (10 groups), projectile attack PASS (7 groups). Covers annotation expansion/rejection, mapped E/LMB and Shift sprint with existing teardown handling.

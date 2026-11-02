@@ -46,20 +46,16 @@ class RoguePlayerController : PlayerController {
 
     def TryBindControls() : void {
         let player = ue_ref(type<PlayerControllerRef>, ue_self_object())
-        let hasInputs = ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact)
+        let hasInputs = ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact) && ue_is_valid(self.Input_Fire)
         if (!hasInputs || !ue_player_controls_ready(player)) { return }
-        if (!self.ControlsBound) {
-            ue_enhanced_add_context(player, self.Controls, 0)
-            // Started fires once per press. Triggered would repeat while E is held.
-            ue_enhanced_bind(self.Input_Interact, TriggerEvent.Started, self.OnInteract)
-            self.ControlsBound = true
-        }
-        if (!self.FireBound && ue_object_valid(self.Input_Fire.handle)) {
-            ue_enhanced_bind(self.Input_Fire, TriggerEvent.Started, self.OnFire)
-            self.FireBound = true
-        }
+        if (self.ControlsBound && self.FireBound) { return }
+        ue_enhanced_add_context(player, self.Controls, 0)
+        ue_bind_inputs()
+        self.ControlsBound = true
+        self.FireBound = true
     }
 
+    [ue_input(action="Input_Fire", Started)]
     def OnFire(value : bool) : void {
         if (!value) { return }
         let pawn = ue_ref(type<PlayerControllerRef>, ue_self_object()).K2_GetPawn()
@@ -69,6 +65,7 @@ class RoguePlayerController : PlayerController {
         if (ue_is_valid(component)) { component.StartAction(ue_tag("Action.PrimaryAttack")) }
     }
 
+    [ue_input(action="Input_Interact", Started)]
     def OnInteract(value : bool) : void {
         if (!value) { return }
         self.InteractPresses += 1

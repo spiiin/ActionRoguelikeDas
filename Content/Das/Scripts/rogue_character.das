@@ -117,24 +117,18 @@ class RogueCharacter : Character {
         let pawn = ue_character_self()
         if (!ue_character_controls_ready(pawn)) { return }
         ue_enhanced_add_context(ue_pawn_controller(pawn), self.Controls, 1)
-        ue_enhanced_bind(self.Input_Move, TriggerEvent.Triggered, self.OnMove)
-        ue_enhanced_bind(self.Input_Look, TriggerEvent.Triggered, self.OnLook)
-        ue_enhanced_bind(self.Input_Jump, TriggerEvent.Started, self.OnJump)
-        ue_enhanced_bind(self.Input_Jump, TriggerEvent.Completed, self.OnJump)
-        ue_enhanced_bind(self.Input_Jump, TriggerEvent.Canceled, self.OnJump)
-        ue_enhanced_bind(self.Input_TestDamage, TriggerEvent.Started, self.OnTestDamage)
-        ue_enhanced_bind(self.Input_Sprint, TriggerEvent.Started, self.OnSprint)
-        ue_enhanced_bind(self.Input_Sprint, TriggerEvent.Completed, self.OnSprint)
-        ue_enhanced_bind(self.Input_Sprint, TriggerEvent.Canceled, self.OnSprint)
+        ue_bind_inputs()
         self.ControlsBound = true
     }
 
+    [ue_input(action="Input_Sprint", Started, Completed, Canceled)]
     def OnSprint(value : bool) : void {
         if (self.Dead) { return }
         if (value) { self.ActionSystem.StartAction(ue_tag("Action.Sprint")) }
         else { self.ActionSystem.StopAction(ue_tag("Action.Sprint")) }
     }
 
+    [ue_input(action="Input_Move", Triggered)]
     def OnMove(value : InputActionValue) : void {
         if (self.Dead) { return }
         let axis = ue_input_axis2d(value)
@@ -145,6 +139,7 @@ class RogueCharacter : Character {
         self.AddMovementInput(ue_rotate_vector(yawRotation, UE_VECTOR_RIGHT), float(axis.y))
     }
 
+    [ue_input(action="Input_Look", Triggered)]
     def OnLook(value : InputActionValue) : void {
         if (self.Dead) { return }
         let axis = ue_input_axis2d(value)
@@ -153,6 +148,7 @@ class RogueCharacter : Character {
         self.AddControllerPitchInput(float(axis.y))
     }
 
+    [ue_input(action="Input_Jump", Started, Completed, Canceled)]
     def OnJump(value : bool) : void {
         if (self.Dead) { return }
         if (value) {
@@ -168,6 +164,7 @@ class RogueCharacter : Character {
     [ue_function(BlueprintPure)]
     def IsAlive() : bool { return !self.Dead && self.Attributes.IsAlive() }
 
+    [ue_input(action="Input_TestDamage", Started)]
     def OnTestDamage(value : bool) : void {
         if (!value || self.Dead) { return }
         ue_apply_damage(ue_self_actor(), self.TestDamage, ue_self_actor(), ue_pawn_controller(ue_character_self()))
