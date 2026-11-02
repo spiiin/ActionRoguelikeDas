@@ -102,7 +102,8 @@ no-op suppression, LastInstigator, OnHealthChanged), RogueMagicProjectile (25 da
 Controller ProjectileClass now points to BP_MagicProjectileDemo. ChestTest contains
 one target at (220,100,100); the chest and E interaction are retained. No course assets.
 
-Final impact contract: RogueImpactHandler.ApplyProjectileDamage(Actor):bool. The
+Original health-slice contract: RogueImpactHandler.ApplyProjectileDamage(Actor):bool.
+The subsequent point-impact stage adds a CollisionHit argument (see below). The
 base owns the single managed hit subscription, guards repeat hits, dispatches the
 interface, emits effects and calls ue_actor_destroy_self_next_tick. The new generic
 native helper preserves source lifetime until queued OnTakeAnyDamage notifications
@@ -490,3 +491,32 @@ the harness; audible playback was not assessed.
 Final rogue-overwhelm-final-20261102: actions PASS (78 s, ten groups),
 projectile-attack PASS (115 s, seven groups), effects PASS (84 s, six groups).
 The harness rejects runtime/timer/teardown errors after each editor closes.
+
+## Point impacts — 2026-11-02
+
+Shared-agent job `rogue-point-instanced-v1-20261102`: build PASS; owned-objects
+PASS (16 s); generic-parents PASS (16 s), including an ordinary ScriptObject
+ActorComponent reference with UE's implicit InstancedReference flag. The owner
+validator still checks explicit instancing and the actual reflected field type.
+
+Real-PIE Overwhelm PASS (58 s, seven groups); point-impact PASS (55 s, three groups):
+point damage and general health damage each delivered once, hit component/location/
+direction and instigator controller preserved, simulating body receives impulse,
+zero-impulse body remains still, zero-damage impact consumes the projectile, and
+static target produces no physics error. Logs are checked after editor shutdown
+for runtime/timer/teardown failures. All 88 scripts compile successfully.
+
+The impact interface was migrated jointly with twelve dependent Blueprints after
+applying new settings separately to the magic projectile and its demo subclass.
+Existing Blueprint resources were retained. The temporary migration source views
+were restored and removed from the normal preparation path after the upgrade.
+
+Hearing noise is dispatched through UE's native API without runtime errors, but
+there is no hearing listener in this test; AI perception behavior and audible
+playback were not assessed. External resource audit: all 135 selected licensed
+files remain excluded; public candidates have no forbidden hard resource paths.
+
+Final `rogue-point-final-regressions-20261102`: Foundation PASS (36 s), interaction
+PASS (31 s), projectile PASS (31 s), projectile-attack PASS (50 s, seven groups),
+effects PASS (50 s, six groups). All editor processes exited and the strict
+post-exit runtime/timer checks remained clean.

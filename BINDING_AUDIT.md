@@ -223,3 +223,18 @@ remain rejected, with the package and asset classes included in the diagnostic.
 Target status/health subscriptions use managed ue_event lifetime. Explicit
 Overwhelm subscriptions are removed before StopAction releases tags or ownership.
 Inactive-host Shutdown skips gameplay time/cooldown calculation during teardown.
+
+## Point impact bridge
+
+The sample's interface now carries `CollisionHit` alongside the target Actor.
+`ue_arg_collision_hit` writes its detached public fields into checked call frames.
+`ue_apply_point_damage` invokes a small native UDasCollisionLibrary adapter which
+reconstructs FHitResult and calls UGameplayStatics::ApplyPointDamage. All damage
+selection, physical simulation checks, impulse magnitude and on-hit effects stay
+in daScript. `ue_report_noise` supplies the current owner's world context to UE
+hearing. No callback memory or actor-instance-handle internals escape the boundary.
+
+The runtime owner validator recognizes the native DefaultToInstanced class rule;
+this fixes Overwhelm's borrowed ActorComponent reference after the explicit
+Instanced validation added by the owned-object work. GenericParents and real-PIE
+Overwhelm cover the regression; owned-objects remains green.

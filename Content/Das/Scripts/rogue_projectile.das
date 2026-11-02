@@ -57,6 +57,7 @@ class RogueProjectile : Actor {
         let impact = ue_begin_interface_call(ue_self_object(),
             "/Game/DasRogue/Types/RogueImpactHandler.RogueImpactHandler_C", "ApplyProjectileDamage")
         ue_arg_object(impact, "other", other.handle)
+        ue_arg_collision_hit(impact, "hit", hit)
         ue_invoke_call(impact)
         ue_release_call(impact)
         self.PlayExplodeEffects()
@@ -64,9 +65,10 @@ class RogueProjectile : Actor {
         // damage causer alive until its notifications have been delivered.
         ue_actor_destroy_self_next_tick()
     }
+
     // Reflected event dispatch preserves overrides on derived projectile classes.
     [ue_function(BlueprintEvent, Category="Projectile")]
-    def ApplyProjectileDamage(other : ActorRef) : bool { return false }
+    def ApplyProjectileDamage(other : ActorRef; hit : CollisionHit) : bool { return false }
 
     def PlayExplodeEffects() : void {
         let actor = ue_ref(type<ActorRef>, ue_self_object())

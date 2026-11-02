@@ -4,6 +4,7 @@ import unreal
 root=Path(__file__).resolve().parents[1]
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 for command in [
+    'Das.DSL.Interfaces.Apply rogue_projectile_impact_interface.das /Game/DasRogue/Types',
     'Das.DSL.Apply rogue_magic_projectile.das /Game/DasRogue/BP_RogueMagicProjectile rogue.RogueMagicProjectile',
     'Das.DSL.Apply rogue_magic_projectile_demo.das /Game/DasRogue/BP_MagicProjectileDemo roguedemo.RogueMagicProjectileDemo',
     'Das.DSL.Apply rogue_combat_target.das /Game/DasRogue/BP_RogueCombatTarget roguedemo.RogueCombatTarget',
