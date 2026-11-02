@@ -46,6 +46,8 @@ def tick(delta):
             if globals().get('EXTERNAL_PRESENTATION'):
                 run_script('Scripts/prepare_external_assets.py')
             run_script('Scripts/prepare_character.py')
+            if globals().get('OVERWHELM_TEST'):
+                run_script('Scripts/prepare_overwhelm.py')
             run_script('Scripts/prepare_action_tests.py')
             if globals().get('ACTION_EFFECTS'):
                 run_script('Scripts/prepare_effect_tests.py')

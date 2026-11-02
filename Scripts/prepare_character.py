@@ -63,6 +63,7 @@ for command in [
     'Das.DSL.Apply rogue_action_system_component.das /Game/DasRogue/BP_RogueActionSystemComponent rogue.RogueActionSystemComponent',
     'Das.DSL.Apply rogue_action_effect.das /Game/DasRogue/Actions/BP_RogueActionEffect rogue.RogueActionEffect',
     'Das.DSL.Apply rogue_action_effect_stun.das /Game/DasRogue/Actions/BP_RogueActionEffectStun rogue.RogueActionEffectStun',
+    'Das.DSL.Apply rogue_action_effect_overwhelm.das /Game/DasRogue/Actions/BP_RogueActionEffectOverwhelm rogue.RogueActionEffectOverwhelm',
 ]:
     if command.startswith('Das.DSL.Apply rogue_action_system_component.das '):
         # Migrate only the legacy bootstrap's exact CDO override. Gameplay configuration now lives in DAS.

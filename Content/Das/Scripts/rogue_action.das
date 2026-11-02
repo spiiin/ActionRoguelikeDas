@@ -74,8 +74,13 @@ class RogueAction : ScriptObject {
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def StopAction() : void {
         self.bIsRunning = false
-        self.CooldownUntil = ue_world_seconds() + double(self.CooldownTime)
-        self.Host.RemoveActiveTags(self.GrantTags)
+        self.CooldownUntil = 0.0lf
+        // Shutdown marks the host inactive before stopping its actions. A world
+        // being torn down has no gameplay clock and needs no future cooldown.
+        if (self.CooldownTime > 0.0f && ue_is_valid(self.Host) && self.Host.IsActionOwnerAlive()) {
+            self.CooldownUntil = ue_world_seconds() + double(self.CooldownTime)
+        }
+        if (ue_is_valid(self.Host)) { self.Host.RemoveActiveTags(self.GrantTags) }
         self.Stops += 1
     }
 }

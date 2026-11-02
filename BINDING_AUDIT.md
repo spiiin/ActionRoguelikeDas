@@ -203,3 +203,23 @@ ResetDuration is reflected so inherited effects invoke the owning class's timer
 implementation. Existing timer APIs suffice; no runtime callback lookup changes
 remain in this slice. Script-only inherited helpers containing managed callbacks
 are not generalized by this change.
+
+## Overwhelm, hit effects and additive Actor migration
+
+Existing component queries, dynamic multicast methods and managed ue_event
+subscriptions cover the gameplay slice. ClassIsChildOf is called through the
+checked reflection API before GrantAction; no native gameplay helper was added.
+EffectOnHit can apply without positive damage, and targets without ActionSystem
+continue to receive ordinary damage.
+
+Additive migration now permits independent authored referencers for supported
+hosts when all existing declarations/defaults/metadata/implementation contracts
+are unchanged. Other structural changes retain their existing scope guards.
+Blueprint packages may include their owned DasScriptClassData export: collection
+checks its name, type, object identity and stored authored ID before accepting it.
+The rollback snapshot already captures that contract. Unknown extra exports
+remain rejected, with the package and asset classes included in the diagnostic.
+
+Target status/health subscriptions use managed ue_event lifetime. Explicit
+Overwhelm subscriptions are removed before StopAction releases tags or ownership.
+Inactive-host Shutdown skips gameplay time/cooldown calculation during teardown.

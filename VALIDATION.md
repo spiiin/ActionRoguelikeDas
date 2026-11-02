@@ -464,3 +464,29 @@ Real-PIE effects receipt has passed=true. Check groups:
 - {"death_cleans_mutating_effect_array": true, "disabled_owner_rejects_grants": true, "endplay_cancels_effect_timers": true}
 
 Shared-agent validation jobs: rogue-effects-v12-20261102, rogue-effects-migration-v3-20261102, rogue-effects-final-regressions-20261102.
+
+## Overwhelm / hit effects — 2026-11-02
+
+Shared-agent rogue-overwhelm-v5-20261102: build PASS; real PIE PASS (87 s,
+seven groups), with runtime/timer/teardown errors treated as failures after the
+editor closes. Real projectile collisions verify damage accumulation, healing
+ignored, visible threshold stun, no refresh from damage while stunned, expiration
+of the damage window, unsubscribe/GC/regrant without duplicate callbacks, direct
+on-hit stacking including zero-damage hits, invalid-class rejection, targets
+without ActionSystem, and lethal-hit cleanup.
+
+rogue-overwhelm-migration-20261102: generic-parents PASS (21 s). A saved generic
+consumer has two package exports (Blueprint and cooked contract), refers to a
+script Actor class and preserves its class value through additive Actor migration.
+
+rogue-overwhelm-regressions-20261102: Foundation, interaction, projectile,
+actions (10 groups), projectile-attack (7 groups) and effects (6 groups) PASS.
+The subsequent teardown fix has a final actions/attack/effects run recorded
+separately. Actor status bindings now use managed subscriptions; stopping the
+world no longer queries gameplay time for inactive hosts. Audio is disabled in
+the harness; audible playback was not assessed.
+
+
+Final rogue-overwhelm-final-20261102: actions PASS (78 s, ten groups),
+projectile-attack PASS (115 s, seven groups), effects PASS (84 s, six groups).
+The harness rejects runtime/timer/teardown errors after each editor closes.

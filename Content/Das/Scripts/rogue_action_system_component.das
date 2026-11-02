@@ -65,6 +65,10 @@ class RogueActionSystemComponent : ActorComponent {
                 return default<RogueActionRef>
             }
             action.StartAction()
+            if (!action.IsRunning()) {
+                self.RemoveAction(action)
+                return default<RogueActionRef>
+            }
         }
         self.OnActionAdded.Broadcast(ue_ref(type<ObjectRef>, action.handle))
         return action
