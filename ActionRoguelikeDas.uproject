@@ -1,0 +1,35 @@
+{
+  "FileVersion": 3,
+  "Category": "Samples",
+  "Description": "ActionRoguelike gameplay port to daScript",
+  "AdditionalPluginDirectories": [
+    "C:/src/DasForUE2-main/Plugins"
+  ],
+  "Plugins": [
+    {
+      "Name": "DasForUE",
+      "Enabled": true
+    },
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
+    },
+    {
+      "Name": "Niagara",
+      "Enabled": true
+    },
+    {
+      "Name": "PythonScriptPlugin",
+      "Enabled": true
+    },
+    {
+      "Name": "PropertyAccessEditor",
+      "Enabled": true
+    },
+    {
+      "Name": "ContentBrowserAssetDataSource",
+      "Enabled": true
+    }
+  ],
+  "DisableEnginePluginsByDefault": true
+}

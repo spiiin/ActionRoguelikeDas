@@ -1,0 +1,135 @@
+"""Fresh PIE: native muzzle/cover collision, incoming projectile and terminal death."""
+import unreal, time, json, traceback
+from pathlib import Path
+w=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_game_world()
+assert w
+p=unreal.GameplayStatics.get_player_pawn(w,0)
+pc=unreal.GameplayStatics.get_player_controller(w,0)
+attack=next(a for a in p.get_editor_property('ActionSystem').get_editor_property('Actions') if a.get_class().get_name()=='BP_RogueActionProjectileAttack_C')
+attributes=p.get_editor_property('Attributes')
+assert attributes.get_editor_property('Health')==100
+assert p.call_method('IsAlive')
+camera=p.get_editor_property('CameraComponent')
+movement=p.get_editor_property('character_movement')
+target=next(a for a in unreal.GameplayStatics.get_all_actors_of_class(w,unreal.Actor) if a.get_class().get_name()=='BP_TargetDummy_C')
+subsystems=[x for x in unreal.ObjectIterator(unreal.EnhancedInputLocalPlayerSubsystem) if x.get_outer().get_class().get_name()=='LocalPlayer']
+def index(x):
+    try:return int(x.get_outer().get_name().rsplit('_',1)[-1])
+    except ValueError:return -1
+inputs=max(subsystems,key=index)
+def inject(name,vector=unreal.Vector(1,0,0)):
+    inputs.inject_input_vector_for_action(unreal.load_asset('/Game/DasRogue/Input/'+name),vector,[],[])
+probe=next(a for a in unreal.GameplayStatics.get_all_actors_of_class(w,unreal.Actor) if a.get_class().get_name()=='BP_CombatProbe_C')
+def spawn(kind,location,rotation):
+    actor=probe.call_method('Spawn',args=(kind,location,rotation))
+    assert actor
+    return actor
+old_idle=unreal.SystemLibrary.get_console_variable_int_value('t.IdleWhenNotForeground')
+unreal.SystemLibrary.execute_console_command(w,'t.IdleWhenNotForeground 0')
+s={'phase':'aim','start':time.perf_counter(),'at':time.perf_counter(),'checks':[],'done':False,'shots':attack.get_editor_property('ProjectilesFired')}
+receipt=Path('C:/src/ActionRoguelikeDas/Saved/Tests/rogue_character_combat_pie.json')
+def phase(name,now):s['phase']=name;s['at']=now
+def finish(error=None):
+    s['done']=True
+    unreal.unregister_slate_post_tick_callback(s['handle'])
+    if s.get('wall') and unreal.is_valid(s['wall']):s['wall'].destroy_actor()
+    unreal.SystemLibrary.execute_console_command(w,'t.IdleWhenNotForeground '+str(old_idle))
+    result={'passed':error is None,'error':error,'checks':s['checks'],'elapsed_seconds':time.perf_counter()-s['start']}
+    receipt.parent.mkdir(parents=True,exist_ok=True)
+    receipt.write_text(json.dumps(result,indent=2),encoding='utf-8')
+    unreal.log('DAS_ROGUE_CHARACTER_COMBAT_PIE '+json.dumps(result))
+def tick(delta):
+    if s['done']:return
+    try:
+        now=time.perf_counter();age=now-s['at']
+        assert now-s['start']<60,'Combat check timed out'
+        for actor in [p,pc,attributes]:assert not actor.get_editor_property('LastDasError'),actor.get_editor_property('LastDasError')
+        if s['phase']=='aim':
+            pc.set_control_rotation(unreal.MathLibrary.find_look_at_rotation(camera.get_world_location(),target.get_actor_location()))
+            if age<0.9:return
+            s['camera']=camera.get_world_location();s['pawn']=p.get_actor_location()
+            inject('IA_Fire');phase('target_hit',now);return
+        if s['phase']=='target_hit':
+            hp=target.get_editor_property('Attributes').get_editor_property('Health')
+            if hp==100:
+                assert age<5,'Shot did not reach camera target'
+                return
+            assert hp==75
+            assert attack.get_editor_property('ProjectilesFired')==s['shots']+1
+            muzzle=attack.get_editor_property('LastMuzzleLocation')
+            assert (muzzle-s['pawn']).length()<100,'Muzzle is not anchored to pawn'
+            assert (muzzle-s['camera']).length()>200,'Shot still originates at camera'
+            assert attributes.get_editor_property('Health')==100,'Self hit'
+            s['checks'].append({'camera_target_hit':hp,'muzzle_to_pawn':(muzzle-s['pawn']).length(),'muzzle_to_camera':(muzzle-s['camera']).length(),'self_ignored':True})
+            movement.stop_movement_immediately()
+            p.set_actor_location(unreal.Vector(350,-400,73.15),False,True)
+            target.set_actor_location(unreal.Vector(550,-400,113),False,True)
+            pc.set_control_rotation(unreal.Rotator(pitch=0,yaw=0,roll=0))
+            s['wall']=spawn(unreal.StaticMeshActor,unreal.Vector(390,-400,113),unreal.Rotator())
+            mesh=s['wall'].get_editor_property('static_mesh_component')
+            mesh.set_mobility(unreal.ComponentMobility.MOVABLE)
+            mesh.set_static_mesh(unreal.load_asset('/Engine/BasicShapes/Cube'))
+            s['wall'].set_actor_scale3d(unreal.Vector(.08,2,2))
+            mesh.set_collision_profile_name('BlockAll')
+            phase('cover_aim',now);return
+        if s['phase']=='cover_aim':
+            if age<0.8:return
+            inject('IA_Fire');phase('cover',now);return
+        if s['phase']=='cover':
+            if age<1.0:return
+            assert attack.get_editor_property('ProjectilesFired')==s['shots']+2,'Clipped muzzle should fire into cover'
+            muzzle=attack.get_editor_property('LastMuzzleLocation')
+            assert 350<muzzle.x<374,'Muzzle spawned beyond cover: '+str(muzzle)
+            assert target.get_editor_property('Attributes').get_editor_property('Health')==75,'Shot passed through cover'
+            assert not [a for a in unreal.GameplayStatics.get_all_actors_of_class(w,unreal.Actor) if a.get_class().get_name()=='BP_MagicProjectileDemo_C'],'Covered projectile did not hit near wall'
+            s['checks'].append({'near_cover_muzzle_x':muzzle.x,'cover_blocks_damage':True})
+            s['wall'].destroy_actor();s['wall']=None
+            kind=unreal.load_class(None,'/Game/DasRogue/BP_MagicProjectileDemo.BP_MagicProjectileDemo_C')
+            s['incoming']=spawn(kind,unreal.Vector(480,-400,73.15),unreal.Rotator(pitch=0,yaw=180,roll=0))
+            phase('incoming',now);return
+        if s['phase']=='incoming':
+            hp=attributes.get_editor_property('Health')
+            if hp==100:
+                assert age<5,'Incoming projectile did not damage capsule'
+                return
+            assert hp==75
+            assert str(p.get_editor_property('HealthLabel').get_editor_property('text'))=='HP: 75 / 100'
+            assert p.call_method('IsAlive')
+            s['checks'].append({'incoming_projectile_health':hp})
+            s['hurt']=0;phase('hurt_press',now);return
+        if s['phase']=='hurt_press':
+            inject('IA_TestDamage');s['hurt']+=1
+            phase('hurt_release',now);return
+        if s['phase']=='hurt_release':
+            if age<0.8:return
+            hp=attributes.get_editor_property('Health');expected=75-25*s['hurt']
+            assert hp==expected,(hp,expected)
+            s['checks'].append({'H_press':s['hurt'],'health':hp})
+            if hp>0:phase('hurt_press',now);return
+            assert p.get_editor_property('Dead')
+            assert p.get_editor_property('DeathCount')==1
+            assert not p.call_method('IsAlive')
+            assert movement.get_editor_property('movement_mode')==unreal.MovementMode.MOVE_NONE
+            assert 'DEAD' in str(p.get_editor_property('HealthLabel').get_editor_property('text'))
+            s['position']=p.get_actor_location();s['rotation']=pc.get_control_rotation()
+            s['final_shots']=attack.get_editor_property('ProjectilesFired')
+            s['interacts']=pc.get_editor_property('InteractPresses')
+            s['events']=[p.get_editor_property(k) for k in ['MoveEvents','LookEvents','JumpPresses']]
+            s['changes']=attributes.get_editor_property('HealthChanges')
+            phase('dead_input',now);return
+        if s['phase']=='dead_input':
+            if age<1.2:
+                inject('IA_Move');inject('IA_Look');inject('IA_Jump');inject('IA_Fire');inject('IA_Interact');inject('IA_TestDamage')
+                return
+            assert attack.get_editor_property('ProjectilesFired')==s['final_shots'],'Dead player fired'
+            assert pc.get_editor_property('InteractPresses')==s['interacts'],'Dead player interacted'
+            assert [p.get_editor_property(k) for k in ['MoveEvents','LookEvents','JumpPresses']]==s['events']
+            assert (p.get_actor_location()-s['position']).length()<.01
+            assert abs(pc.get_control_rotation().yaw-s['rotation'].yaw)<.01
+            assert attributes.get_editor_property('HealthChanges')==s['changes']
+            assert p.get_editor_property('DeathCount')==1
+            s['checks'].append({'death_once':True,'dead_input_disabled':True})
+            finish()
+    except Exception:finish(traceback.format_exc())
+s['handle']=unreal.register_slate_post_tick_callback(tick)
+print('Character combat PIE checks scheduled')

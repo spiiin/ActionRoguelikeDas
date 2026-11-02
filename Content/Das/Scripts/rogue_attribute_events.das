@@ -1,0 +1,8 @@
+options gen2
+module rogue_attribute_events public
+require ue_native_gameplay public
+
+[ue_multicast]
+struct RogueHealthChanged {
+    signature : function<(Instigator : ActorRef; NewHealth : float; Delta : float) : void>
+}

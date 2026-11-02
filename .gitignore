@@ -1,0 +1,8 @@
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+.vs/
+*.sln
+__pycache__/
+*.pyc
