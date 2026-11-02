@@ -29,6 +29,7 @@ class RogueActionEffectOverwhelm : RogueActionEffect {
 
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override StartAction() : void {
+        self.StopListening()
         Super.StartAction()
         let owner = ue_ref(type<ActorRef>, ue_component_owner(self.Host.handle))
         self.Attributes = ue_component_find(type<RogueAttributeComponentRef>, owner)
@@ -38,23 +39,26 @@ class RogueActionEffectOverwhelm : RogueActionEffect {
         }
         self.LastDamageTime = -1.0lf
         self.SummedRecentDamage = 0.0f
-        self.Attributes.OnHealthChanged.RemoveUFunction(ue_self_object(), "OnHealthChanged")
-        self.Attributes.OnHealthChanged.AddUFunction(ue_self_object(), "OnHealthChanged")
+        self.Attributes.OnHealthChanged += self.OnHealthChanged
         self.Listening = true
     }
 
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override StopAction() : void {
-        // Unsubscribe before callbacks caused by tag removal or action removal.
-        if (self.Listening && ue_is_valid(self.Attributes)) {
-            self.Attributes.OnHealthChanged.RemoveUFunction(ue_self_object(), "OnHealthChanged")
-        }
-        self.Listening = false
-        self.Attributes = default<RogueAttributeComponentRef>
+        // Detach before tag/action removal can call other handlers.
+        self.StopListening()
         Super.StopAction()
     }
 
-    [ue_function(BlueprintCallable)]
+    def StopListening() : void {
+        if (self.Listening && ue_is_valid(self.Attributes)) {
+            self.Attributes.OnHealthChanged -= self.OnHealthChanged
+        }
+        self.Listening = false
+        self.Attributes = default<RogueAttributeComponentRef>
+    }
+
+    [ue_function(BlueprintCallable, BlueprintEvent=false)]
     def OnHealthChanged(instigator : ActorRef; newHealth : float; delta : float) : void {
         if (!self.bIsRunning || !self.Listening || !self.Host.IsActionOwnerAlive() || newHealth <= 0.0f || delta >= 0.0f) { return }
         if (ue_tags_has(self.Host.GetActiveTags(), ue_tag("StatusEffect.Stunned"))) { return }

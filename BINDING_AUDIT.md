@@ -259,3 +259,9 @@ ref/out parameters are not implicitly converted. Low-level packing stays in DasF
 ## Reference declaration macros
 
 All eight declarations in seven `*_refs.das` modules now use `UEObjectRef(script, className)` or `UEInterfaceRef(path, authoredId)`. The compiler creates the annotated one-handle view and reuses existing type/identity checks. Source dependency direction and reflected GC ownership remain unchanged. Unused `RogueActionHostRef_from/raw` converters and their duplicate path constant were removed; callers use generic `ue_ref`.
+
+## Managed event subscriptions
+
+Permanent character/target health and combat-status notifications use `BindEvents`; native event annotations use identifier names. The target has one base health subscription and a virtual `AfterHealthChanged` hook, preserving ordered base/combat handling without duplicate hit counts. Health changes are synchronous; permanent notifications are queued and managed across reload/lifecycle cleanup.
+
+Overwhelm uses synchronous `self.Attributes.OnHealthChanged +=/-= self.OnHealthChanged` during its running interval. The wrapper's existing dynamic-event compiler checks now accept reflected native/authored reference properties; runtime source/handler validation and session cleanup are unchanged. StopListening detaches before clearing/replacing the source and before action/tag removal. All handwritten AddUFunction/RemoveUFunction registrations were removed from the example.

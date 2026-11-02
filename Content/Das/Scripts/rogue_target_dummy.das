@@ -36,10 +36,21 @@ class RogueTargetDummy : Actor {
     def BeginPlay() : void {
         self.Visual.SetMaterial(0, self.TargetMaterial)
         self.Visual.SetCollisionProfileName(ue_name_value("BlockAll"), true)
-        self.Attributes.OnHealthChanged.AddUFunction(ue_self_object(), "OnHealthChanged")
         self.UpdateDisplay()
         ue_self_actor().SetActorTickEnabled(false)
     }
+
+    def BindEvents() : void {
+        self.Attributes.OnHealthChanged += self.HandleHealthChanged
+    }
+
+    def HandleHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
+        self.OnHealthChanged(instigator, health, delta)
+        self.AfterHealthChanged(instigator, health, delta)
+    }
+
+    [ue_function(BlueprintCallable, BlueprintEvent)]
+    def AfterHealthChanged(instigator : ActorRef; health : float; delta : float) : void {}
 
     def UpdateDisplay() : void {
         self.Label.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)}"))

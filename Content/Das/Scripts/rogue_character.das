@@ -102,7 +102,6 @@ class RogueCharacter : Character {
         self.Visual.SetCollisionProfileName(ue_name_value("NoCollision"), true)
         // The placeholder visual has no skeletal hit mesh; use the capsule.
         self.CapsuleComponent.SetCollisionResponseToChannel(ECollisionChannel.ECC_GameTraceChannel2, ECollisionResponse.ECR_Block)
-        self.Attributes.OnHealthChanged.AddUFunction(ue_self_object(), "OnHealthChanged")
         self.RefreshHealth()
         self.TryBindControls()
     }
@@ -168,6 +167,14 @@ class RogueCharacter : Character {
     def OnTestDamage(value : bool) : void {
         if (!value || self.Dead) { return }
         ue_apply_damage(ue_self_actor(), self.TestDamage, ue_self_actor(), ue_pawn_controller(ue_character_self()))
+    }
+
+    def BindEvents() : void {
+        self.Attributes.OnHealthChanged += self.HandleHealthChanged
+    }
+
+    def HandleHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
+        self.OnHealthChanged(instigator, health, delta)
     }
 
     [ue_function(BlueprintCallable)]

@@ -19,7 +19,6 @@ class RogueCombatTarget : RogueTargetDummy {
 
     def override BeginPlay() : void {
         Super.BeginPlay()
-        self.Attributes.OnHealthChanged.RemoveUFunction(ue_self_object(), "OnHealthChanged")
         if (ue_class_valid(self.OverwhelmClass)) { self.ActionSystem.GrantAction(self.OverwhelmClass) }
         self.RefreshStatus()
     }
@@ -29,14 +28,16 @@ class RogueCombatTarget : RogueTargetDummy {
         if (ue_is_valid(self.ActionSystem)) { self.ActionSystem.Shutdown() }
     }
 
-    [ue_event(source="Attributes", name="OnHealthChanged")]
-    def OnCombatHealthChanged(instigator : ActorRef; newHealth : float; delta : float) : void {
-        self.OnHealthChanged(instigator, newHealth, delta)
-        if (newHealth <= 0.0f) { self.ActionSystem.Shutdown() }
+    def override BindEvents() : void {
+        self.ActionSystem.GameplayTagUpdated += self.OnStatusChanged
+    }
+
+    [ue_function(BlueprintCallable, BlueprintEvent)]
+    def override AfterHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
+        if (health <= 0.0f) { self.ActionSystem.Shutdown() }
         self.RefreshStatus()
     }
 
-    [ue_event(source="ActionSystem", name="GameplayTagUpdated")]
     def OnStatusChanged(tag : GameplayTag; count : int) : void { self.RefreshStatus() }
 
     [ue_function(BlueprintCallable)]

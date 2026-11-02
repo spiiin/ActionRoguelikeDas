@@ -45,7 +45,7 @@ class RogueAttributeComponent : ActorComponent {
         return true
     }
 
-    [ue_event(source=owner, source_type=ActorRef, name="OnTakeAnyDamage")]
+    [ue_event(source=owner, source_type=ActorRef, name=OnTakeAnyDamage)]
     def OnOwnerDamage(damaged : ActorRef; amount : float; kind : ObjectRef; controller : ObjectRef; source : ActorRef) : void {
         if (amount <= 0.0f || !self.IsAlive()) { return }
         var instigator = source

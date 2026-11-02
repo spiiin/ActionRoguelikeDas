@@ -71,6 +71,7 @@ def tick(delta):
             STATE['warm_ticks']+=1
             if STATE['warm_ticks']<4:return
             level.editor_request_begin_play()
+            STATE['play_requested'] = time.perf_counter()
             STATE['phase']='wait_play'
             return
         if STATE['phase'] == 'wait_play':
@@ -78,7 +79,14 @@ def tick(delta):
             if not world:
                 return
             pawn = unreal.GameplayStatics.get_player_pawn(world, 0)
-            if not pawn or not pawn.get_editor_property('ControlsBound'):
+            # PIE can expose its temporary spectator before the gameplay pawn is possessed.
+            if not pawn or not isinstance(pawn, unreal.Character):
+                if time.perf_counter() - STATE['play_requested'] > 10.0:
+                    mode = unreal.GameplayStatics.get_game_mode(world)
+                    kind = mode.get_editor_property('default_pawn_class') if mode else None
+                    raise RuntimeError(f'Gameplay pawn did not become ready: pawn={pawn}, default_pawn_class={kind}')
+                return
+            if not pawn.get_editor_property('ControlsBound'):
                 return
             STATE['ticks'] += 1
             if STATE['ticks'] < 3:

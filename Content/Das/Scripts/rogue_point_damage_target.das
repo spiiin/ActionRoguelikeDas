@@ -17,7 +17,7 @@ class RoguePointDamageTarget : RogueTargetDummy {
         var DamageController : ObjectRef
     }
 
-    [ue_event(name="OnTakePointDamage")]
+    [ue_event(name=OnTakePointDamage)]
     def OnPointDamage(victim : ActorRef; damage : float; controller : ObjectRef;
         location : UEVector; component : ObjectRef; bone : UENameValue;
         direction : UEVector; kind : ObjectRef; source : ActorRef) : void {

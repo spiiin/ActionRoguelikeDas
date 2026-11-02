@@ -63,12 +63,14 @@ def tick(delta):
         if phase_name=='first':
             assert health(target)==90,health(target)
             assert s['observer'].get_editor_property('DamageEvents')==1
+            assert target.get_editor_property('Hits')==1,'Duplicate base health listener'
             assert s['observer'].get_editor_property('SummedRecentDamage')==10
             target.get_editor_property('Attributes').call_method('ApplyHealthChange',args=(pawn,5.0))
             assert s['observer'].get_editor_property('SummedRecentDamage')==10
             s['shot']=shoot(target);phase('threshold');return
         if phase_name=='threshold':
             assert health(target)==85 and stunned(system)
+            assert target.get_editor_property('Hits')==2, ('Duplicate threshold health delivery', target.get_editor_property('Hits'))
             assert s['observer'].get_editor_property('EffectsTriggered')==1
             assert s['observer'].get_editor_property('SummedRecentDamage')==0
             assert 'STUNNED' in str(target.get_editor_property('Label').get_editor_property('text'))
@@ -77,6 +79,7 @@ def tick(delta):
         if phase_name=='stunned_damage':
             assert health(target)==75
             assert s['observer'].get_editor_property('DamageEvents')==2
+            assert target.get_editor_property('Hits')==3, ('Duplicate combat health delivery', target.get_editor_property('Hits'))
             assert s['observer'].get_editor_property('EffectsTriggered')==1
             assert actions(system,stun_class)[0].get_editor_property('StackCount')==1
             phase('expiry');return

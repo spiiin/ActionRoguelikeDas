@@ -555,3 +555,7 @@ Shared-agent job `input-macro-v2-20261102`: PASS. Wrapper macro suite: 58 checks
 ## Reference declaration macros (2026-11-02)
 
 Shared-agent job `reference-macro-v1-20261102`: PASS. Macro suite: 70 checks, including 12 new reference cases. Real-PIE interaction PASS, projectile attack PASS (7 groups), point impact PASS (3 groups). Covers generated aliases, source/property/signature normalization, identity rejection, interface dispatch and the migrated gameplay reference modules.
+
+## Event subscription refactor (2026-11-03)
+
+Focused event validation: PASS, 59 checks (`rogue-events-v2-20261103`). Native/authored reference-property sources, exact signatures, external-source delivery, idempotence, reload and Destroy/release cleanup passed. Final real-PIE results: effects 6 groups (`rogue-events-pie-v3-20261103`), Overwhelm 7 groups and point impact 3 groups (`rogue-events-pie-v4-20261103`) passed. Overwhelm additionally asserts one base/combat hit notification per damage event, removed-listener GC, regrant and lethal cleanup. The runner waits for the actual gameplay Character before reading ControlsBound.

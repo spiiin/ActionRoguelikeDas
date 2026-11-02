@@ -50,7 +50,7 @@ class RogueProjectile : Actor {
         actor.SetActorTickEnabled(false)
     }
 
-    [ue_event(source="SphereComponent", name="OnComponentHit")]
+    [ue_event(source=SphereComponent, name=OnComponentHit)]
     def OnActorHit(component : ObjectRef; other : ActorRef; otherComponent : ObjectRef; impulse : UEVector; hit : CollisionHit) : void {
         if (self.HasImpacted) { return }
         self.HasImpacted = true
