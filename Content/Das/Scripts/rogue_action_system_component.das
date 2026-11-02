@@ -4,6 +4,8 @@ require rogue_action_refs public
 require rogue_action_events public
 require rogue_attribute_refs public
 require math
+require daslib/linq
+require daslib/linq_boost
 
 [ue_class(module_id="rogue", Blueprintable),
  ue_implements(interface="/Game/DasRogue/Types/RogueActionHost.RogueActionHost_C")]
@@ -49,11 +51,13 @@ class RogueActionSystemComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def GrantAction(kind : ObjectClass) : RogueActionRef {
         if (!self.Enabled || !ue_class_valid(kind)) { return default<RogueActionRef> }
-        for (existing in self.Actions) {
-            if (existing.IsEffect() && ue_class_path(existing.GrantedClass) == ue_class_path(kind)) {
-                existing.IncrementStackSize()
-                return existing
-            }
+        var actions := self.Actions
+        let existing = _fold(each(actions)
+            ._where(_.IsEffect() && ue_class_path(_.GrantedClass) == ue_class_path(kind))
+            .first_or_default(default<RogueActionRef>))
+        if (ue_is_valid(existing)) {
+            existing.IncrementStackSize()
+            return existing
         }
         let action = ue_object_new(type<RogueActionRef>, kind, ue_ref(type<ObjectRef>, ue_self_object()))
         push(self.Actions, action)
@@ -76,10 +80,10 @@ class RogueActionSystemComponent : ActorComponent {
 
     [ue_function(BlueprintCallable)]
     def FindAction(name : GameplayTag) : RogueActionRef {
-        for (action in self.Actions) {
-            if (ue_tag_matches(action.ActionName, name, true)) { return action }
-        }
-        return default<RogueActionRef>
+        var actions := self.Actions
+        return _fold(each(actions)
+            ._where(ue_tag_matches(_.ActionName, name, true))
+            .first_or_default(default<RogueActionRef>))
     }
 
     [ue_function(BlueprintCallable)]

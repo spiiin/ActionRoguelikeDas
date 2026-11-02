@@ -94,8 +94,7 @@ class RogueActionProjectileAttack : RogueAction {
         player.GetPlayerViewPoint(camera, rotation)
         let forward = ue_rotate_vector(rotation, UE_VECTOR_FORWARD)
         let finish = camera + forward * double(self.AimDistance)
-        var ignored : array<ActorRef>
-        push(ignored, ue_ref(type<ActorRef>, pawn.handle))
+        var ignored <- [ue_ref(type<ActorRef>, pawn.handle)]
         let aim = ue_line_trace(camera, finish, ignored)
         let target = aim.blocking_hit ? aim.impact_point : finish
         let origin = ue_ref(type<ActorRef>, pawn.handle).K2_GetActorLocation()
