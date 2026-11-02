@@ -551,3 +551,7 @@ groups). Runtime/timer/teardown log checks remain clean after editor exit.
 ## Declarative input macro (2026-11-02)
 
 Shared-agent job `input-macro-v2-20261102`: PASS. Wrapper macro suite: 58 checks (11 new input cases); real-PIE interaction PASS, actions PASS (10 groups), projectile attack PASS (7 groups). Covers annotation expansion/rejection, mapped E/LMB and Shift sprint with existing teardown handling.
+
+## Reference declaration macros (2026-11-02)
+
+Shared-agent job `reference-macro-v1-20261102`: PASS. Macro suite: 70 checks, including 12 new reference cases. Real-PIE interaction PASS, projectile attack PASS (7 groups), point impact PASS (3 groups). Covers generated aliases, source/property/signature normalization, identity rejection, interface dispatch and the migrated gameplay reference modules.

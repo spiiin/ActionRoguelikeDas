@@ -255,3 +255,7 @@ ref/out parameters are not implicitly converted. Low-level packing stays in DasF
 ## Declarative input bindings
 
 `RogueCharacter` and `RoguePlayerController` use `[ue_input(action="Property", Trigger...)]` beside their handlers and `ue_bind_inputs()` in setup. The wrapper validates declarations and generates ordinary Enhanced Input bindings. Asset defaults, context priorities and readiness stay explicit in daScript. Jump/sprint retain Started/Completed/Canceled; E/LMB retain Started.
+
+## Reference declaration macros
+
+All eight declarations in seven `*_refs.das` modules now use `UEObjectRef(script, className)` or `UEInterfaceRef(path, authoredId)`. The compiler creates the annotated one-handle view and reuses existing type/identity checks. Source dependency direction and reflected GC ownership remain unchanged. Unused `RogueActionHostRef_from/raw` converters and their duplicate path constant were removed; callers use generic `ue_ref`.
