@@ -47,6 +47,8 @@ def tick(delta):
                 run_script('Scripts/prepare_external_assets.py')
             run_script('Scripts/prepare_character.py')
             run_script('Scripts/prepare_action_tests.py')
+            if globals().get('ACTION_EFFECTS'):
+                run_script('Scripts/prepare_effect_tests.py')
             if globals().get('EXTERNAL_PRESENTATION'):
                 run_script('Scripts/prepare_presentation_tests.py')
             STATE['phase'] = 'wait_startup'

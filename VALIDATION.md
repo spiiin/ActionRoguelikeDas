@@ -451,3 +451,16 @@ successfully. No external package is required by a public gameplay asset.
 Job rogue-assets-regressions-20261102: Foundation PASS (41 s); interaction PASS
 (37 s); projectile PASS (42 s); actions PASS (75 s, ten groups); projectile-attack
 PASS (76 s, seven groups). Both editor harnesses closed their editor processes.
+
+
+## Timed action effects — 2026-11-02
+
+Real-PIE effects receipt has passed=true. Check groups:
+- {"effect_auto_starts_and_survives_gc": true}
+- {"one_instance_stacking": true, "duration_refreshed": true, "stack_scaled_ticks": 8, "expiry_removes_effect": true}
+- {"no_refresh_option": true, "final_boundary_tick_once": true}
+- {"manual_remove_no_recursion": true, "cancelled_timer_quiet": true, "removed_effect_collected": true}
+- {"stun_cancels_and_blocks_actions": true, "natural_expiry_restores_actions": true}
+- {"death_cleans_mutating_effect_array": true, "disabled_owner_rejects_grants": true, "endplay_cancels_effect_timers": true}
+
+Shared-agent validation jobs: rogue-effects-v12-20261102, rogue-effects-migration-v3-20261102, rogue-effects-final-regressions-20261102.

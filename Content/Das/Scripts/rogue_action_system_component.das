@@ -41,16 +41,31 @@ class RogueActionSystemComponent : ActorComponent {
     }
 
     def EndPlay(reason : int) : void {
-        self.Enabled = false
+        self.Shutdown()
         clear(self.Actions)
         self.ActiveGameplayTags = ue_tags()
     }
 
     [ue_function(BlueprintCallable)]
     def GrantAction(kind : ObjectClass) : RogueActionRef {
+        if (!self.Enabled || !ue_class_valid(kind)) { return default<RogueActionRef> }
+        for (existing in self.Actions) {
+            if (existing.IsEffect() && ue_class_path(existing.GrantedClass) == ue_class_path(kind)) {
+                existing.IncrementStackSize()
+                return existing
+            }
+        }
         let action = ue_object_new(type<RogueActionRef>, kind, ue_ref(type<ObjectRef>, ue_self_object()))
         push(self.Actions, action)
+        action.GrantedClass = kind
         action.Setup()
+        if (action.IsEffect()) {
+            if (!action.CanStart()) {
+                self.RemoveAction(action)
+                return default<RogueActionRef>
+            }
+            action.StartAction()
+        }
         self.OnActionAdded.Broadcast(ue_ref(type<ObjectRef>, action.handle))
         return action
     }
@@ -86,12 +101,13 @@ class RogueActionSystemComponent : ActorComponent {
         var found = false
         for (action in self.Actions) {
             if (!found && ue_same_object(action, removed)) {
-                if (action.IsRunning()) { action.StopAction() }
                 found = true
             } else { push(next, action) }
         }
         if (!found) { return false }
+        // Detach before callbacks: an effect also removes itself when stopped.
         self.Actions := next
+        if (removed.IsRunning()) { removed.StopAction() }
         self.OnActionRemoved.Broadcast(ue_ref(type<ObjectRef>, removed.handle))
         return true
     }
@@ -101,7 +117,8 @@ class RogueActionSystemComponent : ActorComponent {
         var active = self.ActiveGameplayTags
         for (name in ue_tags_names(tags)) { ue_tags_add(active, ue_tag(name)) }
         self.ActiveGameplayTags = active
-        for (action in self.Actions) {
+        var actions := self.Actions
+        for (action in actions) {
             if (action.IsRunning() && ue_tags_has_any(tags, action.BlockedTags)) { action.StopAction() }
         }
         for (name in ue_tags_names(tags)) { self.GameplayTagUpdated.Broadcast(ue_tag(name), 1) }
@@ -168,7 +185,8 @@ class RogueActionSystemComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def Shutdown() : void {
         self.Enabled = false
-        for (action in self.Actions) {
+        var actions := self.Actions
+        for (action in actions) {
             if (action.IsRunning()) {
                 action.StopAction()
             }

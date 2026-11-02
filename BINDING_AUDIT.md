@@ -185,3 +185,21 @@ skeleton/blend space and montage slot. This is presentation only: movement,
 actions, damage and projectile logic remain in daScript. Explicit reflected
 helpers configure existing Niagara and audio components without adding externs.
 AnimationData and ControlRig are enabled to deserialize the acquired animations.
+
+
+## Timed effects and ScriptObject migration
+
+Gameplay effects use existing managed UObject timers and reflected action
+ownership. No native effect gameplay class was introduced. Plain ScriptObject
+structural reimport updates the cooked method contract and snapshots it for
+rollback. Additive changes can include independently authored referring assets;
+removals, signature changes and default changes retain stricter migration guards.
+Other generic native parent families still retain their structural reimport guard.
+Direct cooked contract owners are repaired before identity preflight only when
+the descriptor ID agrees with the stored import and requested class. Dependent
+generated classes also refresh their contract owner after compilation.
+
+ResetDuration is reflected so inherited effects invoke the owning class's timer
+implementation. Existing timer APIs suffice; no runtime callback lookup changes
+remain in this slice. Script-only inherited helpers containing managed callbacks
+are not generalized by this change.

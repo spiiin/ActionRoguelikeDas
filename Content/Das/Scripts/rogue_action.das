@@ -18,6 +18,7 @@ class RogueAction : ScriptObject {
     }
 
     state = ue_properties(BlueprintReadWrite) {
+        var GrantedClass : ObjectClass
         var Host : RogueActionHostRef
         var bIsRunning : bool = false
         var CooldownUntil : double = 0.0lf
@@ -29,6 +30,12 @@ class RogueAction : ScriptObject {
     def Setup() : void {
         self.Host = ue_ref(type<RogueActionHostRef>, ue_object_outer(ue_self_object()))
     }
+
+    [ue_function(BlueprintCallable, BlueprintEvent)]
+    def IsEffect() : bool { return false }
+
+    [ue_function(BlueprintCallable, BlueprintEvent)]
+    def IncrementStackSize() : void {}
 
     [ue_function(BlueprintCallable)]
     def GetOwningComponent() : RogueActionHostRef { return self.Host }
