@@ -48,12 +48,13 @@ class RogueAttributeComponent : ActorComponent {
     [ue_event(source=owner, source_type=ActorRef, name=OnTakeAnyDamage)]
     def OnOwnerDamage(damaged : ActorRef; amount : float; kind : ObjectRef; controller : ObjectRef; source : ActorRef) : void {
         if (amount <= 0.0f || !self.IsAlive()) { return }
-        var instigator = source
-        if (ue_object_valid(source.handle)) {
-            let pawn = source.Instigator
-            if (ue_object_valid(pawn.handle)) { instigator = ue_ref(type<ActorRef>, pawn.handle) }
-        }
-        self.ApplyHealthChange(instigator, -amount)
+        self.ApplyHealthChange(self.ResolveDamageInstigator(source), -amount)
+    }
+
+    def ResolveDamageInstigator(source : ActorRef) : ActorRef {
+        if (!ue_is_valid(source)) { return source }
+        let pawn = source.Instigator
+        return ue_is_valid(pawn) ? ue_ref(type<ActorRef>, pawn.handle) : source
     }
 }
 

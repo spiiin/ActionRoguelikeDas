@@ -3,6 +3,7 @@ module rogue_ai_controller public
 require rogue_ai_character public
 require ue_perception public
 require math
+require daslib/match
 
 // Perception and ranged combat slice of RogueAIController; no BehaviorTree asset is required.
 [ue_class(module_id="rogue", Blueprintable)]
@@ -59,9 +60,11 @@ class RogueAIController : AIController {
         if (!ue_is_valid(pawn)) { return }
         let enemy = ue_ref(type<RogueAICharacterRef>,pawn.handle)
         if (enemy.Dead) { return }
-        if (stimulus.Sense == AISense.Sight) { self.SightEvents += 1 }
-        elif (stimulus.Sense == AISense.Hearing) { self.HearingEvents += 1 }
-        else { return }
+        match (stimulus.Sense) {
+            if (AISense.Sight) { self.SightEvents += 1 }
+            if (AISense.Hearing) { self.HearingEvents += 1 }
+            if (_) { return }
+        }
         enemy.Target = target
         self.CurrentTarget = target
         self.LastKnownLocation = stimulus.StimulusLocation

@@ -19,6 +19,8 @@ class RogueMagicProjectile : RogueProjectile {
     state = ue_properties(BlueprintReadWrite, Category = "Projectile") {
         var DamageAttempts : int = 0
         var LastDamageApplied : float = 0.0f
+        // Empty for an unconfigured/successful effect; failures stay inspectable.
+        var LastHitEffectError : string
     }
 
     defaults = ue_defaults() { self.InitialLifeSpan = 8.0f }
@@ -46,7 +48,10 @@ class RogueMagicProjectile : RogueProjectile {
         }
         // Damage notifications are queued during managed hit dispatch. Any
         // lethal notification will shut down the target and remove this effect.
-        rogue_apply_hit_effect(other, self.EffectOnHit)
+        self.LastHitEffectError = ""
+        if (ue_class_valid(self.EffectOnHit)) {
+            self.LastHitEffectError = rogue_apply_hit_effect(other, self.EffectOnHit) |> err_to_option() ?? ""
+        }
         return damaged
     }
 }

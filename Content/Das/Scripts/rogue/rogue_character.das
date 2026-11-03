@@ -53,6 +53,7 @@ class RogueCharacter : Character {
         var Dead : bool = false
         var DeathCount : int = 0
         var ControlsBound : bool = false
+        var InputSetups : int = 0
         var MoveEvents : int = 0
         var LookEvents : int = 0
         var JumpPresses : int = 0
@@ -83,7 +84,7 @@ class RogueCharacter : Character {
     }
 
     def BeginPlay() : void {
-        if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) }
+        if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
             rogue_apply_mesh(self.Mesh, self.Presentation)
             self.Visual.SetHiddenInGame(true, false)
@@ -108,21 +109,38 @@ class RogueCharacter : Character {
         // The placeholder visual has no skeletal hit mesh; use the capsule.
         self.CapsuleComponent.SetCollisionResponseToChannel(ECollisionChannel.ECC_GameTraceChannel2, ECollisionResponse.ECR_Block)
         self.RefreshHealth()
-        self.TryBindControls()
     }
 
     def Tick(delta : float) : void {
-        if (!self.Dead && !self.ControlsBound) { self.TryBindControls() }
         self.FaceHealthLabel()
     }
 
-    def TryBindControls() : void {
+    [ue_function(BlueprintEvent)]
+    def SetupPlayerInputComponent() : void {
+        self.ControlsBound = false
         if (self.Dead) { return }
         let pawn = ue_character_self()
-        if (!ue_character_controls_ready(pawn)) { return }
+        verify(ue_character_controls_ready(pawn), "SetupPlayerInputComponent requires local Enhanced Input")
+        verify(ue_is_valid(self.Controls) && ue_is_valid(self.Input_Move) && ue_is_valid(self.Input_Look) &&
+            ue_is_valid(self.Input_Jump) && ue_is_valid(self.Input_Sprint) && ue_is_valid(self.Input_TestDamage),
+            "Character input assets are not configured")
         ue_enhanced_add_context(ue_pawn_controller(pawn), self.Controls, 1)
         ue_bind_inputs()
         self.ControlsBound = true
+        self.InputSetups += 1
+    }
+
+    [ue_function(BlueprintEvent)]
+    def TeardownPlayerInputComponent() : void {
+        if (!self.ControlsBound) { return }
+        self.ActionSystem.StopAction(ue_tag("Action.Sprint"))
+        self.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
+        self.StopJumping()
+        self.CharacterMovement.StopMovementImmediately()
+        ue_unbind_inputs()
+        let player = ue_pawn_controller(ue_character_self())
+        if (ue_is_valid(player)) { ue_enhanced_remove_context(player, self.Controls) }
+        self.ControlsBound = false
     }
 
     [ue_input(action="Input_Sprint", Started, Completed, Canceled)]
@@ -184,25 +202,27 @@ class RogueCharacter : Character {
 
     [ue_function(BlueprintCallable)]
     def OnHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
-        if (health <= 0.0f && !self.Dead) {
-            self.Dead = true
-            self.DeathCount += 1
-            self.ActionSystem.Shutdown()
-            if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.DeathMontage)) {
-                ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
-            }
-            self.StopJumping()
-            self.CharacterMovement.StopMovementImmediately()
-            self.CharacterMovement.DisableMovement()
-            let player = ue_pawn_controller(ue_character_self())
-            if (ue_object_valid(player.handle)) {
-                player.SetIgnoreMoveInput(true)
-                player.SetIgnoreLookInput(true)
-                self.DisableInput(player)
-                player.DisableInput(player)
-            }
-        }
+        if (health <= 0.0f && !self.Dead) { self.HandleDeath() }
         self.RefreshHealth()
+    }
+
+    def HandleDeath() : void {
+        self.Dead = true
+        self.DeathCount += 1
+        self.ActionSystem.Shutdown()
+        if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.DeathMontage)) {
+            ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
+        }
+        self.StopJumping()
+        self.CharacterMovement.StopMovementImmediately()
+        self.CharacterMovement.DisableMovement()
+        let player = ue_pawn_controller(ue_character_self())
+        if (ue_is_valid(player)) {
+            player.SetIgnoreMoveInput(true)
+            player.SetIgnoreLookInput(true)
+            self.DisableInput(player)
+            player.DisableInput(player)
+        }
     }
 
     def RefreshHealth() : void {

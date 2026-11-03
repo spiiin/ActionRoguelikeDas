@@ -20,7 +20,7 @@ def observe_interaction(delta):
         return
     state={"controller":player.get_class().get_path_name()}
     if "BP_RoguePlayerController" in state["controller"]:
-        for name in ["ControlsBound","FireBound","ProjectilesFired","InteractPresses","SuccessfulInteractions","LastDasError"]:
+        for name in ["ControlsBound","InputSetups","ProjectilesFired","InteractPresses","SuccessfulInteractions","LastDasError"]:
             state[name]=player.get_editor_property(name)
         component=player.get_editor_property("InteractionComponent")
         target=component.get_editor_property("SelectedActor")

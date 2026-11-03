@@ -1,5 +1,6 @@
 """Idempotent editor setup. Runtime behavior is entirely in rogue_character.das."""
 import unreal
+from pathlib import Path
 
 tools=unreal.AssetToolsHelpers.get_asset_tools()
 def asset(name,cls,factory):
@@ -52,6 +53,12 @@ assert len(saved)==9
 assert [m.get_class().get_name() for m in saved[1].get_editor_property('modifiers')]==['InputModifierNegate']
 assert len(saved[3].get_editor_property('modifiers'))==2
 assert unreal.EditorLoadingAndSavingUtils.save_packages([x.get_outer() for x in [move,look,jump,hurt,sprint,mapping]],False)
+migration_source=Path(__file__).resolve().parents[1]/'Content/Das/Scripts/rogue/rogue_player_controller.das'
+migration_backup=Path(__file__).resolve().parents[1]/'Saved/Migrations/rogue_player_controller.final.das'
+stage_marker='// DAS_INPUT_FIELD_ARCHIVE_STAGE\n'
+if migration_backup.exists() and migration_source.read_text(encoding='utf-8-sig').startswith(stage_marker):
+    migration_source.write_bytes(migration_backup.read_bytes())
+    migration_backup.unlink()
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_presentation_profile.das /Game/DasRogue/Types/BP_RoguePresentationProfile rogue.RoguePresentationProfile')
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_attribute_component.das /Game/DasRogue/BP_RogueAttributeComponent rogue.RogueAttributeComponent')
@@ -90,19 +97,53 @@ action_system.modify(True)
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_character.das /Game/DasRogue/BP_RogueCharacter rogue.RogueCharacter')
 controller=unreal.load_asset('/Game/DasRogue/BP_RoguePlayerController')
 if controller:
-    # Reimport automatically archives the shooting fields removed from this existing Blueprint.
-    try:
-        unreal.get_default_object(controller.generated_class()).get_editor_property('ProjectileClass')
-        migration=' fields=archive_remove_with_dependencies'
-    except Exception:
-        migration=''
-    unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Reimport /Game/DasRogue/BP_RoguePlayerController'+migration)
-    try:
-        unreal.get_default_object(controller.generated_class()).get_editor_property('ProjectileClass')
-    except Exception:
-        pass
-    else:
-        raise RuntimeError('Controller field migration failed; inspect DAS_DSL_REIMPORT in the log')
+    # Archive only the known obsolete bootstrap/input flags, preserving dependent packages.
+    removed_fields=('ProjectileClass','FireBound')
+    def has_field(name):
+        try:
+            unreal.get_default_object(controller.generated_class()).get_editor_property(name)
+            return True
+        except Exception:
+            return False
+    # Field archival requires a removal-only declaration. Stage the previous
+    # callback shape without obsolete fields, then apply the new setup event.
+    if any(has_field(name) for name in removed_fields):
+        source_path=Path(__file__).resolve().parents[1]/'Content/Das/Scripts/rogue/rogue_player_controller.das'
+        final_bytes=source_path.read_bytes()
+        final_source=final_bytes.decode('utf-8-sig').replace('\r\n','\n')
+        stage=final_source.replace('        var InputSetups : int = 0\n','')
+        stage=stage.replace('        ue_controller_set_team(ue_ref(type<PlayerControllerRef>, ue_self_object()), self.TeamId)\n',
+            '        ue_controller_set_team(ue_ref(type<PlayerControllerRef>, ue_self_object()), self.TeamId)\n        self.TryBindControls()\n')
+        start=stage.index('    [ue_function(BlueprintEvent)]\n    def SetupInputComponent()')
+        end=stage.index('    [ue_input(action="Input_Fire"',start)
+        stage=stage[:start]+'''    def Tick(delta : float) : void {
+        if (!self.ControlsBound) { self.TryBindControls() }
+    }
+
+    def TryBindControls() : void {
+        let player = ue_ref(type<PlayerControllerRef>, ue_self_object())
+        let hasInputs = ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact) && ue_is_valid(self.Input_Fire)
+        if (!hasInputs || !ue_player_controls_ready(player) || self.ControlsBound) { return }
+        ue_enhanced_add_context(player, self.Controls, 0)
+        ue_bind_inputs()
+        self.ControlsBound = true
+    }
+
+'''+stage[end:]
+        try:
+            migration_backup.parent.mkdir(parents=True,exist_ok=True)
+            migration_backup.write_bytes(final_bytes)
+            source_path.write_text(stage_marker+stage,encoding='utf-8')
+            unreal.SystemLibrary.execute_console_command(world,
+                'Das.DSL.Reimport /Game/DasRogue/BP_RoguePlayerController fields=archive_remove_with_dependencies')
+            if any(has_field(name) for name in removed_fields):
+                raise RuntimeError('Controller field archival failed; inspect DAS_DSL_ARCHIVE in the log')
+        finally:
+            source_path.write_bytes(final_bytes)
+            migration_backup.unlink(missing_ok=True)
+    unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Reimport /Game/DasRogue/BP_RoguePlayerController')
+    unreal.get_default_object(controller.generated_class()).get_editor_property('InputSetups')
+
 else:
     unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_player_controller.das /Game/DasRogue/BP_RoguePlayerController rogue.RoguePlayerController')
 kind=unreal.load_class(None,'/Game/DasRogue/BP_RogueCharacter.BP_RogueCharacter_C')

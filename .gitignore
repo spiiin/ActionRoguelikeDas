@@ -17,3 +17,6 @@ __pycache__/
 /Content/Troy/
 /Content/DasRogueExternal/
 /Content/ExampleContent/
+
+# Prepared program artifacts are produced during build/staging.
+/Content/Das/Prepared/

@@ -28,31 +28,26 @@ class RoguePlayerController : PlayerController {
 
     state = ue_properties(BlueprintReadWrite) {
         var ControlsBound : bool = false
-        var FireBound : bool = false
+        var InputSetups : int = 0
         var InteractPresses : int = 0
         var SuccessfulInteractions : int = 0
     }
 
     def BeginPlay() : void {
         ue_controller_set_team(ue_ref(type<PlayerControllerRef>, ue_self_object()), self.TeamId)
-        self.TryBindControls()
     }
 
-    def Tick(delta : float) : void {
-        if (!self.ControlsBound || !self.FireBound) {
-            self.TryBindControls()
-        }
-    }
-
-    def TryBindControls() : void {
+    [ue_function(BlueprintEvent)]
+    def SetupInputComponent() : void {
+        self.ControlsBound = false
         let player = ue_ref(type<PlayerControllerRef>, ue_self_object())
-        let hasInputs = ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact) && ue_is_valid(self.Input_Fire)
-        if (!hasInputs || !ue_player_controls_ready(player)) { return }
-        if (self.ControlsBound && self.FireBound) { return }
+        verify(ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact) && ue_is_valid(self.Input_Fire),
+            "Controller input assets are not configured")
+        verify(ue_player_controls_ready(player), "SetupInputComponent requires local Enhanced Input")
         ue_enhanced_add_context(player, self.Controls, 0)
         ue_bind_inputs()
         self.ControlsBound = true
-        self.FireBound = true
+        self.InputSetups += 1
     }
 
     [ue_input(action="Input_Fire", Started)]

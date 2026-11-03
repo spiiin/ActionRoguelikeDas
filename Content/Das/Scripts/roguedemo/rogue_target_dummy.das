@@ -67,10 +67,10 @@ class RogueTargetDummy : Actor {
         self.UpdateDisplay()
         if (newHealth <= 0.0f && !self.Dead) {
             self.Dead = true
-            ue_timer_start("death", self.DeathDelay, "Die", false)
+            ue_timer_start("death", self.DeathDelay, self.Die, false)
         }
     }
 
-    [ue_function(BlueprintCallable)]
+    [ue_function(BlueprintCallable, BlueprintEvent=false)]
     def Die() : void { ue_actor_destroy_self() }
 }

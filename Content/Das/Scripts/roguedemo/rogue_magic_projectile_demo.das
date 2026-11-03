@@ -16,8 +16,7 @@ class RogueMagicProjectileDemo : RogueMagicProjectile {
     }
 
     def override BeginPlay() : void {
-        let presentation = rogue_load_presentation()
-        if (ue_is_valid(presentation)) {
+        rogue_load_presentation() |> if_some() $(presentation : RoguePresentationProfileRef) {
             if (ue_is_valid(presentation.ProjectileEffect)) {
                 ue_niagara_component_start(self.LoopedNiagaraComponent, presentation.ProjectileEffect)
                 self.Visual.SetHiddenInGame(true, false)

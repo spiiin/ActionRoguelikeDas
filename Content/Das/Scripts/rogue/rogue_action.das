@@ -2,6 +2,17 @@ options gen2
 module rogue_action public
 require rogue_action_host_interface public
 require math
+require ue_result public
+
+// Script-only diagnostic; Blueprint's CanStart contract remains bool.
+enum RogueActionStartFailure {
+    AlreadyRunning
+    MissingHost
+    InactiveOwner
+    Cooldown
+    BlockedTags
+    InsufficientResource
+}
 
 // First action-system slice of Tom Looman's ActionRoguelike, commit 992f860.
 // Publication permission and redistribution license are pending.
@@ -48,17 +59,21 @@ class RogueAction : ScriptObject {
         return max(0.0lf, self.CooldownUntil - ue_world_seconds())
     }
 
-    [ue_function(BlueprintPure)]
-    def CanStart() : bool {
-        if (self.bIsRunning || !ue_object_valid(self.Host.handle)) { return false }
-        if (!self.Host.IsActionOwnerAlive() || self.GetCooldownTimeRemaining() > 0.0lf) { return false }
-        if (ue_tags_has_any(self.Host.GetActiveTags(), self.BlockedTags)) { return false }
+    def CheckCanStart() : Result<bool; RogueActionStartFailure> {
+        ue_require(!self.bIsRunning, RogueActionStartFailure.AlreadyRunning) |> ue_try
+        ue_require(ue_object_valid(self.Host.handle), RogueActionStartFailure.MissingHost) |> ue_try
+        ue_require(self.Host.IsActionOwnerAlive(), RogueActionStartFailure.InactiveOwner) |> ue_try
+        ue_require(!(self.GetCooldownTimeRemaining() > 0.0lf), RogueActionStartFailure.Cooldown) |> ue_try
+        ue_require(!ue_tags_has_any(self.Host.GetActiveTags(), self.BlockedTags), RogueActionStartFailure.BlockedTags) |> ue_try
         var costs := self.ActivationCost
         for (name, value in keys(costs), values(costs)) {
-            if (self.Host.GetAttributeValue(ue_tag(name)) < value) { return false }
+            ue_require(!(self.Host.GetAttributeValue(ue_tag(name)) < value), RogueActionStartFailure.InsufficientResource) |> ue_try
         }
-        return true
+        return ok(true, type<RogueActionStartFailure>)
     }
+
+    [ue_function(BlueprintPure)]
+    def CanStart() : bool { return is_ok(self.CheckCanStart()) }
 
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def StartAction() : void {

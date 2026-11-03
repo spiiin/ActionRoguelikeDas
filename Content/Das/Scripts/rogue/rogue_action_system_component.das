@@ -4,6 +4,7 @@ require rogue_action public
 require rogue_action_events public
 require rogue_attribute_component public
 require math
+require daslib/match
 require daslib/linq
 require daslib/linq_boost
 
@@ -52,9 +53,9 @@ class RogueActionSystemComponent : ActorComponent {
     def GrantAction(kind : ObjectClass) : RogueActionRef {
         if (!self.Enabled || !ue_class_valid(kind)) { return default<RogueActionRef> }
         var actions := self.Actions
-        let existing = _fold(each(actions)
-            ._where(_.IsEffect() && ue_class_path(_.GrantedClass) == ue_class_path(kind))
-            .first_or_default(default<RogueActionRef>))
+        let existing = _fold <| each(actions)._where(
+            _.IsEffect() && ue_class_path(_.GrantedClass) == ue_class_path(kind)
+        ).first_or_default(default<RogueActionRef>)
         if (ue_is_valid(existing)) {
             existing.IncrementStackSize()
             return existing
@@ -81,9 +82,7 @@ class RogueActionSystemComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def FindAction(name : GameplayTag) : RogueActionRef {
         var actions := self.Actions
-        return _fold(each(actions)
-            ._where(ue_tag_matches(_.ActionName, name, true))
-            .first_or_default(default<RogueActionRef>))
+        return _fold <| each(actions)._where(ue_tag_matches(_.ActionName, name, true)).first_or_default(default<RogueActionRef>)
     }
 
     [ue_function(BlueprintCallable)]
@@ -149,11 +148,13 @@ class RogueActionSystemComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def GetAttributeValue(tag : GameplayTag) : float {
         let name = ue_tag_name(tag)
-        if (name == "Attribute.MoveSpeed") { return self.BaseMoveSpeed }
-        if (name == "Attribute.MoveSpeedMultiplier") { return self.MoveSpeedMultiplier }
-        if (name == "Attribute.Health" || name == "Attribute.HealthMax") {
-            let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
-            return name == "Attribute.Health" ? attributes.Health : attributes.HealthMax
+        match (name) {
+            if ("Attribute.MoveSpeed") { return self.BaseMoveSpeed }
+            if ("Attribute.MoveSpeedMultiplier") { return self.MoveSpeedMultiplier }
+            if ("Attribute.Health" || "Attribute.HealthMax") {
+                let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
+                return name == "Attribute.Health" ? attributes.Health : attributes.HealthMax
+            }
         }
         return key_exists(self.Resources, name) ? self.Resources[name] : 0.0f
     }
@@ -161,22 +162,21 @@ class RogueActionSystemComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def ApplyAttributeChange(tag : GameplayTag; delta : float) : void {
         let name = ue_tag_name(tag)
-        if (name == "Attribute.MoveSpeed") {
-            self.BaseMoveSpeed += delta
-            self.ApplyMoveSpeed()
-            return
+        match (name) {
+            if ("Attribute.MoveSpeed") {
+                self.BaseMoveSpeed += delta
+                self.ApplyMoveSpeed()
+            }
+            if ("Attribute.MoveSpeedMultiplier") {
+                self.MoveSpeedMultiplier += delta
+                self.ApplyMoveSpeed()
+            }
+            if ("Attribute.Health") {
+                let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
+                attributes.ApplyHealthChange(ue_self_actor(), delta)
+            }
+            if (_) { self.Resources[name] = self.GetAttributeValue(tag) + delta }
         }
-        if (name == "Attribute.MoveSpeedMultiplier") {
-            self.MoveSpeedMultiplier += delta
-            self.ApplyMoveSpeed()
-            return
-        }
-        if (name == "Attribute.Health") {
-            let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
-            attributes.ApplyHealthChange(ue_self_actor(), delta)
-            return
-        }
-        self.Resources[name] = self.GetAttributeValue(tag) + delta
     }
 
     [ue_function(BlueprintCallable)]

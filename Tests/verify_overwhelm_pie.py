@@ -126,6 +126,7 @@ def tick(delta):
             s['other']=other;s['other_system']=other.get_editor_property('ActionSystem')
             s['shot']=shoot(other,0.0,stun_class);phase('zero_damage');return
         if phase_name=='zero_damage':
+            assert not s['shot'].get_editor_property('LastHitEffectError')
             assert health(s['other'])==100 and stunned(s['other_system'])
             s['shot']=shoot(s['other'],10.0,stun_class);phase('direct_effect');return
         if phase_name=='direct_effect':
@@ -136,10 +137,12 @@ def tick(delta):
             s['other_system'].call_method('RemoveAction',args=(actions(s['other_system'],stun_class)[0],))
             s['shot']=shoot(s['other'],10.0,base_action);phase('invalid_class');return
         if phase_name=='invalid_class':
+            assert 'not an effect' in s['shot'].get_editor_property('LastHitEffectError')
             assert health(s['other'])==80 and len(s['other_system'].get_editor_property('Actions'))==2
             dummy=spawn(dummy_class,unreal.Vector(1600,3000,200));s['actors'].append(dummy);s['dummy']=dummy
             s['shot']=shoot(dummy,10.0,stun_class);phase('no_system');return
         if phase_name=='no_system':
+            assert 'no action system' in s['shot'].get_editor_property('LastHitEffectError')
             assert health(s['dummy'])==90
             s['checks'].append({'non_effect_class_rejected':True,'target_without_action_system_supported':True})
             s['shot']=shoot(target,100.0,stun_class);phase('death');return

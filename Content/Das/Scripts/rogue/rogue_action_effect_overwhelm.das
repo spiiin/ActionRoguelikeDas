@@ -60,21 +60,27 @@ class RogueActionEffectOverwhelm : RogueActionEffect {
 
     [ue_function(BlueprintCallable, BlueprintEvent=false)]
     def OnHealthChanged(instigator : ActorRef; newHealth : float; delta : float) : void {
-        if (!self.bIsRunning || !self.Listening || !self.Host.IsActionOwnerAlive() || newHealth <= 0.0f || delta >= 0.0f) { return }
+        if (!self.bIsRunning || !self.Listening) { return }
+        if (!self.Host.IsActionOwnerAlive() || newHealth <= 0.0f || delta >= 0.0f) { return }
         if (ue_tags_has(self.Host.GetActiveTags(), ue_tag("StatusEffect.Stunned"))) { return }
         self.DamageEvents += 1
+
+        let damage = -delta
         let now = ue_world_seconds()
         let elapsed = now - self.LastDamageTime
-        if (self.LastDamageTime >= 0.0lf && elapsed >= 0.0lf && elapsed < double(self.TimeDeltaThreshold)) {
-            self.SummedRecentDamage -= delta
-        } else { self.SummedRecentDamage = -delta }
+        let inDamageWindow = (self.LastDamageTime >= 0.0lf
+            && elapsed >= 0.0lf && elapsed < double(self.TimeDeltaThreshold))
+        self.SummedRecentDamage = inDamageWindow ? self.SummedRecentDamage + damage : damage
         self.LastDamageTime = now
-        if (self.SummedRecentDamage < self.DamageThreshold || !rogue_is_effect_class(self.EffectOnThreshold)) { return }
+
+        if (self.SummedRecentDamage < self.DamageThreshold) { return }
+        if (!rogue_is_effect_class(self.EffectOnThreshold)) { return }
+
         let system = ue_ref(type<RogueActionSystemComponentRef>, self.Host.handle)
-        if (ue_is_valid(system.GrantAction(self.EffectOnThreshold))) {
-            self.EffectsTriggered += 1
-            self.SummedRecentDamage = 0.0f
-            self.LastDamageTime = -1.0lf
-        }
+        if (!ue_is_valid(system.GrantAction(self.EffectOnThreshold))) { return }
+
+        self.EffectsTriggered += 1
+        self.SummedRecentDamage = 0.0f
+        self.LastDamageTime = -1.0lf
     }
 }

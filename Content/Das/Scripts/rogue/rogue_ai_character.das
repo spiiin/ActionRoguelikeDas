@@ -85,25 +85,27 @@ class RogueAICharacter : Character {
     def OnHealthChanged(instigator:ActorRef; health:float; delta:float) : void {
         if (self.Dead) { return }
         if (delta < 0.0f) { self.Hits += 1 }
-        if (health <= 0.0f && !self.Dead) {
-            self.Dead = true
-            self.Target = default<ActorRef>
-            self.ActionSystem.Shutdown()
-            self.CharacterMovement.StopMovementImmediately()
-            self.CharacterMovement.DisableMovement()
-            self.CapsuleComponent.SetCollisionEnabled(ECollisionEnabled.NoCollision)
-            let controller = ue_character_self().GetController()
-            // Native timer teardown runs outside this damage callback's script context.
-            if (ue_is_valid(controller)) { ue_ref(type<ActorRef>,controller.handle).SetLifeSpan(0.01f) }
-            var duration = 0.0f
-            if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.DeathMontage)) {
-                duration = ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
-                if (duration > 0.0f) { self.DeathAnimations += 1 }
-            }
-            self.SetLifeSpan(max(self.DeathDelay, duration + 0.1f))
-        }
+        if (health <= 0.0f) { self.HandleDeath() }
         if (health > 0.0f && delta < 0.0f) { self.ReactToHit() }
         self.RefreshLabel()
+    }
+
+    def HandleDeath() : void {
+        self.Dead = true
+        self.Target = default<ActorRef>
+        self.ActionSystem.Shutdown()
+        self.CharacterMovement.StopMovementImmediately()
+        self.CharacterMovement.DisableMovement()
+        self.CapsuleComponent.SetCollisionEnabled(ECollisionEnabled.NoCollision)
+        let controller = ue_character_self().GetController()
+        // Native timer teardown runs outside this damage callback's script context.
+        if (ue_is_valid(controller)) { ue_ref(type<ActorRef>,controller.handle).SetLifeSpan(0.01f) }
+        var duration = 0.0f
+        if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.DeathMontage)) {
+            duration = ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
+            if (duration > 0.0f) { self.DeathAnimations += 1 }
+        }
+        self.SetLifeSpan(max(self.DeathDelay, duration + 0.1f))
     }
 
     def ReactToHit() : void {
@@ -123,15 +125,19 @@ class RogueAICharacter : Character {
         self.Stunned = ue_tags_has(self.ActionSystem.GetActiveTags(),ue_tag("StatusEffect.Stunned"))
         self.CharacterMovement.MaxWalkSpeed = self.Stunned ? 0.0f : self.MoveSpeed
         if (self.Stunned) { self.CharacterMovement.StopMovementImmediately() }
-        if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.StunMontage)) {
-            if (self.Stunned && !wasStunned) {
-                let duration = ue_character_play_montage(ue_character_self(), self.Presentation.StunMontage)
-                if (duration > 0.0f) { self.StunAnimations += 1 }
-            } elif (!self.Stunned && wasStunned) {
-                self.StopAnimMontage(self.Presentation.StunMontage)
-            }
-        }
+        self.UpdateStunAnimation(wasStunned)
         self.RefreshLabel()
+    }
+
+    def UpdateStunAnimation(wasStunned : bool) : void {
+        if (self.Stunned == wasStunned || !self.UsingExternalPresentation) { return }
+        if (!ue_is_valid(self.Presentation.StunMontage)) { return }
+        if (!self.Stunned) {
+            self.StopAnimMontage(self.Presentation.StunMontage)
+            return
+        }
+        let duration = ue_character_play_montage(ue_character_self(), self.Presentation.StunMontage)
+        if (duration > 0.0f) { self.StunAnimations += 1 }
     }
 
     def RefreshLabel() : void {

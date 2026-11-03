@@ -34,8 +34,15 @@ def tick(delta):
     try:
         editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
         level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem) or unreal.get_default_object(unreal.LevelEditorSubsystem)
-        if STATE['phase'] not in ('stop', 'cleanup') and time.perf_counter() - STATE['started'] > (600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') else 150):
-            raise RuntimeError('Action test runner timed out in ' + STATE['phase'])
+        # Compile/import preparation must not consume the gameplay test budget.
+        if STATE['phase'] == 'test':
+            if time.perf_counter()-STATE['test_started'] > 75:
+                detail=STATE.get('test',{}).get('s',{}).get('phase','unknown')
+                raise RuntimeError('Gameplay test timed out in '+str(detail))
+        elif STATE['phase'] not in ('stop','cleanup'):
+            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') else 240
+            if time.perf_counter()-STATE['started'] > preparation_limit:
+                raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
             if not world or world.get_name() != 'ChestTest':
@@ -94,6 +101,10 @@ def tick(delta):
                     raise RuntimeError(f'Gameplay pawn did not become ready: pawn={pawn}, default_pawn_class={kind}')
                 return
             if not pawn.get_editor_property('ControlsBound'):
+                if time.perf_counter()-STATE['play_requested'] > 10:
+                    controller=unreal.GameplayStatics.get_player_controller(world,0)
+                    raise RuntimeError('Native input setup did not complete: pawn='+str(pawn.get_editor_property('LastDasError'))+
+                        ', controller='+str(controller.get_editor_property('LastDasError') if controller else None))
                 return
             STATE['ticks'] += 1
             if STATE['ticks'] < 3:
@@ -107,6 +118,7 @@ def tick(delta):
                         controller=actor.get_controller()
                         if controller:controller.destroy_actor()
                         actor.destroy_actor()
+            STATE['test_started'] = time.perf_counter()
             STATE['test'] = run_script(TEST_SCRIPT)
             STATE['phase'] = 'test'
             return

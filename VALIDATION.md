@@ -631,3 +631,42 @@ Explicit Config/DefaultGame.ini program roots pin gameplay classes during world
 loading; test roots are scoped to ChestTest. This closes a missing-prepared-program
 failure for a dynamically spawned test probe. The passing run logs no such error.
 Parallel source refactors made after these receipts are outside this slice.
+
+## 2026-11-03: Result propagation and event-driven input
+
+Validated in the actual UE 5.8 editor/standalone PIE through the shared build agent.
+All 92 scripts compile (`DAS_EDITOR_COMPILE_ALL failed=0`).
+
+- `result-try`: 8 contract groups passed, covering scalar/string/enum values,
+  move-only arrays, exactly-once evaluation, assignment preservation, nearest
+  closure propagation, normal defer cleanup and seven negative compiler cases.
+- `dsl-inherited-handlers`: 35 checks passed. The added inherited helper combines
+  Result/ue_try with a reflected table, exercising private container conversions
+  and concrete generic dependencies in the derived module.
+- `dsl-reflection-macros`: 119 checks passed; script-staging passed with ue_result.
+- Actions: 10 checks passed (ownership/GC, per-owner state, costs, cooldown, sprint,
+  action cancellation). Existing reflected CanStart remains bool; its helper uses
+  enum Result failures without constructing diagnostic strings each check.
+- Presentation: 8 checks passed, including acquired mesh/animation/VFX and missing
+  optional profile fallback via Option.
+- Overwhelm: 7 scenario groups passed, including hit effects, stacking, invalid
+  effect class, target without ActionSystem and lethal cleanup. LastHitEffectError
+  is empty on success and explains checked failures, without per-hit log spam.
+- Input: two independent fresh PIE runs, four scenario groups each. Native setup
+  binds once; unpossess cancels held sprint and clears character bindings; the same
+  pawn can be repossessed; a different pawn receives movement/fire; the old pawn
+  no longer receives movement; controller interaction/fire are not duplicated;
+  returning to the original pawn restores its input. Strict runtime/teardown
+  error checks passed. No Tick retry remains in controller/character setup.
+
+Receipts: rogue-input-hooks-v5-20261103 (inheritance),
+rogue-input-macros-v1-20261103 (reflection/staging),
+rogue-input-hooks-v10-20261103 (actions/presentation),
+rogue-input-hooks-v11-20261103 (effects, result contracts, two input runs).
+Gameplay timeouts now start when the test starts; compile/import preparation has
+its own bounded deadline and cannot consume the gameplay budget.
+
+The known obsolete controller fields migrate in a removal-only archival step,
+then the final setup event/int counter schema is applied. Final source bytes are
+restored in finally; a Saved/Migrations backup recovers the source after a native
+editor crash. Current gameplay source contains only the new event-driven path.

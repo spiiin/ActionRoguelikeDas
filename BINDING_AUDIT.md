@@ -308,3 +308,51 @@ Gameplay hit/stun/death transitions remain in DAS. Hit-reaction deadlines are
 checked only when hit, without an extra actor tick or timer subscription.
 Only the visual test subclass forces bone refresh while unrendered; gameplay
 characters retain Unreal's visibility-based animation update policy.
+
+
+## daScript control-flow and optional-value audit
+
+`rogue_action_system_component` dispatches attribute reads/writes with `match`;
+`rogue_ai_controller` matches sight/hearing and ignores other senses. Simple
+guards and time/range checks remain `if` statements.
+
+`rogue_load_presentation` returns `Option<RoguePresentationProfileRef>`: missing
+licensed/local content is normal absence, not a failure. Player/AI characters
+convert None to the null reference required by their reflected Presentation
+property with `??`; the projectile demo uses `if_some` to configure its visuals.
+`rogue_apply_hit_effect` returns `Result<RogueActionRef; string>` to distinguish
+an applied action from invalid configuration, absent/disabled action systems and
+rejected grants. No configured effect skips the operation; failure text is
+available as the projectile's LastHitEffectError, without per-hit error logging.
+The payload handles remain weak views; the existing reflected properties/Actions
+array continue to provide strong UObject ownership. These standard-library types
+stay in script helpers and are not added to reflected Blueprint signatures.
+
+The local dasSDL3 examples/results/01_results.das and sdl3_common_boost.das were
+used to check Option/Result conventions. The current with_boost macro accepts
+array/table elements, not arbitrary object views. The example has no repeated
+in-place element edits to simplify: Resources performs scalar assignments and
+UE-reflected containers require snapshot writeback. In particular, Actions is
+intentionally copied before callbacks that can remove actions; locking it with
+with_ across StartAction/StopAction would change valid reentrant behavior. No
+with_ calls or extra scope/Result wrappers were introduced just for syntax.
+
+
+## Result propagation and native input lifecycle
+
+The generic ue_result module supplies ue_try, ue_require and ue_require_valid.
+Hit-effect validation now propagates errors linearly. RogueAction.CheckCanStart
+uses Result<bool; RogueActionStartFailure>, while the existing reflected
+CanStart():bool adapts with is_ok. Enum failures avoid constructing diagnostic
+strings in repeated eligibility checks. Macro success/move/cleanup and negative
+placement/type contracts passed the result-try shared-agent suite.
+
+Input setup moved from Tick/BeginPlay retries to optional reflected setup events
+forwarded by native ADasPlayerController/ADasCharacter/ADasPawn hooks. Early native
+setup is held until the script session's BeginPlay; later restarts rebind against
+the current component. UnPossessed delivers teardown before the controller and
+input component are cleared. The character cancels held sprint/jump/fire, expands
+ue_unbind_inputs from the same annotations and releases its owned mapping context.
+The redundant FireBound flag was removed; InputSetups is a diagnostic counter,
+not a polling condition. Controller Tick was removed; character Tick only updates
+the health label. Configured assets/Enhanced Input are verified once per setup.
