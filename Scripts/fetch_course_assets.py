@@ -17,6 +17,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cache',type=Path,default=ROOT/'Saved/ExternalAssets/Source')
     parser.add_argument('--with-course-effects',action='store_true')
+    parser.add_argument('--with-minions',action='store_true')
     args=parser.parse_args()
     config=json.loads(MANIFEST.read_text())
     source=config['source'];cache=args.cache.resolve()
@@ -29,8 +30,8 @@ def main():
     if remote!=source['repository']:raise RuntimeError('Cache belongs to a different source repository')
     present=subprocess.run(['git','-C',str(cache),'cat-file','-e',source['revision']+'^{commit}'],capture_output=True)
     if present.returncode:git(cache,'fetch','--depth=1','origin',source['revision'])
-    git(cache,'sparse-checkout','set',*config['download_folders'])
+    git(cache,'sparse-checkout','set',*(config['download_folders']+(config.get('ai_download_folders',[]) if args.with_minions else [])))
     git(cache,'checkout','--detach',source['revision'])
-    install(cache/'Content',args.with_course_effects)
+    install(cache/'Content',args.with_course_effects,args.with_minions)
 
 if __name__=='__main__':main()

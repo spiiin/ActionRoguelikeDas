@@ -164,6 +164,24 @@
 			"reference": "RogueActionProbeRef"
 		},
 		{
+			"id": "roguetest.RogueAIMissingPresentation",
+			"name": "RogueAIMissingPresentation",
+			"script": "roguetest/rogue_ai_missing_presentation.das",
+			"reference": "RogueAIMissingPresentationRef"
+		},
+		{
+			"id": "roguetest.RogueAIPresentationProbe",
+			"name": "RogueAIPresentationProbe",
+			"script": "roguetest/rogue_ai_presentation_probe.das",
+			"reference": "RogueAIPresentationProbeRef"
+		},
+		{
+			"id": "roguetest.RogueAIVisualTestCharacter",
+			"name": "RogueAIVisualTestCharacter",
+			"script": "roguetest/rogue_ai_visual_test_character.das",
+			"reference": "RogueAIVisualTestCharacterRef"
+		},
+		{
 			"id": "roguetest.RogueFixedDurationEffect",
 			"name": "RogueFixedDurationEffect",
 			"script": "roguetest/rogue_fixed_duration_effect.das",

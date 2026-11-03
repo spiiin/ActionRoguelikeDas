@@ -2,8 +2,10 @@ options gen2
 module rogue_ai_character public
 require rogue_attribute_component public
 require rogue_action_system_component public
+require rogue_presentation public
 require ue_ai public
 require ue_vector_math public
+require math public
 
 // First combat slice of Tom Looman's RogueAICharacter (992f860); gameplay is daScript.
 [ue_class(module_id="rogue", Blueprintable)]
@@ -24,6 +26,8 @@ class RogueAICharacter : Character {
         var MoveSpeed : float = 250.0f
         var DeathDelay : float = 2.0f
         var AttackClass : ObjectClass
+        var UseExternalPresentation : bool = true
+        var PresentationProfilePath : string = "/Game/DasRogueExternal/DA_MinionPresentation.DA_MinionPresentation"
     }
 
     state = ue_properties(BlueprintReadWrite) {
@@ -31,6 +35,12 @@ class RogueAICharacter : Character {
         var Dead : bool = false
         var Stunned : bool = false
         var Hits : int = 0
+        var Presentation : RoguePresentationProfileRef
+        var UsingExternalPresentation : bool = false
+        var NextHitReactionAt : double = -1.0lf
+        var HitReactions : int = 0
+        var StunAnimations : int = 0
+        var DeathAnimations : int = 0
     }
 
     defaults = ue_defaults() {
@@ -43,6 +53,13 @@ class RogueAICharacter : Character {
     }
 
     def BeginPlay() : void {
+        if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
+        if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
+            rogue_apply_mesh(self.Mesh, self.Presentation)
+            self.Mesh.SetCollisionProfileName(ue_name_value("NoCollision"), true)
+            self.Visual.SetHiddenInGame(true, false)
+            self.UsingExternalPresentation = true
+        }
         self.CharacterMovement.MaxWalkSpeed = self.MoveSpeed
         self.CharacterMovement.bOrientRotationToMovement = false
         self.CharacterMovement.bUseControllerDesiredRotation = true
@@ -50,7 +67,12 @@ class RogueAICharacter : Character {
         self.Visual.SetCollisionProfileName(ue_name_value("NoCollision"), true)
         self.CapsuleComponent.SetCollisionResponseToChannel(ECollisionChannel.ECC_GameTraceChannel2, ECollisionResponse.ECR_Block)
         self.ActionSystem.SetBaseMoveSpeed(self.MoveSpeed)
-        if (ue_class_valid(self.AttackClass)) { self.ActionSystem.GrantAction(self.AttackClass) }
+        if (ue_class_valid(self.AttackClass)) {
+            let action = self.ActionSystem.GrantAction(self.AttackClass)
+            if (ue_is_valid(action) && self.UsingExternalPresentation) {
+                rogue_apply_attack(ue_ref(type<RogueProjectileAttackRef>, action.handle), self.Presentation)
+            }
+        }
         self.RefreshLabel()
         ue_self_actor().SetActorTickEnabled(false)
     }
@@ -61,6 +83,7 @@ class RogueAICharacter : Character {
     }
 
     def OnHealthChanged(instigator:ActorRef; health:float; delta:float) : void {
+        if (self.Dead) { return }
         if (delta < 0.0f) { self.Hits += 1 }
         if (health <= 0.0f && !self.Dead) {
             self.Dead = true
@@ -72,16 +95,42 @@ class RogueAICharacter : Character {
             let controller = ue_character_self().GetController()
             // Native timer teardown runs outside this damage callback's script context.
             if (ue_is_valid(controller)) { ue_ref(type<ActorRef>,controller.handle).SetLifeSpan(0.01f) }
-            self.SetLifeSpan(self.DeathDelay)
+            var duration = 0.0f
+            if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.DeathMontage)) {
+                duration = ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
+                if (duration > 0.0f) { self.DeathAnimations += 1 }
+            }
+            self.SetLifeSpan(max(self.DeathDelay, duration + 0.1f))
         }
+        if (health > 0.0f && delta < 0.0f) { self.ReactToHit() }
         self.RefreshLabel()
+    }
+
+    def ReactToHit() : void {
+        if (!self.UsingExternalPresentation || self.Stunned || ue_world_seconds() < self.NextHitReactionAt ||
+            !ue_is_valid(self.Presentation.HitReactMontage)) { return }
+        // A hit cancels the pending shot before the full-body reaction takes over.
+        self.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
+        let duration = ue_character_play_montage(ue_character_self(), self.Presentation.HitReactMontage)
+        if (duration <= 0.0f) { return }
+        self.HitReactions += 1
+        self.NextHitReactionAt = ue_world_seconds() + double(max(duration, 0.15f))
     }
 
     def OnStatusChanged(tag:GameplayTag; count:int) : void {
         if (self.Dead) { return }
+        let wasStunned = self.Stunned
         self.Stunned = ue_tags_has(self.ActionSystem.GetActiveTags(),ue_tag("StatusEffect.Stunned"))
         self.CharacterMovement.MaxWalkSpeed = self.Stunned ? 0.0f : self.MoveSpeed
         if (self.Stunned) { self.CharacterMovement.StopMovementImmediately() }
+        if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.StunMontage)) {
+            if (self.Stunned && !wasStunned) {
+                let duration = ue_character_play_montage(ue_character_self(), self.Presentation.StunMontage)
+                if (duration > 0.0f) { self.StunAnimations += 1 }
+            } elif (!self.Stunned && wasStunned) {
+                self.StopAnimMontage(self.Presentation.StunMontage)
+            }
+        }
         self.RefreshLabel()
     }
 

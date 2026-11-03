@@ -90,3 +90,35 @@ RogueAnimInstance. Удаление локальных ассетов не тр�
 машина состояний исходного курса, включая отдельные состояния прыжка, пока не
 перенесена. Для смерти создаётся локальный `AM_Death` с совместимым слотом и
 удержанием последней позы; исходная анимация курса не изменяется.
+
+
+## Paragon Minion
+
+Флаг `--with-minions` у обеих команд установки добавляет ranged Dawn Minion,
+его blendspace и анимации атаки, попадания, stun и смерти. Например:
+
+```powershell
+python Scripts/fetch_course_assets.py --with-course-effects --with-minions
+```
+
+После обычной подготовки персонажа, вне PIE:
+
+```python
+runpy.run_path(r'C:/src/ActionRoguelikeDas/Scripts/prepare_ai.py')
+runpy.run_path(r'C:/src/ActionRoguelikeDas/Scripts/prepare_ai_presentation.py')
+```
+
+Генератор создаёт `DA_MinionPresentation`, `ABP_MinionLocomotion` и четыре
+монтажа `AM_Minion*` в локальной папке `DasRogueExternal`. Исходный
+`MinionRanged_AnimBP` не используется. Профиль задаёт задержку атаки 0,4 с
+и сокет `Muzzle_01`; игровые действия выполняются в daScript.
+
+Попадание прерывает подготовку выстрела; повторная реакция ограничена длительностью
+анимации. Stun снимает свою анимацию при окончании эффекта. После смерти последняя
+поза удерживается до удаления противника. Без локального профиля остаётся конус.
+Результат подготовки записывается в `Saved/ExternalAssets/ai_prepared.json`.
+Ресурсы Minions и производные ассеты также исключены из Git; условия ресурсов
+нужно проверять по источнику автора и лицензии Epic, указанным выше.
+
+Материал Minion также использует общую `ExampleContent/Textures/T_White`.
+Установщик копирует её по графу зависимостей; `Content/ExampleContent` исключена из Git.

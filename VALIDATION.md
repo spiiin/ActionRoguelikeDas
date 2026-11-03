@@ -587,3 +587,47 @@ Source groups: `{'rogue': 26, 'roguedemo': 7, 'roguetest': 8}`. Validated module
 The earlier Health-reference compile blocker is cleared in the current working tree. `rogue-recheck-v1-20261103`: PASS (119 macro checks, attack 7, presentation 8, effects 6, Overwhelm 7, point impact 3). `rogue-recheck-handlers-v2-20261103`: PASS (35 inherited-handler/reload checks). `rogue-recheck-ai-v3-20261103`: PASS (7 real-PIE AI groups).
 
 Inherited reload fixtures now explicitly prepare edited programs before gameplay resumes. AI health setup uses a test-only typed DAS helper and verifies the component remains the player's live component; editor property mutation had replaced it and left the fixture reading a detached object. Actual projectile damage and managed owner events work without a gameplay damage workaround.
+
+
+## Local Paragon Minion presentation (2026-11-03)
+
+Shared build-agent receipts: `rogue-ai-visual-v2-20261103` passed build,
+projectile attack (7 groups), player presentation (8), and AI behavior (7).
+`rogue-ai-visual-v8-20261103` passed build and Minion presentation (9 groups,
+155 seconds including editor setup); the final runner exited cleanly with
+`DAS_SUITES=PASS`. No gameplay runtime/timer/teardown errors were logged.
+
+The new suite checks local mesh/AnimInstance/socket/profile wiring, missing-profile
+fallback, pursuit with changing component-space bone pose, attack windup before
+the shot, the animated weapon socket, hit interruption with bounded reaction
+restarts, stun recovery, held death pose and actor/controller cleanup. It also
+checks public Blueprint hard dependencies against Minions/ControlRig and the
+local external-profile folder. Source assets and generated montages/profiles
+remain gitignored. All example/test Python sources passed syntax parsing.
+
+Test-derived AI variants explicitly receive the gameplay controller/action
+defaults. The hidden-window bone-refresh override is confined to their visual
+test subclass. The Slate callback guards against reentrancy. Live capture
+component properties are assigned without editor reconstruction, and its actual
+world transform is checked before direct scene capture.
+
+Offscreen `Saved/Tests/MinionAttack.png` and `MinionDeath.png` were inspected:
+the model is present in the firing pose and the fallen death pose. These captures
+have darker exposure than the player camera; they verify pose/framing rather
+than final lighting quality. Physical keyboard/mouse input, packaged builds and
+the full wrapper automation suite were not rerun for this presentation-only slice.
+
+
+### Minion material dependency and dynamic program roots
+
+`rogue-minion-material-v2-20261103`: build and all 9 presentation groups PASS.
+The source Minion material depends on `ExampleContent/Textures/T_White`; the
+installer now includes that dependency, with its entire destination root ignored
+by Git. The material no longer falls back to UE's default material. The runner
+fails on material compilation errors and missing Minion/T_White packages. The
+updated firing capture was inspected and shows the source white/orange armor.
+
+Explicit Config/DefaultGame.ini program roots pin gameplay classes during world
+loading; test roots are scoped to ChestTest. This closes a missing-prepared-program
+failure for a dynamically spawned test probe. The passing run logs no such error.
+Parallel source refactors made after these receipts are outside this slice.

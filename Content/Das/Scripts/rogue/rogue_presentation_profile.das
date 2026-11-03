@@ -15,6 +15,9 @@ class RoguePresentationProfile : DataAsset {
         var AnimationClass : ObjectClass
         var AttackMontage : AnimMontageRef
         var DeathMontage : AnimMontageRef
+        var HitReactMontage : AnimMontageRef
+        var StunMontage : AnimMontageRef
+        var AttackDelay : float = 0.2f
         var CastEffect : NiagaraSystemRef
         var CastSound : SoundBaseRef
         var ProjectileEffect : NiagaraSystemRef

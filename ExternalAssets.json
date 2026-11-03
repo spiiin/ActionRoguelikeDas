@@ -14,10 +14,12 @@
     "ParagonMinions",
     "tharlevfx_tutorials",
     "SanderAudio",
-    "Troy"
+    "Troy",
+    "ExampleContent"
   ],
   "excluded_assets": [
-    "GideonManny_AnimBlueprint"
+    "GideonManny_AnimBlueprint",
+    "MinionRanged_AnimBP"
   ],
   "download_folders": [
     "Content/ControlRig",
@@ -38,5 +40,17 @@
     "ProjectileSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Loop",
     "ImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_HitWorld",
     "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Impact-001"
+  },
+  "ai_download_folders": [
+    "Content/ParagonMinions",
+    "Content/ExampleContent/Textures"
+  ],
+  "ai_assets": {
+    "CharacterMesh": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Meshes/Minion_Lane_Ranged_Dawn",
+    "Locomotion": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Blendspaces/IdleToRun_A_Combat",
+    "AttackAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Fire_A",
+    "HitAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/HitReact_FullBody_A",
+    "DeathAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Death_Front_A",
+    "StunAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Stun"
   }
 }

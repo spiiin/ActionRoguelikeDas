@@ -281,8 +281,8 @@ controllers. The player overload remains convenient; the port projectile now
 uses its native pawn's GetController. Shared attack code exposes virtual aim
 queries; AI aims at its target, player camera semantics remain unchanged.
 
-The new gameplay slice and shared-agent rogue-ai suite await successful build
-and PIE validation after another agent's daScript dependency update.
+The shared-agent rogue-ai suite passed after the dependency update; see the
+reference/gameplay recheck in VALIDATION.md.
 
 ## Stable-ID reference catalog
 
@@ -295,3 +295,16 @@ Six object reference aliases use `UEObjectRef("rogue.ClassName")`; three authore
 ## Live Health reference validation
 
 The current module-local generated property/method helper implementation passed typed-reference checks and all six gameplay suites (attack, presentation, effects, Overwhelm, point impact, AI). The roguetest ConfigureHealth helper exercises writes to HealthMax/Health through RogueAttributeComponentRef in a separate consumer module. AI setup checks component identity so editor reconstruction cannot make the test observe a detached cached component. See the 2026-11-03 reference/gameplay receipts in VALIDATION.md.
+
+
+## Minion animation presentation
+
+No new runtime binding was needed. The profile uses SkeletalMeshComponent mesh/
+AnimInstance setters, Character montage playback and typed StopAnimMontage,
+socket queries, strong reflected profile/montage properties and managed events.
+The existing editor DasAnimationAssetLibrary builds a generic locomotion graph
+with a DefaultSlot; AnimMontageFactory creates local montages from acquired clips.
+Gameplay hit/stun/death transitions remain in DAS. Hit-reaction deadlines are
+checked only when hit, without an extra actor tick or timer subscription.
+Only the visual test subclass forces bone refresh while unrendered; gameplay
+characters retain Unreal's visibility-based animation update policy.

@@ -25,15 +25,16 @@ def dependencies(data):
     found.update(re.findall(r'/Game/[A-Za-z0-9_/-]+',data.decode('utf-16-le',errors='ignore')))
     return found
 
-def install(source,with_effects=False):
+def install(source,with_effects=False,with_minions=False):
     config=json.loads(MANIFEST.read_text(encoding='utf-8'))
     source=Path(source).resolve(strict=True)
     if source.name!='Content':raise ValueError('Pass the source project Content directory')
     assets=dict(config['assets'])
     if with_effects:assets.update(config['course_effects'])
+    ai_assets=dict(config.get('ai_assets',{})) if with_minions else {}
     allowed=set(config['allowed_roots'])
     ignored=set(config['excluded_assets'])
-    todo=list(assets.values()); visited=set(); files=[]; missing=[]
+    todo=list(assets.values())+list(ai_assets.values()); visited=set(); files=[]; missing=[]
     while todo:
         package=todo.pop()
         if package in visited:continue
@@ -49,7 +50,7 @@ def install(source,with_effects=False):
         data=path.read_bytes()
         files.append((path,relative.with_suffix('.uasset'),hashlib.sha256(data).hexdigest()))
         todo.extend(dependencies(data)-visited)
-    seeds=[p for p in assets.values() if not (source/Path(p.removeprefix('/Game/'))).with_suffix('.uasset').is_file()]
+    seeds=[p for p in list(assets.values())+list(ai_assets.values()) if not (source/Path(p.removeprefix('/Game/'))).with_suffix('.uasset').is_file()]
     if seeds:raise FileNotFoundError('Required assets missing: '+repr(seeds))
     # Never copy content unless the destination patterns already protect it.
     for name in allowed|{'DasRogueExternal'}:
@@ -62,7 +63,7 @@ def install(source,with_effects=False):
         if not target.exists() or hashlib.sha256(target.read_bytes()).hexdigest()!=digest:
             shutil.copy2(path,target)
     receipt={'source_content':str(source),'source_revision':config['source']['revision'],
-        'assets':assets,'course_effects':with_effects,'files':[str(r).replace('\\','/') for _,r,_ in files],
+        'assets':assets,'ai_assets':ai_assets,'course_effects':with_effects,'minions':with_minions,'files':[str(r).replace('\\','/') for _,r,_ in files],
         'sha256':{str(r).replace('\\','/'):h for _,r,h in files},'unresolved_preview_or_source_paths':sorted(missing)}
     dest=ROOT/'Saved/ExternalAssets/install.json';dest.parent.mkdir(parents=True,exist_ok=True)
     dest.write_text(json.dumps(receipt,indent=2),encoding='utf-8')
@@ -73,12 +74,13 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source-content',type=Path)
     parser.add_argument('--with-course-effects',action='store_true',help='Use locally acquired tharlevfx Niagara and Sander audio too')
+    parser.add_argument('--with-minions',action='store_true',help='Also install the ranged Paragon Minion dependency graph')
     parser.add_argument('--open-sources',action='store_true',help='Open the official Fab listing and course resource instructions')
     args=parser.parse_args()
     if args.open_sources:
         config=json.loads(MANIFEST.read_text())
         webbrowser.open(config['source']['paragon_gideon']);webbrowser.open(config['source']['readme'])
-    if args.source_content:install(args.source_content,args.with_course_effects)
+    if args.source_content:install(args.source_content,args.with_course_effects,args.with_minions)
     elif not args.open_sources:parser.error('Use --source-content or --open-sources')
 
 if __name__=='__main__':main()

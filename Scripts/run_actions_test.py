@@ -34,7 +34,7 @@ def tick(delta):
     try:
         editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
         level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem) or unreal.get_default_object(unreal.LevelEditorSubsystem)
-        if STATE['phase'] not in ('stop', 'cleanup') and time.perf_counter() - STATE['started'] > (600 if globals().get('EXTERNAL_PRESENTATION') else 150):
+        if STATE['phase'] not in ('stop', 'cleanup') and time.perf_counter() - STATE['started'] > (600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') else 150):
             raise RuntimeError('Action test runner timed out in ' + STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
@@ -57,6 +57,8 @@ def tick(delta):
                 run_script('Scripts/prepare_presentation_tests.py')
             if globals().get('AI_TEST'):
                 run_script('Scripts/prepare_ai.py')
+            if globals().get('AI_PRESENTATION'):
+                run_script('Scripts/prepare_ai_presentation.py')
             STATE['phase'] = 'wait_startup'
             STATE['warm_ticks'] = 0
             return
