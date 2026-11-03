@@ -391,3 +391,57 @@ AI-инстигатор корректно проходит через point dam
 а игровая логика находится в `rogue_patrol_point.das` и `rogue_patrol_controller.das`.
 Проверка `rogue-patrol` прошла девять групп в реальном PIE; результат записывается
 в `Saved/Tests/rogue_patrol_pie.json`.
+
+
+## Лечебный pickup
+
+На `ChestTest` возле `(300, -250, 80)` стоит зелёная сфера. В Outliner она
+называется `Health pickup - press E - respawns in 5 seconds`.
+Нажмите Play, получите урон клавишей **H**, подойдите к сфере на расстояние
+до 250 см и нажмите **E**. Предмет лечит на 50 HP с ограничением HealthMax,
+исчезает и становится доступен через 5 секунд. При полном здоровье он остаётся
+на месте. `HealingAmount`, `PickupSound`, `RespawnDelay` и дистанция настраиваются
+в Details / Class Defaults соответствующего Blueprint.
+
+Три класса находятся в `Content/DasRogue/Pickups`:
+
+- `BP_RoguePickupActor` — основа подбора и жизненного цикла.
+- `BP_RogueHealthPickup` — исходный режим: пересечение с Pawn, лечение,
+  одноразовое удаление. По умолчанию RequireInteraction=false, RespawnDelay=0.
+- `BP_HealthPickupInteract` — явный демонстрационный вариант с E и respawn.
+
+В зафиксированной версии курса используется overlap и Destroy, а не E и таймер.
+Эти режимы разделены настройками и классом из `roguedemo`. Интерфейс Interact
+не передаёт пользователя, поэтому демонстрационный вариант берёт local player 0.
+Текущее лечение использует существующий RogueAttributeComponent; полная модель
+атрибутов ActionSystem остаётся отдельным этапом. Погибшие Pawn и неположительное
+лечение не потребляют предмет. Звук необязателен; оформление использует engine mesh.
+
+Подготовка ассетов и размещение выполняются `Scripts/prepare_health_pickup.py`
+после общей подготовки персонажа. Всё поведение находится в daScript; Python
+не выполняет игровое лечение или respawn. Suite `rogue-pickup` проверяет восемь
+групп в настоящем PIE, включая Enhanced Input, native overlap и уничтожение
+предмета с ожидающим таймером. Отчёт: `Saved/Tests/rogue_pickup_pie.json`.
+
+
+## Монеты и DropLoot
+
+На `PatrolTest` после смерти врага появляются золотые диски. Подойдите к ним:
+монеты в радиусе 200 см собираются, а баланс `Coins` обновляется в HUD.
+Один мировой `RogueCoinPickupSubsystem` хранит все монеты в общем ISM без
+отдельного Actor на каждый диск. Монеты остаются после исчезновения тела.
+
+`DropLootActionClass` врага задаёт действие выдачи награды; `MonsterData.LootCoins`
+задаёт сумму. Без данных выпадает 10 кредитов. `MaxCreditsPerCoin` по умолчанию 15;
+при недоступном NavMesh вся награда остаётся у позиции погибшего врага.
+В `Content/DasRogue/Pickups/BP_RogueCoinPickupSubsystem`, Class Defaults → Coins,
+настраиваются радиус подбора, mesh, material и необязательный звук.
+`BP_RogueCoinTestActor` позволяет задать `InitialCoinCount` для демонстрационной
+партии; на тестовой карте он изначально равен нулю.
+
+Кошелёк, суммарная стоимость монет и `OnCoinsChanged` используют `int64`.
+Начисления проверяются на отрицательные значения и переполнение; HUD выводит
+баланс без преобразования к float или int32. Аудит типов — в `BINDING_AUDIT.md`.
+Suite `rogue-coins` проверяет реальные Tick, сбор, GC, DropLoot и очистку PIE.
+Отчёт: `Saved/Tests/rogue_coins_pie.json`. Подготовка ассетов и карты:
+`Scripts/prepare_coins_test.py`; вся игровая логика выполняется в daScript.

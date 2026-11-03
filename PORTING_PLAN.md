@@ -82,6 +82,9 @@ C++ используется внутри DasForUE для универсальн
 
 ### Этап 6 Подбор предметов и монеты
 
+Статус на 3 ноября 2026: базовый pickup и лечение реализованы и проверены в PIE.
+Монеты, генератор монет и DropLoot остаются впереди.
+
 Классы: ARoguePickupActor, ARogueHealthPickup, URogueCoinPickupSubsystem, ARogueCoinTestActor, URogueAction_DropLoot.
 
 Порядок: обычный pickup, лечение, подсистема монет, тестовый генератор монет, выдача добычи.
@@ -224,3 +227,42 @@ RefreshPatrolGraph. Недоступные nav-данные откладываю
 ChestTest сохраняет прежний боевой сценарий. `rogue-patrol-v8-20261103` прошёл
 все девять групп реального PIE: движение, прерывания, удаление цели и очистка.
 Подробности и отдельное ограничение дискового AST-кэша — в VALIDATION.md.
+
+
+## Pickup и лечение — проверено в PIE
+
+RoguePickupActor и RogueHealthPickup реализованы на daScript. По умолчанию
+сохранён overlap-подбор с одноразовым удалением из исходной версии 992f860.
+RogueHealthPickupDemo включает E и пятисекундное повторное появление на ChestTest.
+Применение здоровья пока адаптировано к текущему RogueAttributeComponent,
+а не к ещё не перенесённой полной системе AttributeSet.
+
+Available резервируется до применения здоровья и доставки событий; повторный
+вход не вызывает второе лечение. Использованный предмет скрыт и не участвует
+в коллизии. Таймер принадлежит актору и отменяется при его уничтожении.
+Dead Pawn и некорректное неположительное лечение отклоняются явно.
+`rogue-pickup-v2-20261103`: восемь групп реального PIE PASS.
+Подсистема монет и награды/DropLoot также перенесены и проверены ниже.
+
+
+## Coins / DropLoot — verified in PIE
+
+RogueCoinPickupSubsystem batches coins in one world-owned ISM instead of creating
+an Actor per coin. RogueActionDropLoot runs before the dying AI shuts down its
+actions, uses RogueMonsterData.LootCoins (default ten without data), and preserves
+the sum when navigation placement fails. RogueCoinTestActor generates batches.
+Currency totals and player wallet use reflected int64; HUD refreshes on the
+typed balance-change event. MonsterData's remaining director/UI fields are
+declarations only; those systems remain future stages.
+
+
+## Сверка стрельбы с оригиналом 992f860 — первый срез проверен
+
+Удержание ЛКМ повторяет атаку через Triggered, с прежней задержкой каста и cooldown.
+Прицеливание использует 5000 см и канал Projectile. Защита от создания снаряда
+за препятствием сохранена; её sweep использует тот же канал. Смена default дальности
+проходит через Reimport с preserve_overrides. Проверено 17 групп в реальном PIE
+на изолированной копии без незавершённых монетных изменений; подробности в VALIDATION.md.
+Следующий пункт сверки — полноценный AttributeSet и получение Rage от урона.
+
+Acceptance: `15` real PIE groups PASS, including an exact balance above 2^53, overflow rejection, native damage, GC and EndPIE cleanup. See VALIDATION.md.

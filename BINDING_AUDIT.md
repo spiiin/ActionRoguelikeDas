@@ -375,3 +375,61 @@ death cleanup. The full-path probe enters through an actor-owned DAS call so
 Unreal's PIE world switching runs before static NavigationSystem functions.
 Calling these directly on the class from a Python Slate callback can query the
 world-less NavigationSystem CDO and trigger an engine ensure.
+
+
+## Health pickup
+
+The pickup uses existing typed sphere collision methods, managed ue_event overlap
+delivery, authored BlueprintEvent dispatch to the health subclass, interface
+interaction and owner-managed timers. No C++ gameplay or new low-level bridge
+calls were needed. Actor hidden/collision state is restored by the DAS timer.
+Sound is optional and fire-and-forget. Collection reserves Available before
+health notifications can re-enter it; one-shot deletion is deferred to the next
+tick so queued health notifications retain a valid source through delivery.
+
+The demo resolves local player 0 for the argument-less course Interact interface;
+the default course-style overlap uses the actual overlapping Pawn instead.
+Healing currently adapts the health AttributeSet role to RogueAttributeComponent.
+Computed vector arithmetic in ue_defaults was not accepted by the current scalar
+default evaluator, so the mesh scale uses a direct ue_vector constructor.
+
+
+## Batched coins, DropLoot and integer currency
+
+Gameplay remains in daScript: one world subsystem owns parallel coin arrays and
+a shared native ISM component, with stable FPrimitiveInstanceId keys. Reflected
+WorldISM/WorldAudio fields retain components strongly; Deinitialize destroys them.
+The wrapper adds generic tickable WorldSubsystem lifecycle, world-component
+creation/registration/destruction, stable-ID instance batches and FRandomStream
+integer sampling. These APIs contain no Rogue-specific policy.
+
+The int64 audit found two lossy currency paths: temporary double aggregate
+counters and the player's float Resources entry followed by an int HUD cast.
+RemainingValue, CollectedValue and the actual player wallet now use int64,
+including exact GrantCoins/CanReceiveCoins and OnCoinsChanged(int64). Combat
+attributes remain floats and world timestamps remain double seconds. Array
+indices, native instance IDs and FRandomStream seeds remain int32 because their
+native APIs require it. Per-enemy rewards remain bounded int32 settings; only
+accumulated balances and sums need int64.
+
+| Location | Previous storage | Current storage / reason |
+| --- | --- | --- |
+| `RogueActionSystemComponent.Coins` | `float Resources["Attribute.Coins"]` | Dedicated reflected `int64` wallet; checked grants. |
+| `RogueCoinPickupSubsystem.RemainingValue`, `CollectedValue` | Temporary `double` totals | Exact reflected `int64`; no rounding above 2^53. |
+| Coin collection sum and `GrantCoins` | Float-compatible grant path | `int64` throughout, including `OnCoinsChanged`. |
+| `RogueCharacter.RefreshHealth` | `int` cast for coin text | Formats the `int64` wallet directly. |
+| Instance IDs, array indices, RNG seed | `int32` | Retained: native API contracts and bounded arrays. |
+| Per-enemy reward, coin denomination, test counters | `int32` | Retained: bounded individual values, not cumulative balances. |
+| Health, durations, world time, coordinates | Float/double | Retained: fractional quantities, not integer workarounds. |
+
+Reflected int64 uses FInt64Property and a dedicated call-frame slot, without
+conversion through double. Persisted default literals use decimal strings to
+preserve values outside the exact double integer range. The runtime catalogue
+still resolves compiled identities directly; this adds no gameplay JSON lookup.
+
+Differences from course 992f860: local player 0 is checked explicitly; missing
+or dead pawns do not consume coins. Failed navigation sampling falls back to
+the corpse position. Visual/sound settings are authored subsystem properties;
+DeveloperSettings-based asynchronous asset loading is not part of this slice.
+The current currency wallet is an integer adaptation alongside the existing
+partial action/attribute system, rather than the full original AttributeSet.

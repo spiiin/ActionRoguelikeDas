@@ -194,7 +194,10 @@ class RogueCharacter : Character {
 
     def BindEvents() : void {
         self.Attributes.OnHealthChanged += self.HandleHealthChanged
+        self.ActionSystem.OnCoinsChanged += self.HandleCoinsChanged
     }
+
+    def HandleCoinsChanged(balance : int64) : void { self.RefreshHealth() }
 
     def HandleHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
         self.OnHealthChanged(instigator, health, delta)
@@ -227,7 +230,10 @@ class RogueCharacter : Character {
 
     def RefreshHealth() : void {
         if (self.Dead) { self.HealthLabel.K2_SetText(ue_text_invariant("DEAD - restart Play")) }
-        else { self.HealthLabel.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)}")) }
+        else {
+            let coins = self.ActionSystem.Coins
+            self.HealthLabel.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)} | Coins: {coins}"))
+        }
     }
 
     def FaceHealthLabel() : void {

@@ -739,3 +739,87 @@ The editor exited after PIE cleanup. The optional disk AST serialization issue
 recorded above remains separate from this successful source-backed PIE acceptance.
 The final harness also uses the correct AISense_Hearing noise API and explicitly
 checks inherited UsePathfinding for combat movement.
+
+
+### Health pickup PIE acceptance: PASS (2026-11-03)
+
+Shared agent job `rogue-pickup-v2-20261103`: build PASS, suite rogue-pickup PASS,
+8 real PIE groups. All 96 source modules compiled with failed=0. No script
+runtime errors, Blueprint runtime errors or engine ensures/fatal errors.
+Receipt: Saved/Tests/rogue_pickup_pie.json; editor exited after PIE cleanup.
+
+- Actual Enhanced Input E at full health does not consume the pickup.
+- An injured player gains 50 HP; health event re-entry cannot collect twice.
+- The item is hidden, has actor collision disabled and rejects repeated use.
+- The owner timer restores the item; the second E clamps health to HealthMax.
+- Default overlap pickup is not consumed at full health. Changing health while
+  remaining inside does not invent another overlap event.
+- Leaving/re-entering the native sphere heals and destroys the one-shot actor.
+- Null targets, actors without attributes, dead Pawn and zero/negative healing
+  do not consume the actor.
+- Destroying an actor with a pending respawn produces no delayed callbacks;
+  a completed respawn timer does not keep repeating.
+
+The first attempt failed on unsupported computed vector arithmetic in defaults;
+the scale now uses the supported direct constructor. Automatic overlap/one-shot
+remains the default course behavior. E/respawn is an explicit demo extension;
+rejection of dead Pawn and nonpositive healing is an intentional validation rule.
+
+
+### Original shooting parity (2026-11-03)
+
+The controller uses Triggered for primary fire: holding LMB repeats after the
+0.2 s windup and 0.5 s cooldown, and release stops repetition. Camera aiming uses
+5000 cm and the Projectile channel (GameTrace2), matching course commit 992f860.
+The existing muzzle-cover protection remains and now uses the same channel.
+prepare_character.py reimports existing attack defaults with preserve_overrides;
+hand-edited instance values are retained by the standard defaults migration.
+
+Actual PIE validation: 10 projectile-attack groups and 7 character-combat groups
+PASS. Covers Visibility-only vs Projectile-only blockers, the 5000 cm endpoint,
+held/released fire, cooldown, stun/removal/death cancellation, animated socket
+origin, near-cover clipping, incoming damage and terminal input disablement.
+The old cone-only 100 cm muzzle assertion now checks the animated socket sampled
+at the shot; cover setup explicitly faces the character toward the obstacle.
+
+Verification used C:/src/ActionRoguelikeDas-shooting-verify, baseline 4a08b62 plus
+these changes, because concurrent coin/int64 work blocked the full working tree.
+Both gameplay source files match the main working tree after newline normalization;
+their SHA256 values and both receipts are in
+Saved/Tests/rogue_shooting_parity_isolated.json. These receipts do not validate the
+concurrent coin feature. Jobs: rogue-original-shooting-isolated-v6-20261103 and
+rogue-original-cover-v2-20261103.
+
+
+### Coins / DropLoot and int64 acceptance: PASS (2026-11-03)
+
+Shared serial-agent run: rogue-coins PASS, 15 real PIE groups.
+Receipt: `Saved/Tests/rogue_coins_pie.json`. The suite also checks the complete
+editor startup compilation and rejects script/Blueprint runtime errors,
+engine ensures/fatals, or teardown errors. The editor exits after cleanup.
+
+- world_collection_owns_one_renderer_without_coin_actors
+- script_seed_advances_native_FRandomStream_reproducibly
+- validated_bulk_add_is_atomic_and_preserves_values
+- swap_removal_keeps_stable_id_mapping_and_gc_retains_renderer
+- real_subsystem_tick_collects_three_coins_with_one_summed_grant
+- native_audio_trigger_and_strong_world_audio_ownership
+- dead_or_missing_player_does_not_consume_or_lose_coins
+- demo_generator_adds_a_batch_through_the_same_world_service
+- native_lethal_damage_drops_monster_data_value_once_in_bounded_positive_coins
+- loot_outlives_its_dead_owner_and_preserves_ism_alignment
+- default_reward_and_failed_nav_query_preserve_all_ten_credits
+- zero_reward_creates_no_zero_value_instances
+- int64_wallet_keeps_exact_large_grants_and_rejects_overflow
+- int64_balance_event_refreshes_HUD_without_rounding
+- EndPIE_destroys_world_renderer_and_clears_subsystem
+
+Generic bridge validation: authored-int64 PASS (17 checks, including a live
+subscription declaration), authored-subsystems PASS (21 checks), foundation PASS,
+method-values Create/Reopen PASS; Python unit suite PASS (400 tests).
+Values include both signed endpoints, exact defaults/reimport, ref/out, native
+frames, persistent ue_state, array/map/set storage, and atomic default overflow
+rejection. The PIE wallet grants 9007199254740993 exactly and refreshes HUD via
+an int64 multicast. Sound APIs and lifetime are checked with -NoSound; audible
+playback is not an acceptance claim. DeveloperSettings async asset loading and
+the remaining MonsterData director/UI features are future stages.

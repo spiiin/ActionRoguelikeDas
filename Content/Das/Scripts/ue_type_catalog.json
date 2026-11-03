@@ -8,6 +8,12 @@
 			"reference": "RogueActionRef"
 		},
 		{
+			"id": "rogue.RogueActionDropLoot",
+			"name": "RogueActionDropLoot",
+			"script": "rogue/rogue_action_drop_loot.das",
+			"reference": "RogueActionDropLootRef"
+		},
+		{
 			"id": "rogue.RogueActionEffect",
 			"name": "RogueActionEffect",
 			"script": "rogue/rogue_action_effect.das",
@@ -74,6 +80,18 @@
 			"reference": "RogueCharacterRef"
 		},
 		{
+			"id": "rogue.RogueCoinPickupSubsystem",
+			"name": "RogueCoinPickupSubsystem",
+			"script": "rogue/rogue_coin_pickup_subsystem.das",
+			"reference": "RogueCoinPickupSubsystemRef"
+		},
+		{
+			"id": "rogue.RogueHealthPickup",
+			"name": "RogueHealthPickup",
+			"script": "rogue/rogue_health_pickup.das",
+			"reference": "RogueHealthPickupRef"
+		},
+		{
 			"id": "rogue.RogueInteractionComponent",
 			"name": "RogueInteractionComponent",
 			"script": "rogue/rogue_interaction_component.das",
@@ -92,6 +110,12 @@
 			"reference": "RogueMagicProjectileRef"
 		},
 		{
+			"id": "rogue.RogueMonsterData",
+			"name": "RogueMonsterData",
+			"script": "rogue/rogue_monster_data.das",
+			"reference": "RogueMonsterDataRef"
+		},
+		{
 			"id": "rogue.RoguePatrolController",
 			"name": "RoguePatrolController",
 			"script": "rogue/rogue_patrol_controller.das",
@@ -102,6 +126,12 @@
 			"name": "RoguePatrolPoint",
 			"script": "rogue/rogue_patrol_point.das",
 			"reference": "RoguePatrolPointRef"
+		},
+		{
+			"id": "rogue.RoguePickupActor",
+			"name": "RoguePickupActor",
+			"script": "rogue/rogue_pickup_actor.das",
+			"reference": "RoguePickupActorRef"
 		},
 		{
 			"id": "rogue.RoguePlayerController",
@@ -128,10 +158,22 @@
 			"reference": "RogueChestDemoRef"
 		},
 		{
+			"id": "roguedemo.RogueCoinTestActor",
+			"name": "RogueCoinTestActor",
+			"script": "roguedemo/rogue_coin_test_actor.das",
+			"reference": "RogueCoinTestActorRef"
+		},
+		{
 			"id": "roguedemo.RogueCombatTarget",
 			"name": "RogueCombatTarget",
 			"script": "roguedemo/rogue_combat_target.das",
 			"reference": "RogueCombatTargetRef"
+		},
+		{
+			"id": "roguedemo.RogueHealthPickupDemo",
+			"name": "RogueHealthPickupDemo",
+			"script": "roguedemo/rogue_health_pickup_demo.das",
+			"reference": "RogueHealthPickupDemoRef"
 		},
 		{
 			"id": "roguedemo.RogueInteractiveChest",
@@ -194,6 +236,12 @@
 			"reference": "RogueAIVisualTestCharacterRef"
 		},
 		{
+			"id": "roguetest.RogueCoinProbe",
+			"name": "RogueCoinProbe",
+			"script": "roguetest/rogue_coin_probe.das",
+			"reference": "RogueCoinProbeRef"
+		},
+		{
 			"id": "roguetest.RogueFixedDurationEffect",
 			"name": "RogueFixedDurationEffect",
 			"script": "roguetest/rogue_fixed_duration_effect.das",
@@ -216,6 +264,12 @@
 			"name": "RoguePeriodicEffect",
 			"script": "roguetest/rogue_periodic_effect.das",
 			"reference": "RoguePeriodicEffectRef"
+		},
+		{
+			"id": "roguetest.RoguePickupProbe",
+			"name": "RoguePickupProbe",
+			"script": "roguetest/rogue_pickup_probe.das",
+			"reference": "RoguePickupProbeRef"
 		},
 		{
 			"id": "roguetest.RoguePointDamageTarget",

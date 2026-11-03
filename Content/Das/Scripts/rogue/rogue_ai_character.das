@@ -3,6 +3,8 @@ module rogue_ai_character public
 require rogue_attribute_component public
 require rogue_action_system_component public
 require rogue_presentation public
+require rogue_action_drop_loot public
+require rogue_monster_data public
 require ue_ai public
 require ue_vector_math public
 require math public
@@ -26,6 +28,8 @@ class RogueAICharacter : Character {
         var MoveSpeed : float = 250.0f
         var DeathDelay : float = 2.0f
         var AttackClass : ObjectClass
+        var DropLootActionClass : ObjectClass
+        var MonsterData : RogueMonsterDataRef
         var UseExternalPresentation : bool = true
         var PresentationProfilePath : string = "/Game/DasRogueExternal/DA_MinionPresentation.DA_MinionPresentation"
     }
@@ -41,6 +45,8 @@ class RogueAICharacter : Character {
         var HitReactions : int = 0
         var StunAnimations : int = 0
         var DeathAnimations : int = 0
+        var LootDrops : int = 0
+        var LastLootCoins : int = 0
     }
 
     defaults = ue_defaults() {
@@ -93,6 +99,7 @@ class RogueAICharacter : Character {
     def HandleDeath() : void {
         self.Dead = true
         self.Target = default<ActorRef>
+        self.DropLoot()
         self.ActionSystem.Shutdown()
         self.CharacterMovement.StopMovementImmediately()
         self.CharacterMovement.DisableMovement()
@@ -106,6 +113,18 @@ class RogueAICharacter : Character {
             if (duration > 0.0f) { self.DeathAnimations += 1 }
         }
         self.SetLifeSpan(max(self.DeathDelay, duration + 0.1f))
+    }
+
+    def DropLoot() : void {
+        if (!ue_class_valid(self.DropLootActionClass)) { return }
+        let action = self.ActionSystem.GrantAction(self.DropLootActionClass)
+        if (!ue_is_valid(action)) { return }
+        let loot = ue_ref(type<RogueActionDropLootRef>, action.handle)
+        loot.CreditsToDrop = ue_is_valid(self.MonsterData) ? max(self.MonsterData.LootCoins, 0) : 10
+        if (self.ActionSystem.StartAction(ue_tag("Action.DropLoot")) && loot.HasDropped) {
+            self.LootDrops += 1
+            self.LastLootCoins = loot.DroppedCredits
+        }
     }
 
     def ReactToHit() : void {

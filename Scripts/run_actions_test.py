@@ -40,7 +40,7 @@ def tick(delta):
                 detail=STATE.get('test',{}).get('s',{}).get('phase','unknown')
                 raise RuntimeError('Gameplay test timed out in '+str(detail))
         elif STATE['phase'] not in ('stop','cleanup'):
-            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') or globals().get('WAIT_NAVIGATION') else 240
+            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') or globals().get('WAIT_NAVIGATION') or globals().get('PICKUP_TEST') else 240
             if time.perf_counter()-STATE['started'] > preparation_limit:
                 raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':
@@ -164,6 +164,13 @@ def tick(delta):
         if STATE['phase'] == 'cleanup':
             if editor.get_game_world():
                 return
+            teardown = STATE.get('test', {}).get('verify_teardown')
+            if teardown:
+                try:
+                    teardown()
+                except Exception:
+                    RESULT.write_text(json.dumps({'passed':False,'error':traceback.format_exc()},indent=2),encoding='utf-8')
+                    unreal.log_error('DAS_ROGUE_TEARDOWN '+traceback.format_exc())
             actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
             for actor in list(actors.get_all_level_actors()):
                 if actor.get_class().get_name() == 'BP_RogueActionProbe_C':

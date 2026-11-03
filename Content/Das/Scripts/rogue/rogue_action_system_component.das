@@ -8,6 +8,8 @@ require daslib/match
 require daslib/linq
 require daslib/linq_boost
 
+let ROGUE_MAX_COIN_BALANCE : int64 = 9223372036854775807l
+
 [ue_class(module_id="rogue", Blueprintable),
  ue_implements(interface="/Game/DasRogue/Types/RogueActionHost.RogueActionHost_C")]
 class RogueActionSystemComponent : ActorComponent {
@@ -24,9 +26,12 @@ class RogueActionSystemComponent : ActorComponent {
         var Resources : table<string; float>
         var MoveSpeedMultiplier : float = 1.0f
         var Enabled : bool = true
+        // Currency is integral; generic combat attributes remain floating point.
+        var Coins : int64 = 0l
     }
 
     events = ue_properties(BlueprintAssignable) {
+        var OnCoinsChanged : RogueCoinsChanged
         var OnActionAdded : RogueActionChanged
         var OnActionRemoved : RogueActionChanged
         var GameplayTagUpdated : RogueGameplayTagUpdated
@@ -35,7 +40,7 @@ class RogueActionSystemComponent : ActorComponent {
     def BeginPlay() : void {
         self.Enabled = true
         self.Resources["Attribute.Rage"] = 0.0f
-        self.Resources["Attribute.Coins"] = 0.0f
+        self.Coins = 0l
         for (kind in self.DefaultActions) {
             if (ue_class_valid(kind)) {
                 self.GrantAction(kind)
@@ -144,6 +149,19 @@ class RogueActionSystemComponent : ActorComponent {
 
     [ue_function(BlueprintCallable)]
     def IsActionOwnerAlive() : bool { return self.Enabled }
+
+    [ue_function(BlueprintPure)]
+    def CanReceiveCoins(amount : int64) : bool {
+        return self.Enabled && amount >= 0l && self.Coins >= 0l && self.Coins <= ROGUE_MAX_COIN_BALANCE - amount
+    }
+
+    [ue_function(BlueprintCallable)]
+    def GrantCoins(amount : int64) : bool {
+        if (!self.CanReceiveCoins(amount)) { return false }
+        self.Coins += amount
+        self.OnCoinsChanged.Broadcast(self.Coins)
+        return true
+    }
 
     [ue_function(BlueprintCallable)]
     def GetAttributeValue(tag : GameplayTag) : float {
