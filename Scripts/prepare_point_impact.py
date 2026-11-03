@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 import unreal
 root=Path(__file__).resolve().parents[1]
-shutil.copyfile(root/'Tests/Das/rogue_point_damage_target.das',root/'Content/Das/Scripts/rogue_point_damage_target.das')
+shutil.copyfile(root/'Tests/Das/roguetest/rogue_point_damage_target.das',root/'Content/Das/Scripts/roguetest/rogue_point_damage_target.das')
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_point_damage_target.das /Game/DasRogue/Tests/BP_RoguePointDamageTarget roguetest.RoguePointDamageTarget')
 actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)

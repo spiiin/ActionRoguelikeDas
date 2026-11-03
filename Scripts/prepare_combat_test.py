@@ -2,7 +2,7 @@
 from pathlib import Path
 import shutil
 root=Path(r"C:/src/ActionRoguelikeDas")
-shutil.copyfile(root/'Tests/Das/rogue_combat_probe.das',root/'Content/Das/Scripts/rogue_combat_probe.das')
+shutil.copyfile(root/'Tests/Das/roguetest/rogue_combat_probe.das',root/'Content/Das/Scripts/roguetest/rogue_combat_probe.das')
 import unreal
 w=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 unreal.SystemLibrary.execute_console_command(w,'Das.DSL.Apply rogue_combat_probe.das /Game/DasRogue/Tests/BP_CombatProbe roguetest.CombatProbe')

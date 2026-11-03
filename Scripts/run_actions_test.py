@@ -55,6 +55,8 @@ def tick(delta):
                 run_script('Scripts/prepare_effect_tests.py')
             if globals().get('EXTERNAL_PRESENTATION'):
                 run_script('Scripts/prepare_presentation_tests.py')
+            if globals().get('AI_TEST'):
+                run_script('Scripts/prepare_ai.py')
             STATE['phase'] = 'wait_startup'
             STATE['warm_ticks'] = 0
             return
@@ -66,6 +68,9 @@ def tick(delta):
             assert match,'Harness requires an explicit log path'
             logfile=Path(match.group(1) or match.group(2))
             log=logfile.read_text(encoding='utf-8',errors='replace') if logfile.exists() else ''
+            startup_results = re.findall(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=(\d+)',log)
+            if startup_results and int(startup_results[-1]):
+                raise RuntimeError('Startup compilation failed; inspect DAS_EDITOR_COMPILE_ALL and BlueprintLog')
             if not re.search(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=0',log):
                 return
             STATE['warm_ticks']+=1
@@ -94,6 +99,12 @@ def tick(delta):
             for actor in unreal.GameplayStatics.get_all_actors_of_class(world, unreal.Actor):
                 if actor.get_class().get_name() in ('BP_InteractiveChestHinged_C', 'BP_TargetDummy_C'):
                     assert not actor.get_editor_property('LastDasError'), actor.get_editor_property('LastDasError')
+            if not globals().get('AI_TEST'):
+                for actor in unreal.GameplayStatics.get_all_actors_of_class(world,unreal.Character):
+                    if actor.get_class().get_name()=='BP_RogueAICharacter_C':
+                        controller=actor.get_controller()
+                        if controller:controller.destroy_actor()
+                        actor.destroy_actor()
             STATE['test'] = run_script(TEST_SCRIPT)
             STATE['phase'] = 'test'
             return

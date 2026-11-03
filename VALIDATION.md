@@ -164,7 +164,7 @@ changes were made as part of this interface-migration extension.
 ## RogueCharacter movement/camera slice - 2026-11-02
 
 BP_RogueCharacter now replaces DefaultPawn in BP_RogueGameMode. Canonical source
-is Content/Das/Scripts/rogue_character.das. Movement basis, input handlers, setup,
+is Content/Das/Scripts/rogue/rogue_character.das. Movement basis, input handlers, setup,
 jump and release are daScript. Added only a native type declaration for
 SpringArmComponentRef to the wrapper; no C++/native host/build or optimization
 changes required. Native CharacterMovement settings are assigned in BeginPlay
@@ -559,3 +559,31 @@ Shared-agent job `reference-macro-v1-20261102`: PASS. Macro suite: 70 checks, in
 ## Event subscription refactor (2026-11-03)
 
 Focused event validation: PASS, 59 checks (`rogue-events-v2-20261103`). Native/authored reference-property sources, exact signatures, external-source delivery, idempotence, reload and Destroy/release cleanup passed. Final real-PIE results: effects 6 groups (`rogue-events-pie-v3-20261103`), Overwhelm 7 groups and point impact 3 groups (`rogue-events-pie-v4-20261103`) passed. Overwhelm additionally asserts one base/combat hit notification per damage event, removed-listener GC, regrant and lethal cleanup. The runner waits for the actual gameplay Character before reading ControlsBound.
+
+## AI slice — pending (2026-11-03)
+
+`rogue-ai-v1-20261103` could not reach validation: the shared
+`C:/src/DasForUE2/ThirdParty/daScript` source/library directory disappeared during
+the build. The user confirmed another agent is updating that dependency; it was
+not restored or overwritten here. No AI runtime result is claimed.
+
+Python syntax and suite-registry uniqueness checks passed. The new real-PIE
+test is `Tests/verify_ai_pie.py`; rerun `foundation,rogue-ai,rogue-projectile-attack`
+through the shared build agent when the dependency is ready. Native bindings,
+assets, aim refactoring and generic damage instigators remain unverified.
+
+## Stable-ID catalog references (2026-11-03)
+
+Shared-agent job `catalog-entities-v5-20261103`: reflection macros PASS, 101 checks. Tests cover class/interface IDs, short-name ambiguity, wrong kinds, nullable and checked runtime references, declaration inventory and invalid identities. Project startup generated 33 class and 3 value/interface records. Gameplay regression is blocked by the concurrent `RogueActionProjectileAttack.FireProjectile` compile error (`self` missing in GetAimRotation/GetAimPoint calls); attack startup times out and the remaining suites are not reached.
+
+## Source folders (2026-11-03)
+
+`rogue-script-folders-v3-20261103`: reflection/source-path suite PASS, 119 checks. Presentation did not complete. EXCEPTION: Rogue setup failed before PIE: [2026.11.03-02.14.59:434][ 29]LogTemp: Warning: DAS_DSL_AUTO_REIMPORT rejected BP_RogueCombatTarget: C:/src/ActionRoguelikeDas/Content/Das/Scripts/roguedemo/rogue_combat_target.das(47,85): [DAS:compile] RogueCombatTarget.RefreshStatus | field 'Health' not found in rogue_attribute_component::__ue_reference_f7b33ea74a16ded8e952dfe18bef9905 aka RogueAttributeComponentRef (+3 more on this line)
+
+Source groups: `{'rogue': 26, 'roguedemo': 7, 'roguetest': 8}`. Validated module uniqueness, project imports, catalog paths and Python syntax. The native mesh alias is now local to `rogue/rogue_presentation_profile.das`; the separate presentation-types module is removed. Runtime name lookup uses the startup filename index; catalog-relative paths are canonicalized consistently for typed method/property descriptors.
+
+## Reference and gameplay recheck (2026-11-03)
+
+The earlier Health-reference compile blocker is cleared in the current working tree. `rogue-recheck-v1-20261103`: PASS (119 macro checks, attack 7, presentation 8, effects 6, Overwhelm 7, point impact 3). `rogue-recheck-handlers-v2-20261103`: PASS (35 inherited-handler/reload checks). `rogue-recheck-ai-v3-20261103`: PASS (7 real-PIE AI groups).
+
+Inherited reload fixtures now explicitly prepare edited programs before gameplay resumes. AI health setup uses a test-only typed DAS helper and verifies the component remains the player's live component; editor property mutation had replaced it and left the fixture reading a detached object. Actual projectile damage and managed owner events work without a gameplay damage workaround.

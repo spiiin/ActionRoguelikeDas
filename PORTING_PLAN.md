@@ -186,3 +186,16 @@ RogueActionProjectileAttack перенесён: контроллер запра�
 
 Следующий боевой срез: point damage/HitResult, физический импульс и AI hearing.
 Далее — подбор предметов/добыча, AI, UI и полный игровой цикл согласно этапам выше.
+
+## AI — первый срез реализован, верификация ожидает зависимость
+
+Добавлены AI Character, generic-parent AIController и ranged action на daScript.
+Сценарий: зрение/слух → живая player-pawn цель → direct MoveTo → ranged action;
+stun останавливает бой, потеря LOS отменяет атаку, память цели ограничена,
+смерть выключает действия и уничтожает контроллер. Новый тест `rogue-ai` готов.
+
+Сборка остановлена внешним обновлением ThirdParty/daScript, поэтому срез ещё
+не считается проверенным. После восстановления зависимости: foundation,
+rogue-ai и rogue-projectile-attack через общий build-agent. Далее — NavMesh/
+обход препятствий, Behavior Tree или его полный DAS-эквивалент, патруль,
+лечение, награда/добыча.

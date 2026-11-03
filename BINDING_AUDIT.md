@@ -258,10 +258,40 @@ ref/out parameters are not implicitly converted. Low-level packing stays in DasF
 
 ## Reference declaration macros
 
-All eight declarations in seven `*_refs.das` modules now use `UEObjectRef(script, className)` or `UEInterfaceRef(path, authoredId)`. The compiler creates the annotated one-handle view and reuses existing type/identity checks. Source dependency direction and reflected GC ownership remain unchanged. Unused `RogueActionHostRef_from/raw` converters and their duplicate path constant were removed; callers use generic `ue_ref`.
+The eight reference aliases now live beside their corresponding class/interface declarations, using `UEObjectRef("rogue.ClassName")` or `UEInterfaceRef("rogue.InterfaceName")`. Seven small refs-only modules were removed; consumers require the owning module. The local dependency graph remains acyclic. The compiler generates the same annotated handle views, identity checks and reflected GC ownership. Callers use generic `ue_ref`.
 
 ## Managed event subscriptions
 
 Permanent character/target health and combat-status notifications use `BindEvents`; native event annotations use identifier names. The target has one base health subscription and a virtual `AfterHealthChanged` hook, preserving ordered base/combat handling without duplicate hit counts. Health changes are synchronous; permanent notifications are queued and managed across reload/lifecycle cleanup.
 
 Overwhelm uses synchronous `self.Attributes.OnHealthChanged +=/-= self.OnHealthChanged` during its running interval. The wrapper's existing dynamic-event compiler checks now accept reflected native/authored reference properties; runtime source/handler validation and session cleanup are unchanged. StopListening detaches before clearing/replacing the source and before action/tag removal. All handwritten AddUFunction/RemoveUFunction registrations were removed from the example.
+
+## AI: generic native operations (validation pending)
+
+Added ue_perception_configure for reusable native sight/hearing configs owned
+by UAIPerceptionComponent, plus ue_ai_pawn, ue_ai_set_focus and
+ue_ai_line_of_sight. Configuration validates finite ranges, authority, game-world
+and lifecycle constraints. Existing ue_controller_set_team now accepts any
+IGenericTeamAgentInterface AController, with typed AIControllerRef overload.
+No game-specific C++ controller/pawn host was added: the native AIController
+uses the existing generic Blueprint-parent bridge.
+
+ControllerRef generalizes projectile point-damage instigators beyond player
+controllers. The player overload remains convenient; the port projectile now
+uses its native pawn's GetController. Shared attack code exposes virtual aim
+queries; AI aims at its target, player camera semantics remain unchanged.
+
+The new gameplay slice and shared-agent rogue-ai suite await successful build
+and PIE validation after another agent's daScript dependency update.
+
+## Stable-ID reference catalog
+
+Six object reference aliases use `UEObjectRef("rogue.ClassName")`; three authored interface aliases use `UEInterfaceRef("rogue.InterfaceName")`. Automatic declaration inventory covers classes/interfaces/structs/enums. Interface lookup checks both catalog kind/identity and the actual reflected interface; existing signature, implementation and GC semantics remain. Inventory runs before editor compilation, with no gameplay directory scans.
+
+## Native object reference macro
+
+`RogueSkeletalMeshRef` uses `UENativeObjectRef("/Script/Engine.SkeletalMesh")` instead of a handwritten native-wrapper struct. The alias is declared next to its consuming profile in `rogue_presentation_profile.das`; the separate `rogue_presentation_types.das` module was removed. An audit of all example and test `.das` sources found no remaining handwritten native object wrappers. This macro validates the native class at compilation and uses no source catalog. It retains the existing weak handle and native property/signature transport semantics.
+
+## Live Health reference validation
+
+The current module-local generated property/method helper implementation passed typed-reference checks and all six gameplay suites (attack, presentation, effects, Overwhelm, point impact, AI). The roguetest ConfigureHealth helper exercises writes to HealthMax/Health through RogueAttributeComponentRef in a separate consumer module. AI setup checks component identity so editor reconstruction cannot make the test observe a detached cached component. See the 2026-11-03 reference/gameplay receipts in VALIDATION.md.

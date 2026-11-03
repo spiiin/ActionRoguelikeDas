@@ -1,0 +1,53 @@
+options gen2
+module rogue_action_probe public
+require ue_vector_math public
+require ue_native_gameplay public
+require rogue_action public
+require rogue_attribute_component public
+
+// Opaque handles are weak. This observer must never be an owning UPROPERTY.
+var watched : UObjectHandle
+
+[ue_class(module_id="roguetest", Blueprintable)]
+class RogueActionProbe : Actor {
+
+    def BeginPlay() : void { ue_self_actor().SetActorTickEnabled(false) }
+
+    // Change live state through runtime property access, without editor reconstruction.
+    [ue_function(BlueprintCallable)]
+    def ConfigureHealth(attributes : RogueAttributeComponentRef; maximum : float) : void {
+        attributes.HealthMax = maximum
+        attributes.Health = maximum
+    }
+
+    [ue_function(BlueprintCallable)]
+    def Watch(action : ObjectRef) : void { watched = action.handle }
+
+    [ue_function(BlueprintCallable)]
+    def WatchAlive() : bool { return ue_object_valid(watched) }
+
+    [ue_function(BlueprintCallable)]
+    def CreateOrphan(kind : ObjectClass; outer : ObjectRef) : void {
+        watched = ue_object_new(type<ObjectRef>, kind, outer).handle
+    }
+
+    [ue_function(BlueprintCallable)]
+    def RejectCreation(kind : ObjectClass; outer : ObjectRef) : bool {
+        var rejected = false
+        try { let result = ue_object_new(type<ObjectRef>, kind, outer) } recover { rejected = true }
+        return rejected
+    }
+
+    [ue_function(BlueprintCallable)]
+    def RejectTypedCreation(kind : ObjectClass; outer : ObjectRef) : bool {
+        var rejected = false
+        try { let result = ue_object_new(type<RogueActionRef>, kind, outer) } recover { rejected = true }
+        return rejected
+    }
+
+    [ue_function(BlueprintCallable)]
+    def Spawn(kind : ActorClass; position : UEVector; rotation : UERotator) : ActorRef {
+        return ue_actor_spawn(type<ActorRef>, kind,
+            ue_transform(position, rotation, UE_VECTOR_ONE), default<ActorRef>, "AlwaysSpawn")
+    }
+}

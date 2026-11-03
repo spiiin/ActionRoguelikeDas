@@ -2,8 +2,8 @@ import unreal
 from pathlib import Path
 import shutil
 root=Path(r"C:/src/ActionRoguelikeDas")
-shutil.copyfile(root/'Tests/Das/rogue_action_probe.das',root/'Content/Das/Scripts/rogue_action_probe.das')
-shutil.copyfile(root/'Tests/Das/rogue_unrelated_object.das',root/'Content/Das/Scripts/rogue_unrelated_object.das')
+shutil.copyfile(root/'Tests/Das/roguetest/rogue_action_probe.das',root/'Content/Das/Scripts/roguetest/rogue_action_probe.das')
+shutil.copyfile(root/'Tests/Das/roguetest/rogue_unrelated_object.das',root/'Content/Das/Scripts/roguetest/rogue_unrelated_object.das')
 w=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 unreal.SystemLibrary.execute_console_command(w,'Das.DSL.Apply rogue_unrelated_object.das /Game/DasRogue/Tests/BP_RogueUnrelatedObject roguetest.RogueUnrelatedObject')
 unreal.SystemLibrary.execute_console_command(w,'Das.DSL.Apply rogue_action_probe.das /Game/DasRogue/Tests/BP_RogueActionProbe roguetest.RogueActionProbe')

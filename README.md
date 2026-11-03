@@ -10,11 +10,11 @@
 
 ## Первые классы
 
-Content/Das/Scripts/rogue_interaction_interface.das объявляет настоящий UE Blueprint Interface с методом Interact без параметров.
+Content/Das/Scripts/rogue/rogue_interaction_interface.das объявляет настоящий UE Blueprint Interface с методом Interact без параметров.
 
-Content/Das/Scripts/rogue_interaction.das вызывает этот интерфейс из daScript, отвергая пустые ссылки и объекты без нужного интерфейса.
+Content/Das/Scripts/rogue/rogue_interaction.das вызывает этот интерфейс из daScript, отвергая пустые ссылки и объекты без нужного интерфейса.
 
-Content/Das/Scripts/rogue_item_chest.das реализует RogueItemChest: два StaticMesh-компонента, редактируемые скорость и целевой pitch, включение tick при взаимодействии, равномерное вращение крышки и overridable событие ChestAnimationComplete. Начальный tick отключается в BeginPlay. Профили collision устанавливаются там же, после создания SCS компонентов; в C++ оригинале они задаются в конструкторе.
+Content/Das/Scripts/rogue/rogue_item_chest.das реализует RogueItemChest: два StaticMesh-компонента, редактируемые скорость и целевой pitch, включение tick при взаимодействии, равномерное вращение крышки и overridable событие ChestAnimationComplete. Начальный tick отключается в BeginPlay. Профили collision устанавливаются там же, после создания SCS компонентов; в C++ оригинале они задаются в конструкторе.
 
 Поведение повторного взаимодействия сохранено: во время анимации оно не сбрасывает прогресс; после полного открытия повторно вызывает завершение на следующем tick. Нулевая скорость не завершает движение к отличающейся цели. Событие завершения в базовом классе имеет пустую реализацию и может быть переопределено в дочернем Blueprint.
 
@@ -41,13 +41,13 @@ Das.DSL.Apply rogue_item_chest.das /Game/DasRogue/BP_RogueItemChest rogue.RogueI
 test-suite rogue-chest-local rogue-chest repo=C:/src/DasForUE2-main
 ```
 
-Тестовый runner копирует три исходника и Tests/Das/rogue_item_chest_observer.das в Content/Das/Scripts smoke-проекта. Канонические исходники находятся здесь. Автотест DasForUE.Ports.RogueChest проверяет интерфейс, компоненты, tick, углы, повторное взаимодействие и две независимые копии. Результаты и ограничения запуска фиксируются в VALIDATION.md после проверки.
+Тестовый runner копирует три исходника и Tests/Das/roguetest/rogue_item_chest_observer.das в Content/Das/Scripts smoke-проекта. Канонические исходники находятся здесь. Автотест DasForUE.Ports.RogueChest проверяет интерфейс, компоненты, tick, углы, повторное взаимодействие и две независимые копии. Результаты и ограничения запуска фиксируются в VALIDATION.md после проверки.
 
 ## Выбор цели и клавиша E
 
 Первый этап реализован полностью: `rogue_interaction_component.das` принадлежит контроллеру и каждый tick выбирает объект в радиусе 800 по весу расстояния и направления камеры. `rogue_player_controller.das` создаёт этот компонент, устанавливает TeamId=1 и подключает Enhanced Input после готовности локального ввода. Вся игровая логика находится в daScript.
 
-В `Content/Das/Scripts/rogue_player_controller.das` заданы ссылки по умолчанию на `/Game/DasRogue/Input/IA_Interact` и `IMC_Rogue`. Эти ресурсы создаёт `Scripts/prepare_interaction.py` до импорта класса. Mapping связывает E с Boolean action; событие Started вызывает взаимодействие один раз за нажатие. Удержание E не вызывает повторных команд. Это осознанное отличие от Triggered в исходном контроллере.
+В `Content/Das/Scripts/rogue/rogue_player_controller.das` заданы ссылки по умолчанию на `/Game/DasRogue/Input/IA_Interact` и `IMC_Rogue`. Эти ресурсы создаёт `Scripts/prepare_interaction.py` до импорта класса. Mapping связывает E с Boolean action; событие Started вызывает взаимодействие один раз за нажатие. Удержание E не вызывает повторных команд. Это осознанное отличие от Triggered в исходном контроллере.
 
 Компонент отбрасывает объекты без интерфейса, безопасно обрабатывает отсутствие pawn и обновляет выбор непосредственно перед вызовом Interact. Автоматический таймер открытия удалён. На карте используется `RogueInteractiveChest`, наследующий только поведение сундука.
 
@@ -114,7 +114,7 @@ AI noise, action effects, сетевое состояние и полноцен�
 
 ## Персонаж: движение и камера
 
-Content/Das/Scripts/rogue_character.das переносит движение, взгляд и прыжок
+Content/Das/Scripts/rogue/rogue_character.das переносит движение, взгляд и прыжок
 RoguePlayerCharacter. GameMode использует BP_RogueCharacter вместо DefaultPawn.
 W/S — вперёд/назад относительно yaw камеры, A/D — влево/вправо, мышь — обзор,
 Space — прыжок; отпускание Space вызывает StopJumping. E и ЛКМ остаются
@@ -309,3 +309,49 @@ AttributeComponent продолжает получать одно событие
 Сохранённые Blueprint и исходники используют новый контракт попадания вместе.
 При разовом обновлении старых ресурсов настройки родителя и дочернего снаряда
 применены отдельно перед совместной миграцией интерфейса и реализаций.
+
+## AI-противник — первый срез (ожидает сборки и PIE-проверки)
+
+Добавлены `rogue_ai_character.das`, `rogue_ai_controller.das` и
+`rogue_ai_projectile_attack.das`. Вся логика выбора цели, преследования, запроса
+действия, stun и смерти находится в daScript. Native AIPerception создаёт события
+зрения/слуха; generic API DasForUE настраивает senses и предоставляет focus/LOS.
+Поведение соответствует первому боевому срезу RogueAICharacter/Controller и
+RogueBTTask_RangedAttack оригинала; Behavior Tree, патруль, лечение и добыча
+пока не перенесены.
+
+`Scripts/prepare_ai.py` создаёт Blueprint-ассеты в `/Game/DasRogue/AI`, связывает
+AIControllerClass/AutoPossessAI и добавляет противника и открытый пол на ChestTest.
+Эта Python-настройка работает только в редакторе; игровое поведение она не реализует.
+Противник стоит около `(3000, 800, 96)`, игрок начинает у сундука. После успешной
+сборки/подготовки карты: Play, подойти к противнику, стрелять ЛКМ. Четыре обычных
+попадания по 25 урона убивают противника с базовыми 100 HP.
+
+Настройки контроллера: SightRadius, LoseSightRadius, SightAngle, HearingRadius,
+TargetMemory, AttackRange, ThinkInterval. `UsePathfinding=false` использует
+прямой native MoveTo в открытой арене; обход препятствий требует построенного
+NavMesh и `UsePathfinding=true`. Это ограничение первого среза.
+
+Игрок сохраняет прицеливание по камере. AI-способность переопределяет GetAimPoint
+и GetAimRotation для выбранного Actor; у снаряда общий ControllerRef, поэтому
+AI-инстигатор корректно проходит через point damage.
+
+Регрессия `rogue-ai` использует реальный PIE: sight/hearing, движение, попадание
+в игрока, stun, LOS/истечение памяти и смерть. Сейчас запуск этой новой
+регрессии не подтверждён: общая ThirdParty/daScript обновляется другим агентом.
+
+## Ссылки по стабильному ID
+
+Пример использует `UEObjectRef("rogue.RogueAction")` и `UEInterfaceRef("rogue.RogueActionHost")` без имён файлов. В `DefaultEngine.ini` включено `[DasForUE.SourceCatalog] AutoGenerate=True`: редактор обновляет `Content/Das/Scripts/ue_type_catalog.json` по объявлениям классов, интерфейсов, структур и перечислений до компиляции. Каталог не нужно редактировать вручную. При явном `module_id` или `id` переименование файла сохраняет ID. Для commandlet/cook используйте актуальный сгенерированный каталог; его можно обновить открытием проекта в редакторе. Каталог не создаёт ресурсы интерфейсов и типов — они проходят обычный импорт и проверку.
+
+Типы ссылок объявлены через `typedef` рядом с соответствующим классом или интерфейсом, например `RogueActionRef` в `rogue_action.das`. Отдельных `*_refs.das` больше нет; потребители импортируют модуль владельца. Тестовые исходники используют те же импорты.
+
+## Организация скриптов
+
+- `Content/Das/Scripts/rogue/` — игровая логика, компоненты, действия, интерфейсы и presentation.
+- `Content/Das/Scripts/roguedemo/` — конкретные объекты демонстрационной сцены: сундуки, снаряды, мишени.
+- `Content/Das/Scripts/roguetest/` — проверочные классы; исходные заготовки тестовых сценариев находятся в `Tests/Das/roguetest/`.
+
+Папки соответствуют группам стабильных ID `module_id`; отдельные daScript-модули сохраняют имена (`rogue_character`, `rogue_action` и т. п.). Импорты и ID типов не меняются при переносе. Индекс имён файлов строится при старте загрузчика и обновляется при сообщении об изменении состава файлов; обычный поиск использует таблицу в памяти. Одинаковые имена файлов в разных проектных папках отклоняются как неоднозначные. Генерируемый `ue_type_catalog.json` остаётся в корне `Scripts` и хранит относительные пути с папками.
+
+`RogueSkeletalMeshRef` объявлен рядом с профилем через `UENativeObjectRef`; отдельного `rogue_presentation_types.das` больше нет.

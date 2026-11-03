@@ -1,0 +1,238 @@
+{
+	"schema_version": 3,
+	"classes": [
+		{
+			"id": "rogue.RogueAction",
+			"name": "RogueAction",
+			"script": "rogue/rogue_action.das",
+			"reference": "RogueActionRef"
+		},
+		{
+			"id": "rogue.RogueActionEffect",
+			"name": "RogueActionEffect",
+			"script": "rogue/rogue_action_effect.das",
+			"reference": "RogueActionEffectRef"
+		},
+		{
+			"id": "rogue.RogueActionEffectOverwhelm",
+			"name": "RogueActionEffectOverwhelm",
+			"script": "rogue/rogue_action_effect_overwhelm.das",
+			"reference": "RogueActionEffectOverwhelmRef"
+		},
+		{
+			"id": "rogue.RogueActionEffectStun",
+			"name": "RogueActionEffectStun",
+			"script": "rogue/rogue_action_effect_stun.das",
+			"reference": "RogueActionEffectStunRef"
+		},
+		{
+			"id": "rogue.RogueActionProjectileAttack",
+			"name": "RogueActionProjectileAttack",
+			"script": "rogue/rogue_action_projectile_attack.das",
+			"reference": "RogueActionProjectileAttackRef"
+		},
+		{
+			"id": "rogue.RogueActionSprint",
+			"name": "RogueActionSprint",
+			"script": "rogue/rogue_action_sprint.das",
+			"reference": "RogueActionSprintRef"
+		},
+		{
+			"id": "rogue.RogueActionSystemComponent",
+			"name": "RogueActionSystemComponent",
+			"script": "rogue/rogue_action_system_component.das",
+			"reference": "RogueActionSystemComponentRef"
+		},
+		{
+			"id": "rogue.RogueAICharacter",
+			"name": "RogueAICharacter",
+			"script": "rogue/rogue_ai_character.das",
+			"reference": "RogueAICharacterRef"
+		},
+		{
+			"id": "rogue.RogueAIController",
+			"name": "RogueAIController",
+			"script": "rogue/rogue_ai_controller.das",
+			"reference": "RogueAIControllerRef"
+		},
+		{
+			"id": "rogue.RogueAIProjectileAttack",
+			"name": "RogueAIProjectileAttack",
+			"script": "rogue/rogue_ai_projectile_attack.das",
+			"reference": "RogueAIProjectileAttackRef"
+		},
+		{
+			"id": "rogue.RogueAttributeComponent",
+			"name": "RogueAttributeComponent",
+			"script": "rogue/rogue_attribute_component.das",
+			"reference": "RogueAttributeComponentRef"
+		},
+		{
+			"id": "rogue.RogueCharacter",
+			"name": "RogueCharacter",
+			"script": "rogue/rogue_character.das",
+			"reference": "RogueCharacterRef"
+		},
+		{
+			"id": "rogue.RogueInteractionComponent",
+			"name": "RogueInteractionComponent",
+			"script": "rogue/rogue_interaction_component.das",
+			"reference": "RogueInteractionComponentRef"
+		},
+		{
+			"id": "rogue.RogueItemChest",
+			"name": "RogueItemChest",
+			"script": "rogue/rogue_item_chest.das",
+			"reference": "RogueItemChestRef"
+		},
+		{
+			"id": "rogue.RogueMagicProjectile",
+			"name": "RogueMagicProjectile",
+			"script": "rogue/rogue_magic_projectile.das",
+			"reference": "RogueMagicProjectileRef"
+		},
+		{
+			"id": "rogue.RoguePlayerController",
+			"name": "RoguePlayerController",
+			"script": "rogue/rogue_player_controller.das",
+			"reference": "RoguePlayerControllerRef"
+		},
+		{
+			"id": "rogue.RoguePresentationProfile",
+			"name": "RoguePresentationProfile",
+			"script": "rogue/rogue_presentation_profile.das",
+			"reference": "RoguePresentationProfileRef"
+		},
+		{
+			"id": "rogue.RogueProjectile",
+			"name": "RogueProjectile",
+			"script": "rogue/rogue_projectile.das",
+			"reference": "RogueProjectileRef"
+		},
+		{
+			"id": "roguedemo.RogueChestDemo",
+			"name": "RogueChestDemo",
+			"script": "roguedemo/rogue_chest_demo.das",
+			"reference": "RogueChestDemoRef"
+		},
+		{
+			"id": "roguedemo.RogueCombatTarget",
+			"name": "RogueCombatTarget",
+			"script": "roguedemo/rogue_combat_target.das",
+			"reference": "RogueCombatTargetRef"
+		},
+		{
+			"id": "roguedemo.RogueInteractiveChest",
+			"name": "RogueInteractiveChest",
+			"script": "roguedemo/rogue_interactive_chest.das",
+			"reference": "RogueInteractiveChestRef"
+		},
+		{
+			"id": "roguedemo.RogueInteractiveChestHinged",
+			"name": "RogueInteractiveChestHinged",
+			"script": "roguedemo/rogue_hinged_chest.das",
+			"reference": "RogueInteractiveChestHingedRef"
+		},
+		{
+			"id": "roguedemo.RogueMagicProjectileDemo",
+			"name": "RogueMagicProjectileDemo",
+			"script": "roguedemo/rogue_magic_projectile_demo.das",
+			"reference": "RogueMagicProjectileDemoRef"
+		},
+		{
+			"id": "roguedemo.RogueProjectileDemo",
+			"name": "RogueProjectileDemo",
+			"script": "roguedemo/rogue_projectile_demo.das",
+			"reference": "RogueProjectileDemoRef"
+		},
+		{
+			"id": "roguedemo.RogueTargetDummy",
+			"name": "RogueTargetDummy",
+			"script": "roguedemo/rogue_target_dummy.das",
+			"reference": "RogueTargetDummyRef"
+		},
+		{
+			"id": "roguetest.CombatProbe",
+			"name": "CombatProbe",
+			"script": "roguetest/rogue_combat_probe.das",
+			"reference": "CombatProbeRef"
+		},
+		{
+			"id": "roguetest.RogueActionProbe",
+			"name": "RogueActionProbe",
+			"script": "roguetest/rogue_action_probe.das",
+			"reference": "RogueActionProbeRef"
+		},
+		{
+			"id": "roguetest.RogueFixedDurationEffect",
+			"name": "RogueFixedDurationEffect",
+			"script": "roguetest/rogue_fixed_duration_effect.das",
+			"reference": "RogueFixedDurationEffectRef"
+		},
+		{
+			"id": "roguetest.RogueMissingPresentation",
+			"name": "RogueMissingPresentation",
+			"script": "roguetest/rogue_missing_presentation.das",
+			"reference": "RogueMissingPresentationRef"
+		},
+		{
+			"id": "roguetest.RoguePeriodicEffect",
+			"name": "RoguePeriodicEffect",
+			"script": "roguetest/rogue_periodic_effect.das",
+			"reference": "RoguePeriodicEffectRef"
+		},
+		{
+			"id": "roguetest.RoguePointDamageTarget",
+			"name": "RoguePointDamageTarget",
+			"script": "roguetest/rogue_point_damage_target.das",
+			"reference": "RoguePointDamageTargetRef"
+		},
+		{
+			"id": "roguetest.RogueUnrelatedObject",
+			"name": "RogueUnrelatedObject",
+			"script": "roguetest/rogue_unrelated_object.das",
+			"reference": "RogueUnrelatedObjectRef"
+		},
+		{
+			"id": "roguetest.RogueWithoutPresentation",
+			"name": "RogueWithoutPresentation",
+			"script": "roguetest/rogue_without_presentation.das",
+			"reference": "RogueWithoutPresentationRef"
+		}
+	],
+	"value_modules": [
+		{
+			"module": "rogue_action_host_interface",
+			"script": "rogue/rogue_action_host_interface.das",
+			"types": [
+				{
+					"kind": "interface",
+					"id": "rogue.RogueActionHost",
+					"name": "RogueActionHost"
+				}
+			]
+		},
+		{
+			"module": "rogue_interaction_interface",
+			"script": "rogue/rogue_interaction_interface.das",
+			"types": [
+				{
+					"kind": "interface",
+					"id": "rogue.RogueInteractionInterface",
+					"name": "RogueInteractionInterface"
+				}
+			]
+		},
+		{
+			"module": "rogue_projectile_impact_interface",
+			"script": "rogue/rogue_projectile_impact_interface.das",
+			"types": [
+				{
+					"kind": "interface",
+					"id": "rogue.RogueImpactHandler",
+					"name": "RogueImpactHandler"
+				}
+			]
+		}
+	]
+}
