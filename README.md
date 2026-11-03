@@ -445,3 +445,22 @@ AI-инстигатор корректно проходит через point dam
 Suite `rogue-coins` проверяет реальные Tick, сбор, GC, DropLoot и очистку PIE.
 Отчёт: `Saved/Tests/rogue_coins_pie.json`. Подготовка ассетов и карты:
 `Scripts/prepare_coins_test.py`; вся игровая логика выполняется в daScript.
+
+
+## AttributeSet и Rage
+
+Health, HealthMax, MoveSpeed и MoveSpeedMultiplier теперь хранятся в общем
+RogueAttributeSet с Base/Modifier. У игрока дополнительно есть Rage; у монстров
+этого атрибута нет. Изменения передаются событиями в компоненты и UI.
+
+Для ручной проверки на ChestTest нажать H: при стандартном TestDamage=25 здоровье
+уменьшится на 25, Rage увеличится на 18.75. Значение Rage показано рядом с HP и Coins.
+Подбор лечения восстанавливает HP и не даёт Rage. Shift по-прежнему включает спринт.
+Классы наборов доступны в Content/DasRogue/Attributes; игровая реализация —
+Content/Das/Scripts/rogue/rogue_attribute_set.das.
+
+Проверка нового среза через общий агент:
+
+```text
+test-suite rogue-attributes-local rogue-attributes repo=C:/src/DasForUE2-main
+```

@@ -23,7 +23,14 @@ class RogueCoinProbe : RogueActionProbe {
 
     [ue_function(BlueprintCallable)]
     def SetHealth(actor : ActorRef; value : float) : void {
-        ue_component_find(type<RogueAttributeComponentRef>, actor).Health = value
+        // Inject the wallet availability case without delivering terminal death events.
+        let component = ue_component_find(type<RogueAttributeComponentRef>, actor)
+        let attributes = component.GetAttributeSet()
+        var bases := attributes.BaseValues
+        bases["Attribute.Health"] = value
+        attributes.BaseValues := bases
+        attributes.Reconcile()
+        component.Health = attributes.GetValue(ue_tag("Attribute.Health"))
     }
 
     [ue_function(BlueprintCallable)]

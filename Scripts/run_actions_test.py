@@ -60,6 +60,8 @@ def tick(delta):
                 if globals().get('OVERWHELM_TEST'):
                     run_script('Scripts/prepare_overwhelm.py')
                 run_script('Scripts/prepare_action_tests.py')
+                if globals().get('ATTRIBUTE_TEST'):
+                    run_script('Scripts/prepare_attribute_test.py')
                 if globals().get('POINT_IMPACT_TEST'):
                     run_script('Scripts/prepare_point_impact.py')
                 if globals().get('ACTION_EFFECTS'):
@@ -173,7 +175,7 @@ def tick(delta):
                     unreal.log_error('DAS_ROGUE_TEARDOWN '+traceback.format_exc())
             actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
             for actor in list(actors.get_all_level_actors()):
-                if actor.get_class().get_name() == 'BP_RogueActionProbe_C':
+                if actor.get_class().get_name() in ('BP_RogueActionProbe_C','BP_RogueAttributeProbe_C'):
                     actors.destroy_actor(actor)
             unreal.EditorLoadingAndSavingUtils.save_dirty_packages(True, True)
             unreal.unregister_slate_post_tick_callback(STATE['handle'])

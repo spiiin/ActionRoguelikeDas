@@ -59,6 +59,7 @@ class RogueAICharacter : Character {
     }
 
     def BeginPlay() : void {
+        self.ActionSystem.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RogueMonsterAttributeSet.BP_RogueMonsterAttributeSet_C"))
         if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
             rogue_apply_mesh(self.Mesh, self.Presentation)
@@ -142,8 +143,15 @@ class RogueAICharacter : Character {
         if (self.Dead) { return }
         let wasStunned = self.Stunned
         self.Stunned = ue_tags_has(self.ActionSystem.GetActiveTags(),ue_tag("StatusEffect.Stunned"))
-        self.CharacterMovement.MaxWalkSpeed = self.Stunned ? 0.0f : self.MoveSpeed
-        if (self.Stunned) { self.CharacterMovement.StopMovementImmediately() }
+        // Attribute changes may refresh speed during stun; the movement mode remains disabled.
+        if (self.Stunned != wasStunned) {
+            if (self.Stunned) {
+                self.CharacterMovement.DisableMovement()
+                self.CharacterMovement.StopMovementImmediately()
+            } else {
+                self.CharacterMovement.SetMovementMode(EMovementMode.MOVE_Walking)
+            }
+        }
         self.UpdateStunAnimation(wasStunned)
         self.RefreshLabel()
     }

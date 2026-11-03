@@ -142,7 +142,13 @@ def tick(delta):
             assert enemy.get_editor_property('Stunned')
             assert controller.get_editor_property('AttackRequests')==s['attacks'],'Attacked while stunned'
             assert (enemy.get_actor_location()-s['stun_origin']).length()<10
-            s['checks'].append({'stun_stops_ai_and_attack':True})
+            movement=enemy.get_editor_property('character_movement')
+            assert movement.get_editor_property('movement_mode')==unreal.MovementMode.MOVE_NONE
+            base_speed=system.get_editor_property('BaseMoveSpeed')
+            system.call_method('SetBaseMoveSpeed',args=(base_speed+25.0,))
+            assert movement.get_editor_property('movement_mode')==unreal.MovementMode.MOVE_NONE
+            system.call_method('SetBaseMoveSpeed',args=(base_speed,))
+            s['checks'].append({'stun_stops_ai_attack_and_attribute_changes_do_not_restore_movement':True})
             phase('recover');return
         if s['phase']=='recover':
             if enemy.get_editor_property('Stunned') and age<4:return

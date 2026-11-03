@@ -6,3 +6,9 @@ require ue_native_gameplay public
 struct RogueHealthChanged {
     signature : function<(Instigator : ActorRef; NewHealth : float; Delta : float) : void>
 }
+
+
+[ue_multicast]
+struct RogueAttributeChanged {
+    signature : function<(Tag : GameplayTag; NewValue : float; OldValue : float; Instigator : ActorRef) : void>
+}

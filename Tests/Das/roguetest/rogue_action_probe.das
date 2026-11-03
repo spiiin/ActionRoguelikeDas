@@ -8,7 +8,7 @@ require rogue_attribute_component public
 // Opaque handles are weak. This observer must never be an owning UPROPERTY.
 var watched : UObjectHandle
 
-[ue_class(module_id="roguetest", Blueprintable)]
+[ue_class(module_id="roguetest", type_folder="/Game/DasRogue/Types", Blueprintable)]
 class RogueActionProbe : Actor {
 
     def BeginPlay() : void { ue_self_actor().SetActorTickEnabled(false) }
@@ -16,8 +16,8 @@ class RogueActionProbe : Actor {
     // Change live state through runtime property access, without editor reconstruction.
     [ue_function(BlueprintCallable)]
     def ConfigureHealth(attributes : RogueAttributeComponentRef; maximum : float) : void {
-        attributes.HealthMax = maximum
-        attributes.Health = maximum
+        attributes.ModifyAttribute(ue_tag("Attribute.HealthMax"), maximum, RogueAttributeModifyType.OverrideBase, default<ActorRef>)
+        attributes.ModifyAttribute(ue_tag("Attribute.Health"), maximum, RogueAttributeModifyType.OverrideBase, default<ActorRef>)
     }
 
     [ue_function(BlueprintCallable)]
@@ -50,4 +50,16 @@ class RogueActionProbe : Actor {
         return ue_actor_spawn(type<ActorRef>, kind,
             ue_transform(position, rotation, UE_VECTOR_ONE), default<ActorRef>, "AlwaysSpawn")
     }
+
+    [ue_function(BlueprintCallable)]
+    def ConfigureAimBlocker(actor : ActorRef; projectile : bool; visibility : bool) : void {
+        let mesh = ue_component_find(type<StaticMeshComponentRef>, actor)
+        mesh.SetCollisionResponseToAllChannels(ECollisionResponse.ECR_Ignore)
+        mesh.SetCollisionEnabled(ECollisionEnabled.QueryOnly)
+        mesh.SetCollisionResponseToChannel(ECollisionChannel.ECC_GameTraceChannel2,
+            projectile ? ECollisionResponse.ECR_Block : ECollisionResponse.ECR_Ignore)
+        mesh.SetCollisionResponseToChannel(ECollisionChannel.ECC_Visibility,
+            visibility ? ECollisionResponse.ECR_Block : ECollisionResponse.ECR_Ignore)
+    }
+
 }

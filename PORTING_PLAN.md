@@ -234,8 +234,8 @@ ChestTest сохраняет прежний боевой сценарий. `rogu
 RoguePickupActor и RogueHealthPickup реализованы на daScript. По умолчанию
 сохранён overlap-подбор с одноразовым удалением из исходной версии 992f860.
 RogueHealthPickupDemo включает E и пятисекундное повторное появление на ChestTest.
-Применение здоровья пока адаптировано к текущему RogueAttributeComponent,
-а не к ещё не перенесённой полной системе AttributeSet.
+Лечение проходит через RogueAttributeComponent в общий AttributeSet; прежнее
+событие OnHealthChanged сохраняет поведение предметов и их обработчиков.
 
 Available резервируется до применения здоровья и доставки событий; повторный
 вход не вызывает второе лечение. Использованный предмет скрыт и не участвует
@@ -263,6 +263,34 @@ declarations only; those systems remain future stages.
 за препятствием сохранена; её sweep использует тот же канал. Смена default дальности
 проходит через Reimport с preserve_overrides. Проверено 17 групп в реальном PIE
 на изолированной копии без незавершённых монетных изменений; подробности в VALIDATION.md.
-Следующий пункт сверки — полноценный AttributeSet и получение Rage от урона.
+AttributeSet и получение Rage от урона реализованы и проверены ниже.
 
 Acceptance: `15` real PIE groups PASS, including an exact balance above 2^53, overflow rejection, native damage, GC and EndPIE cleanup. See VALIDATION.md.
+
+
+## AttributeSet и Rage — проверено в PIE
+
+На daScript перенесены RogueAttributeSet, Health/Pawn/Player/Monster-наследники и
+RogueAttributeModifyType (Base, Modifier, OverrideBase). Значение равно Base + Modifier;
+скорость равна MoveSpeed × MoveSpeedMultiplier. Health.Base ограничивается HealthMax,
+как в оригинале 992f860. Понижение максимума дополнительно уведомляет наблюдателей
+здоровья; отдельное событие максимума обновляет UI даже без изменения текущего HP.
+
+Общий ScriptObject удерживается отражёнными ссылками компонентов здоровья и действий.
+BaseValues/Modifiers — сериализуемые карты; RogueAttribute — обычный снимок значения для
+Option-запросов. Прежние Health/HealthMax, Resources и параметры скорости служат видами
+для просмотра. Runtime-изменения выполняются через ModifyAttribute/ApplyHealthChange.
+Смена Player/Monster-набора сохраняет общие атрибуты и удаляет несовместимые, включая Rage.
+
+Нативное событие урона передаётся в daScript: игрок получает Rage = входящий урон × 0.75,
+включая overkill до ограничения HP. Лечение не даёт Rage; у Monster-набора его нет.
+Coins остаются отдельным int64. Существующая настройка персонажа WalkSpeed=450 сохранена;
+сам PawnAttributeSet имеет исходный default 550, Monster — 450. Stun AI отключает режим
+движения, поэтому пересчёт атрибутов не разрешает движение до окончания эффекта.
+
+rogue-attributes-v16-20261103: 12 групп реального PIE PASS, включая значения и события,
+Rage/UI, спринт, повторный вход, смену набора, удержание нового и сборку старого объекта.
+GenericParents PASS: аддитивные callback/метаданные при независимых потребителях,
+отказ при удалении callback, контракт наследника без собственных методов после GC
+и повторного импорта. Исправления находятся в DasForUE2-main; packaged-сборка этого
+этапа отдельно не проверялась. Регрессии соседних систем записываются в VALIDATION.md.

@@ -32,7 +32,7 @@ def phase(name,now):s['phase']=name;s['at']=now
 def finish(error=None):
     s['done']=True
     unreal.unregister_slate_post_tick_callback(s['handle'])
-    if s.get('wall') and unreal.is_valid(s['wall']):s['wall'].destroy_actor()
+    if s.get('wall') and unreal.SystemLibrary.is_valid(s['wall']):s['wall'].destroy_actor()
     unreal.SystemLibrary.execute_console_command(w,'t.IdleWhenNotForeground '+str(old_idle))
     result={'passed':error is None,'error':error,'checks':s['checks'],'elapsed_seconds':time.perf_counter()-s['start']}
     receipt.parent.mkdir(parents=True,exist_ok=True)
@@ -50,6 +50,10 @@ def tick(delta):
             s['camera']=camera.get_world_location();s['pawn']=p.get_actor_location()
             inject('IA_Fire');phase('target_hit',now);return
         if s['phase']=='target_hit':
+            mesh=p.get_editor_property('mesh')
+            socket=attack.get_editor_property('MuzzleSocketName')
+            if attack.get_editor_property('ProjectilesFired')>s['shots'] and 'socket_at_shot' not in s:
+                if mesh.does_socket_exist(socket):s['socket_at_shot']=mesh.get_socket_location(socket)
             hp=target.get_editor_property('Attributes').get_editor_property('Health')
             if hp==100:
                 assert age<5,'Shot did not reach camera target'
@@ -57,12 +61,18 @@ def tick(delta):
             assert hp==75
             assert attack.get_editor_property('ProjectilesFired')==s['shots']+1
             muzzle=attack.get_editor_property('LastMuzzleLocation')
-            assert (muzzle-s['pawn']).length()<100,'Muzzle is not anchored to pawn'
+            if 'socket_at_shot' in s:
+                error=(muzzle-s['socket_at_shot']).length()
+                assert error<10,'Muzzle differs from the animated socket at the shot: '+str(error)
+            else:
+                assert (muzzle-s['pawn']).length()<100,'Fallback muzzle is not anchored to pawn'
             assert (muzzle-s['camera']).length()>200,'Shot still originates at camera'
             assert attributes.get_editor_property('Health')==100,'Self hit'
             s['checks'].append({'camera_target_hit':hp,'muzzle_to_pawn':(muzzle-s['pawn']).length(),'muzzle_to_camera':(muzzle-s['camera']).length(),'self_ignored':True})
             movement.stop_movement_immediately()
             p.set_actor_location(unreal.Vector(350,-400,73.15),False,True)
+            # Point the animated muzzle through the wall for the cover test.
+            p.set_actor_rotation(unreal.Rotator(),False)
             target.set_actor_location(unreal.Vector(550,-400,113),False,True)
             pc.set_control_rotation(unreal.Rotator(pitch=0,yaw=0,roll=0))
             s['wall']=spawn(unreal.StaticMeshActor,unreal.Vector(390,-400,113),unreal.Rotator())
@@ -133,3 +143,9 @@ def tick(delta):
     except Exception:finish(traceback.format_exc())
 s['handle']=unreal.register_slate_post_tick_callback(tick)
 print('Character combat PIE checks scheduled')
+
+
+def teardown():
+    actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+    for actor in list(actors.get_all_level_actors()):
+        if actor.get_class().get_name()=='BP_CombatProbe_C':actors.destroy_actor(actor)

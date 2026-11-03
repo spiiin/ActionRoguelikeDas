@@ -74,6 +74,12 @@
 			"reference": "RogueAttributeComponentRef"
 		},
 		{
+			"id": "rogue.RogueAttributeSet",
+			"name": "RogueAttributeSet",
+			"script": "rogue/rogue_attribute_set.das",
+			"reference": "RogueAttributeSetRef"
+		},
+		{
 			"id": "rogue.RogueCharacter",
 			"name": "RogueCharacter",
 			"script": "rogue/rogue_character.das",
@@ -84,6 +90,12 @@
 			"name": "RogueCoinPickupSubsystem",
 			"script": "rogue/rogue_coin_pickup_subsystem.das",
 			"reference": "RogueCoinPickupSubsystemRef"
+		},
+		{
+			"id": "rogue.RogueHealthAttributeSet",
+			"name": "RogueHealthAttributeSet",
+			"script": "rogue/rogue_attribute_set.das",
+			"reference": "RogueHealthAttributeSetRef"
 		},
 		{
 			"id": "rogue.RogueHealthPickup",
@@ -110,6 +122,12 @@
 			"reference": "RogueMagicProjectileRef"
 		},
 		{
+			"id": "rogue.RogueMonsterAttributeSet",
+			"name": "RogueMonsterAttributeSet",
+			"script": "rogue/rogue_attribute_set.das",
+			"reference": "RogueMonsterAttributeSetRef"
+		},
+		{
 			"id": "rogue.RogueMonsterData",
 			"name": "RogueMonsterData",
 			"script": "rogue/rogue_monster_data.das",
@@ -128,10 +146,22 @@
 			"reference": "RoguePatrolPointRef"
 		},
 		{
+			"id": "rogue.RoguePawnAttributeSet",
+			"name": "RoguePawnAttributeSet",
+			"script": "rogue/rogue_attribute_set.das",
+			"reference": "RoguePawnAttributeSetRef"
+		},
+		{
 			"id": "rogue.RoguePickupActor",
 			"name": "RoguePickupActor",
 			"script": "rogue/rogue_pickup_actor.das",
 			"reference": "RoguePickupActorRef"
+		},
+		{
+			"id": "rogue.RoguePlayerAttributeSet",
+			"name": "RoguePlayerAttributeSet",
+			"script": "rogue/rogue_attribute_set.das",
+			"reference": "RoguePlayerAttributeSetRef"
 		},
 		{
 			"id": "rogue.RoguePlayerController",
@@ -236,6 +266,12 @@
 			"reference": "RogueAIVisualTestCharacterRef"
 		},
 		{
+			"id": "roguetest.RogueAttributeProbe",
+			"name": "RogueAttributeProbe",
+			"script": "roguetest/rogue_attribute_probe.das",
+			"reference": "RogueAttributeProbeRef"
+		},
+		{
 			"id": "roguetest.RogueCoinProbe",
 			"name": "RogueCoinProbe",
 			"script": "roguetest/rogue_coin_probe.das",
@@ -299,6 +335,17 @@
 					"kind": "interface",
 					"id": "rogue.RogueActionHost",
 					"name": "RogueActionHost"
+				}
+			]
+		},
+		{
+			"module": "rogue_attribute_types",
+			"script": "rogue/rogue_attribute_types.das",
+			"types": [
+				{
+					"kind": "enum",
+					"id": "rogue.RogueAttributeModifyType",
+					"name": "RogueAttributeModifyType"
 				}
 			]
 		},

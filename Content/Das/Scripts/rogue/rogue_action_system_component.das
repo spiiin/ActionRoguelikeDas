@@ -10,7 +10,7 @@ require daslib/linq_boost
 
 let ROGUE_MAX_COIN_BALANCE : int64 = 9223372036854775807l
 
-[ue_class(module_id="rogue", Blueprintable),
+[ue_class(module_id="rogue", type_folder="/Game/DasRogue/Types", Blueprintable),
  ue_implements(interface="/Game/DasRogue/Types/RogueActionHost.RogueActionHost_C")]
 class RogueActionSystemComponent : ActorComponent {
 
@@ -23,14 +23,18 @@ class RogueActionSystemComponent : ActorComponent {
         // Reflected strong ownership: Outer and standalone script handles do not retain actions.
         var Actions : array<RogueActionRef>
         var ActiveGameplayTags : GameplayTagContainer
+        // Live inspection views; AttributeSet is authoritative after initialization.
         var Resources : table<string; float>
         var MoveSpeedMultiplier : float = 1.0f
         var Enabled : bool = true
+        var AttributeSet : RogueAttributeSetRef
+        var AttributeBridge : RogueAttributeComponentRef
         // Currency is integral; generic combat attributes remain floating point.
         var Coins : int64 = 0l
     }
 
     events = ue_properties(BlueprintAssignable) {
+        var OnAttributeChanged : RogueAttributeChanged
         var OnCoinsChanged : RogueCoinsChanged
         var OnActionAdded : RogueActionChanged
         var OnActionRemoved : RogueActionChanged
@@ -39,7 +43,6 @@ class RogueActionSystemComponent : ActorComponent {
 
     def BeginPlay() : void {
         self.Enabled = true
-        self.Resources["Attribute.Rage"] = 0.0f
         self.Coins = 0l
         for (kind in self.DefaultActions) {
             if (ue_class_valid(kind)) {
@@ -163,50 +166,89 @@ class RogueActionSystemComponent : ActorComponent {
         return true
     }
 
-    [ue_function(BlueprintCallable)]
-    def GetAttributeValue(tag : GameplayTag) : float {
-        let name = ue_tag_name(tag)
-        match (name) {
-            if ("Attribute.MoveSpeed") { return self.BaseMoveSpeed }
-            if ("Attribute.MoveSpeedMultiplier") { return self.MoveSpeedMultiplier }
-            if ("Attribute.Health" || "Attribute.HealthMax") {
-                let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
-                return name == "Attribute.Health" ? attributes.Health : attributes.HealthMax
-            }
+    def FindAttributeBridge() : RogueAttributeComponentRef {
+        if (!ue_is_valid(self.AttributeBridge)) {
+            self.AttributeBridge = ue_component_find(type<RogueAttributeComponentRef>, ue_self_actor())
         }
-        return key_exists(self.Resources, name) ? self.Resources[name] : 0.0f
+        return self.AttributeBridge
+    }
+
+    def AttachAttributeSet(attributes : RogueAttributeSetRef) : void {
+        if (ue_same_object(self.AttributeSet, attributes)) { return }
+        if (ue_is_valid(self.AttributeSet)) { self.AttributeSet.OnAttributeChanged -= self.HandleAttributeChanged }
+        self.AttributeSet = attributes
+        self.AttributeSet.OnAttributeChanged += self.HandleAttributeChanged
+        self.RefreshAttributeViews()
     }
 
     [ue_function(BlueprintCallable)]
-    def ApplyAttributeChange(tag : GameplayTag; delta : float) : void {
-        let name = ue_tag_name(tag)
-        match (name) {
-            if ("Attribute.MoveSpeed") {
-                self.BaseMoveSpeed += delta
-                self.ApplyMoveSpeed()
-            }
-            if ("Attribute.MoveSpeedMultiplier") {
-                self.MoveSpeedMultiplier += delta
-                self.ApplyMoveSpeed()
-            }
-            if ("Attribute.Health") {
-                let attributes = ue_component_get(type<RogueAttributeComponentRef>, ue_self_actor(), "Attributes")
-                attributes.ApplyHealthChange(ue_self_actor(), delta)
-            }
-            if (_) { self.Resources[name] = self.GetAttributeValue(tag) + delta }
+    def ConfigureAttributeSet(kind : ObjectClass) : bool {
+        if (!ue_class_valid(kind)) { return false }
+        let bridge = self.FindAttributeBridge()
+        if (ue_is_valid(bridge)) {
+            if (!bridge.ConfigureAttributeSet(kind)) { return false }
+            self.AttachAttributeSet(bridge.GetAttributeSet())
+        } else {
+            let attributes = ue_object_new(type<RogueAttributeSetRef>, kind, ue_ref(type<ObjectRef>, ue_self_object()))
+            self.AttachAttributeSet(attributes)
+            attributes.InitializeAttributes()
         }
+        return true
+    }
+
+    [ue_function(BlueprintCallable)]
+    def GetAttributeSet() : RogueAttributeSetRef {
+        let bridge = self.FindAttributeBridge()
+        if (ue_is_valid(bridge) && ue_is_valid(bridge.AttributeSet) && !ue_same_object(self.AttributeSet, bridge.AttributeSet)) {
+            self.AttachAttributeSet(bridge.AttributeSet)
+        }
+        if (!ue_is_valid(self.AttributeSet)) { self.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RoguePawnAttributeSet.BP_RoguePawnAttributeSet_C")) }
+        return self.AttributeSet
+    }
+
+    def RefreshAttributeViews() : void {
+        let attributes = self.AttributeSet
+        if (attributes.HasAttribute(ue_tag("Attribute.MoveSpeed"))) {
+            self.BaseMoveSpeed = attributes.GetBaseValue(ue_tag("Attribute.MoveSpeed"))
+            self.MoveSpeedMultiplier = attributes.GetValue(ue_tag("Attribute.MoveSpeedMultiplier"))
+        }
+        var resources : table<string; float>
+        var bases := attributes.BaseValues
+        for (name in keys(bases)) { resources[name] = attributes.GetValue(ue_tag(name)) }
+        self.Resources := resources
+    }
+
+    def HandleAttributeChanged(tag : GameplayTag; value : float; oldValue : float; instigator : ActorRef) : void {
+        self.RefreshAttributeViews()
+        self.OnAttributeChanged.Broadcast(tag, value, oldValue, instigator)
+    }
+
+    [ue_function(BlueprintCallable)]
+    def GetAttributeValue(tag : GameplayTag) : float { return self.GetAttributeSet().GetValue(tag) }
+
+    [ue_function(BlueprintCallable)]
+    def ModifyAttribute(tag : GameplayTag; amount : float; kind : RogueAttributeModifyType) : bool {
+        let bridge = self.FindAttributeBridge()
+        self.GetAttributeSet()
+        var changed = false
+        if (ue_is_valid(bridge)) { changed = bridge.ModifyAttribute(tag, amount, kind, ue_self_actor()) }
+        else { changed = self.AttributeSet.ModifyAttribute(tag, amount, kind, ue_self_actor()) }
+        self.RefreshAttributeViews()
+        return changed
+    }
+
+    // Actions consume/refund modifiers; health damage and pickups explicitly modify Base.
+    [ue_function(BlueprintCallable)]
+    def ApplyAttributeChange(tag : GameplayTag; delta : float) : void {
+        self.ModifyAttribute(tag, delta, RogueAttributeModifyType.Modifier)
     }
 
     [ue_function(BlueprintCallable)]
     def SetBaseMoveSpeed(value : float) : void {
-        self.BaseMoveSpeed = value
-        self.ApplyMoveSpeed()
+        self.ModifyAttribute(ue_tag("Attribute.MoveSpeed"), value, RogueAttributeModifyType.OverrideBase)
     }
 
-    def ApplyMoveSpeed() : void {
-        let owner = ue_ref(type<CharacterRef>, ue_component_owner(ue_self_object()))
-        owner.CharacterMovement.MaxWalkSpeed = max(0.0f, self.BaseMoveSpeed * self.MoveSpeedMultiplier)
-    }
+    def ApplyMoveSpeed() : void { self.GetAttributeSet().Reconcile() }
 
     [ue_function(BlueprintCallable)]
     def Shutdown() : void {

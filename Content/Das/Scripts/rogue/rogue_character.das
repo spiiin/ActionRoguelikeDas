@@ -84,6 +84,7 @@ class RogueCharacter : Character {
     }
 
     def BeginPlay() : void {
+        self.ActionSystem.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RoguePlayerAttributeSet.BP_RoguePlayerAttributeSet_C"))
         if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
             rogue_apply_mesh(self.Mesh, self.Presentation)
@@ -194,10 +195,16 @@ class RogueCharacter : Character {
 
     def BindEvents() : void {
         self.Attributes.OnHealthChanged += self.HandleHealthChanged
+        self.ActionSystem.OnAttributeChanged += self.HandleAttributeChanged
         self.ActionSystem.OnCoinsChanged += self.HandleCoinsChanged
     }
 
     def HandleCoinsChanged(balance : int64) : void { self.RefreshHealth() }
+
+    def HandleAttributeChanged(tag : GameplayTag; value : float; oldValue : float; instigator : ActorRef) : void {
+        let name = ue_tag_name(tag)
+        if (name == "Attribute.Rage" || name == "Attribute.HealthMax") { self.RefreshHealth() }
+    }
 
     def HandleHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
         self.OnHealthChanged(instigator, health, delta)
@@ -232,7 +239,8 @@ class RogueCharacter : Character {
         if (self.Dead) { self.HealthLabel.K2_SetText(ue_text_invariant("DEAD - restart Play")) }
         else {
             let coins = self.ActionSystem.Coins
-            self.HealthLabel.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)} | Coins: {coins}"))
+            let rage = self.ActionSystem.GetAttributeValue(ue_tag("Attribute.Rage"))
+            self.HealthLabel.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)} | Rage: {rage} | Coins: {coins}"))
         }
     }
 

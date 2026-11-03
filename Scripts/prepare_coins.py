@@ -1,5 +1,7 @@
 """Import batched coin/loot assets. All runtime policy remains in daScript."""
 import unreal
+from pathlib import Path
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_attribute_sets.py')))
 
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 for source,path,identity in [

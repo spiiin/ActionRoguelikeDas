@@ -1,5 +1,6 @@
 import unreal
 from pathlib import Path
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_attribute_sets.py')))
 ROOT=Path(r"C:/src/ActionRoguelikeDas")
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 import unreal

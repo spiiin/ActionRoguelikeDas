@@ -1,6 +1,7 @@
 """Idempotent editor setup. Runtime behavior is entirely in rogue_character.das."""
 import unreal
 from pathlib import Path
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_attribute_sets.py')))
 
 tools=unreal.AssetToolsHelpers.get_asset_tools()
 def asset(name,cls,factory):
@@ -84,6 +85,9 @@ for command in [
             if target and list(target.get_editor_property('DefaultActions'))==[legacy_sprint]:
                 target.modify(True)
                 target.set_editor_property('DefaultActions',[])
+    # Merge the original 5000 cm aim default without replacing manual overrides.
+    if command.startswith('Das.DSL.Apply rogue_action_projectile_attack.das ') and unreal.load_asset('/Game/DasRogue/Actions/BP_RogueActionProjectileAttack'):
+        command='Das.DSL.Reimport /Game/DasRogue/Actions/BP_RogueActionProjectileAttack defaults=preserve_overrides'
     unreal.SystemLibrary.execute_console_command(world,command)
     if command.startswith('Das.DSL.Interfaces.Apply'):
         interface=unreal.load_asset('/Game/DasRogue/Types/RogueActionHost')

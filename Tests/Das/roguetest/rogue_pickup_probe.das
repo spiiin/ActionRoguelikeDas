@@ -3,7 +3,7 @@ module rogue_pickup_probe public
 require rogue_action_probe public
 require rogue_health_pickup public
 
-[ue_class(module_id="roguetest", Blueprintable)]
+[ue_class(module_id="roguetest", type_folder="/Game/DasRogue/Types", Blueprintable)]
 class RoguePickupProbe : RogueActionProbe {
     state = ue_properties(BlueprintReadWrite) {
         var WatchedPickup : RoguePickupActorRef
@@ -33,7 +33,7 @@ class RoguePickupProbe : RogueActionProbe {
     [ue_function(BlueprintCallable)]
     def SetHealth(target : ActorRef; health : float) : void {
         let attributes = ue_component_find(type<RogueAttributeComponentRef>, target)
-        attributes.Health = clamp(health, 0.0f, attributes.HealthMax)
+        attributes.ModifyAttribute(ue_tag("Attribute.Health"), health, RogueAttributeModifyType.OverrideBase, default<ActorRef>)
     }
 
     [ue_function(BlueprintCallable)]

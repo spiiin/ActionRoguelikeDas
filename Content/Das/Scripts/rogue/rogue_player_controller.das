@@ -50,7 +50,7 @@ class RoguePlayerController : PlayerController {
         self.InputSetups += 1
     }
 
-    [ue_input(action="Input_Fire", Started)]
+    [ue_input(action="Input_Fire", Triggered)]
     def OnFire(value : bool) : void {
         if (!value) { return }
         let pawn = ue_ref(type<PlayerControllerRef>, ue_self_object()).K2_GetPawn()

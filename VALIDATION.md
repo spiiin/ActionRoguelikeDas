@@ -823,3 +823,32 @@ rejection. The PIE wallet grants 9007199254740993 exactly and refreshes HUD via
 an int64 multicast. Sound APIs and lifetime are checked with -NoSound; audible
 playback is not an acceptance claim. DeveloperSettings async asset loading and
 the remaining MonsterData director/UI features are future stages.
+
+
+### AttributeSet / damage Rage: PASS (2026-11-03)
+
+Main working tree, UE 5.8.3, shared queue. Job rogue-attributes-v16-20261103:
+rogue-attributes PASS, 12 real PIE groups; generic-parents PASS. Regression job
+rogue-attributes-regressions-v1-20261103: actions 10, effects 6, overwhelm 7, ai 7, pickup 8, coins 15 groups PASS.
+The harness also requires successful editor startup compilation, checks script
+and engine errors, ends PIE, saves preparation assets and closes the editor.
+
+The attribute suite checks Base/Modifier/OverrideBase, finite/no-op/unknown-tag
+handling, movement and sprint composition, health clamps and max-only UI updates,
+native damage (75% Rage), healing, overkill, event source and reentrant observers.
+Player and monster sets are distinct. Shared per-owner storage survives GC;
+replacement copies common attributes and releases the old set. The AI regression
+also changes movement attributes during stun and checks that movement stays disabled.
+
+GenericParents covers adding a callback with independent consumers, refusal and
+unchanged contract on callback removal, and a ScriptObject child without own methods:
+its own contract survives GC and reimport without overwriting the parent's identity.
+The cross-module authored-reference setter collision is exercised by importing the
+two components that both strongly own RogueAttributeSetRef.
+
+Combined receipts and source hashes: Saved/Tests/rogue_attribute_stage_validation.json.
+Gameplay is entirely daScript. Wrapper changes concern additive migration, generated
+helper identity and the CDO's strong reference to its cooked ScriptObject contract.
+Existing character WalkSpeed=450 is retained; the base Pawn set default is 550,
+Monster 450. HealthMax clamps additionally notify Health observers. Coins remain int64.
+Packaged execution for this stage was not run.

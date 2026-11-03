@@ -20,7 +20,7 @@ class RogueActionProjectileAttack : RogueAction {
         // Fallback for characters without a skeletal mesh/socket, including the cone test pawn.
         var MuzzleOffset : float = 75.0f
         var MuzzleHeight : float = 40.0f
-        var AimDistance : float = 10000.0f
+        var AimDistance : float = 5000.0f
         var MuzzleClearance : float = 16.0f
     }
 
@@ -95,7 +95,7 @@ class RogueActionProjectileAttack : RogueAction {
         let forward = ue_rotate_vector(rotation, UE_VECTOR_FORWARD)
         let finish = camera + forward * double(self.AimDistance)
         var ignored <- [ue_ref(type<ActorRef>, pawn.handle)]
-        let aim = ue_line_trace(camera, finish, ignored)
+        let aim = ue_line_trace(camera, finish, ignored, TraceChannel.GameTrace2)
         return aim.blocking_hit ? aim.impact_point : finish
     }
 
@@ -130,7 +130,7 @@ class RogueActionProjectileAttack : RogueAction {
         }
         var ignored <- [ue_ref(type<ActorRef>, pawn.handle)]
         // Clip the muzzle to the near side of cover, never spawn through it.
-        let cover = ue_sphere_trace(base, position, double(self.MuzzleClearance), ignored)
+        let cover = ue_sphere_trace(base, position, double(self.MuzzleClearance), ignored, TraceChannel.GameTrace2)
         if (cover.start_penetrating) {
             self.BlockedShots += 1
             return
