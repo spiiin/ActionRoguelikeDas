@@ -356,3 +356,22 @@ ue_unbind_inputs from the same annotations and releases its owned mapping contex
 The redundant FireBound flag was removed; InputSetups is a diagnostic counter,
 not a polling condition. Controller Tick was removed; character Tick only updates
 the health label. Configured assets/Enhanced Input are verified once per setup.
+
+
+## Navigation adapter and patrol (PIE accepted)
+
+The new ue_navigation module exposes a typed native NavigationPath reference
+and a small NavigationDistance result (status and native corridor length).
+The call frame and hidden WorldContext handling stay in the wrapper. Example
+gameplay uses vector operations and typed queries, without raw call frames.
+Existing lifecycle-managed ue_ai moves own their request/callback cancellation.
+No game-specific C++ was added. Runtime connection rebuilding replaces editor
+OnConstruction navigation queries for this slice.
+
+
+`rogue-patrol-v8-20261103` passed nine real PIE groups with a real Recast mesh,
+including obstacle following, stun/combat preemption, deleted-goal replanning and
+death cleanup. The full-path probe enters through an actor-owned DAS call so
+Unreal's PIE world switching runs before static NavigationSystem functions.
+Calling these directly on the class from a Python Slate callback can query the
+world-less NavigationSystem CDO and trigger an engine ensure.

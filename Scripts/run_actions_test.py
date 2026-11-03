@@ -40,34 +40,56 @@ def tick(delta):
                 detail=STATE.get('test',{}).get('s',{}).get('phase','unknown')
                 raise RuntimeError('Gameplay test timed out in '+str(detail))
         elif STATE['phase'] not in ('stop','cleanup'):
-            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') else 240
+            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') or globals().get('WAIT_NAVIGATION') else 240
             if time.perf_counter()-STATE['started'] > preparation_limit:
                 raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
-            if not world or world.get_name() != 'ChestTest':
+            allowed_maps = ('ChestTest','PatrolTest') if globals().get('WAIT_NAVIGATION') else ('ChestTest',)
+            if not world or world.get_name() not in allowed_maps:
                 return
             unreal.SystemLibrary.execute_console_command(world, 't.IdleWhenNotForeground 0')
             interface = unreal.load_class(None, '/Game/DasRogue/Types/RogueActionHost.RogueActionHost_C')
             assert interface, 'ActionHost interface must exist before typed reference compilation'
-            if globals().get('EXTERNAL_PRESENTATION'):
-                run_script('Scripts/prepare_external_assets.py')
-            run_script('Scripts/prepare_character.py')
-            if globals().get('OVERWHELM_TEST'):
-                run_script('Scripts/prepare_overwhelm.py')
-            run_script('Scripts/prepare_action_tests.py')
-            if globals().get('POINT_IMPACT_TEST'):
-                run_script('Scripts/prepare_point_impact.py')
-            if globals().get('ACTION_EFFECTS'):
-                run_script('Scripts/prepare_effect_tests.py')
-            if globals().get('EXTERNAL_PRESENTATION'):
-                run_script('Scripts/prepare_presentation_tests.py')
-            if globals().get('AI_TEST'):
-                run_script('Scripts/prepare_ai.py')
-            if globals().get('AI_PRESENTATION'):
-                run_script('Scripts/prepare_ai_presentation.py')
+            if globals().get('PREPARE_SCRIPT'):
+                run_script(PREPARE_SCRIPT)
+            else:
+                if globals().get('EXTERNAL_PRESENTATION'):
+                    run_script('Scripts/prepare_external_assets.py')
+                run_script('Scripts/prepare_character.py')
+                if globals().get('OVERWHELM_TEST'):
+                    run_script('Scripts/prepare_overwhelm.py')
+                run_script('Scripts/prepare_action_tests.py')
+                if globals().get('POINT_IMPACT_TEST'):
+                    run_script('Scripts/prepare_point_impact.py')
+                if globals().get('ACTION_EFFECTS'):
+                    run_script('Scripts/prepare_effect_tests.py')
+                if globals().get('EXTERNAL_PRESENTATION'):
+                    run_script('Scripts/prepare_presentation_tests.py')
+                if globals().get('AI_TEST'):
+                    run_script('Scripts/prepare_ai.py')
+                if globals().get('AI_PRESENTATION'):
+                    run_script('Scripts/prepare_ai_presentation.py')
             STATE['phase'] = 'wait_startup'
             STATE['warm_ticks'] = 0
+            return
+        if STATE['phase'] == 'wait_navigation':
+            world=editor.get_editor_world()
+            assert world and world.get_name()=='PatrolTest'
+            STATE.setdefault('nav_started',time.perf_counter())
+            nav_age=time.perf_counter()-STATE['nav_started']
+            if nav_age>1.0 and not STATE.get('nav_rebuild_requested'):
+                # Allow the new Recast actor to register before requesting the build.
+                unreal.SystemLibrary.execute_console_command(world,'RebuildNavigation')
+                STATE['nav_rebuild_requested']=True
+            assert nav_age<60,'Recast navigation did not produce a complete editor path'
+            path=unreal.NavigationSystemV1.find_path_to_location_synchronously(world,unreal.Vector(3200,0,10),unreal.Vector(4400,0,10))
+            if not path or not path.is_valid() or path.is_partial():
+                return
+            assert path.get_path_length()>1250,'NavMesh path did not detour around obstacle'
+            level.save_current_level()
+            STATE['navigation_ready']=True
+            STATE['phase']='wait_startup'
             return
         if STATE['phase'] == 'wait_startup':
             # Map-open startup work runs on a core ticker after the Python setup
@@ -84,6 +106,9 @@ def tick(delta):
                 return
             STATE['warm_ticks']+=1
             if STATE['warm_ticks']<4:return
+            if globals().get('WAIT_NAVIGATION') and not STATE.get('navigation_ready'):
+                STATE['phase']='wait_navigation'
+                return
             level.editor_request_begin_play()
             STATE['play_requested'] = time.perf_counter()
             STATE['phase']='wait_play'

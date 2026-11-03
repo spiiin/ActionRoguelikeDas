@@ -92,6 +92,18 @@
 			"reference": "RogueMagicProjectileRef"
 		},
 		{
+			"id": "rogue.RoguePatrolController",
+			"name": "RoguePatrolController",
+			"script": "rogue/rogue_patrol_controller.das",
+			"reference": "RoguePatrolControllerRef"
+		},
+		{
+			"id": "rogue.RoguePatrolPoint",
+			"name": "RoguePatrolPoint",
+			"script": "rogue/rogue_patrol_point.das",
+			"reference": "RoguePatrolPointRef"
+		},
+		{
 			"id": "rogue.RoguePlayerController",
 			"name": "RoguePlayerController",
 			"script": "rogue/rogue_player_controller.das",
@@ -192,6 +204,12 @@
 			"name": "RogueMissingPresentation",
 			"script": "roguetest/rogue_missing_presentation.das",
 			"reference": "RogueMissingPresentationRef"
+		},
+		{
+			"id": "roguetest.RoguePatrolProbe",
+			"name": "RoguePatrolProbe",
+			"script": "roguetest/rogue_patrol_probe.das",
+			"reference": "RoguePatrolProbeRef"
 		},
 		{
 			"id": "roguetest.RoguePeriodicEffect",

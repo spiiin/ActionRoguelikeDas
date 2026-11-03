@@ -317,8 +317,8 @@ AttributeComponent продолжает получать одно событие
 действия, stun и смерти находится в daScript. Native AIPerception создаёт события
 зрения/слуха; generic API DasForUE настраивает senses и предоставляет focus/LOS.
 Поведение соответствует первому боевому срезу RogueAICharacter/Controller и
-RogueBTTask_RangedAttack оригинала; Behavior Tree, патруль, лечение и добыча
-пока не перенесены.
+RogueBTTask_RangedAttack оригинала; Behavior Tree, лечение и добыча
+пока не перенесены. Патруль добавлен на отдельной карте ниже.
 
 `Scripts/prepare_ai.py` создаёт Blueprint-ассеты в `/Game/DasRogue/AI`, связывает
 AIControllerClass/AutoPossessAI и добавляет противника и открытый пол на ChestTest.
@@ -368,3 +368,26 @@ AI-инстигатор корректно проходит через point dam
 `(3000, 800)`. Миньон преследует игрока и готовит выстрел; попадание ЛКМ прерывает
 его подготовку. Проверка `rogue-ai-presentation` дополнительно проверяет изменение
 позы, сокет оружия, восстановление после stun и удержание позы смерти.
+
+
+## Патруль на NavMesh
+
+Откройте `Content/DasRogue/Maps/PatrolTest` и нажмите Play. В арене около
+`(3200, 0)` Minion ходит между четырьмя точками, обходит центральное препятствие,
+переключается на бой при обнаружении игрока и возвращается к маршруту после
+потери цели. На этой карте используется `BP_RoguePatrolController`; ChestTest
+сохраняет прежний сценарий. Все решения выполняются в daScript.
+
+В Outliner точки названы `Patrol point A`–`D`; их `MaxPathLength` ограничивает
+длину native navigation corridor, а не расстояние по прямой. При нескольких
+выходах предыдущая точка исключается из выбора. В Class Defaults контроллера
+группа Patrol задаёт `PatrolWait`, `PatrolRetryDelay`, `PatrolAcceptanceRadius`
+и `PatrolEnabled`. Граф строится после готовности NavMesh; после изменения
+набора точек в игре можно вызвать `RefreshPatrolGraph`.
+
+Для повторной подготовки карты выполните в редакторе Python:
+`py __import__('runpy').run_path(r'C:/src/ActionRoguelikeDas/Scripts/prepare_patrol.py')`.
+Этот скрипт ожидает уже подготовленные общие игровые ассеты. Он настраивает карту,
+а игровая логика находится в `rogue_patrol_point.das` и `rogue_patrol_controller.das`.
+Проверка `rogue-patrol` прошла девять групп в реальном PIE; результат записывается
+в `Saved/Tests/rogue_patrol_pie.json`.

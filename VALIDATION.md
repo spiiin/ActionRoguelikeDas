@@ -632,6 +632,27 @@ loading; test roots are scoped to ChestTest. This closes a missing-prepared-prog
 failure for a dynamically spawned test probe. The passing run logs no such error.
 Parallel source refactors made after these receipts are outside this slice.
 
+
+## Navigation and patrol: isolated checks (2026-11-03)
+
+- `rogue-navigation-v7-20261103`: native binding generation and
+  `navigation-queries` PASS on a real transient Recast mesh. Covers generated and
+  compact typed paths, an obstacle detour, native corridor length, partial paths
+  to a disconnected island and failed projection outside the navigation bounds.
+- `TestNativeGameplayDiscovery.py`: 21 tests PASS, including literal
+  `UENativeObjectRef` aliases and rejection of malformed declarations.
+- `rogue-patrol-point-v2-20261103`: PatrolPoint source compiles, but the optional
+  `DasPreparePrograms` disk AST export fails with `daScript cannot serialize this
+  program`. Prepared-artifact reload has therefore **not** passed. A separate
+  source-compilation probe avoids conflating this with runtime navigation.
+- The full `rogue-patrol` PIE scenario remains pending acceptance. Do not treat
+  the isolated navigation checks as proof that the gameplay controller works.
+
+- `rogue-patrol-point-v4-20261103`: isolated source compilation and authored
+  self-reference probe PASS in a fresh commandlet process. This verifies the
+  PatrolPoint source independently of combat; it does not resolve disk AST export.
+
+
 ## 2026-11-03: Result propagation and event-driven input
 
 Validated in the actual UE 5.8 editor/standalone PIE through the shared build agent.
@@ -670,3 +691,51 @@ The known obsolete controller fields migrate in a removal-only archival step,
 then the final setup event/int counter schema is applied. Final source bytes are
 restored in finally; a Saved/Migrations backup recovers the source after a native
 editor crash. Current gameplay source contains only the new event-driven path.
+
+- `rogue-patrol-v1/v2-20261103`: preparation harness exposed unavailable
+  EditorAssetLibrary and early LevelEditorSubsystem lookup; changed to the asset
+  subsystem and the existing default-object fallback.
+- `rogue-patrol-v3-20261103`: PatrolTest and Recast bounds were created. The nav
+  readiness timer expired during startup compilation. The runner now waits for
+  successful startup compilation before timing navigation and can open an
+  existing PatrolTest directly.
+- `rogue-patrol-v4-20261103`: blocked before PIE by a concurrent change outside
+  this slice: rogue_action_effect_overwhelm.das:72, syntax error, unexpected &&.
+  That file was left untouched to avoid conflicting with the active refactor.
+  Full patrol movement/combat/stun/deleted-goal acceptance is still pending.
+
+
+### Patrol PIE resumed (2026-11-03)
+
+`rogue-patrol-v6-20261103` entered real PIE after explicitly reapplying all three
+pre-existing TargetDummy declarations. Four groups passed: full path and native
+corridor detour, symmetric connection budgeting, nearest/nonbacktracking point
+selection and isolated-point idle behavior. The route assertion then used an
+incorrect fixed 40 cm clearance for the default Character capsule (34 cm).
+The test now reads the actual scaled capsule radius and records minimum clearance.
+A direct Python NavigationSystem class call also triggered an editor CDO-world
+ensure; the full-path query now enters through the PIE actor's daScript probe.
+The acceptance harness rejects engine ensures as well as script runtime errors.
+Final patrol acceptance is pending the corrected full run.
+
+
+### Patrol PIE acceptance: PASS (2026-11-03)
+
+`rogue-patrol-v8-20261103`, suite `rogue-patrol`: build PASS, real PIE PASS,
+9 check groups. Receipt: `Saved/Tests/rogue_patrol_pie.json`.
+
+- Full path and native corridor length detour; symmetric, duplicate-free graph
+  budget; nearest initial point and no immediate backtracking; isolated-node idle.
+- Character follows Recast around the obstacle and arrives. Actual capsule radius
+  34 cm; minimum sampled clearance 37.469 cm, with collision assertions each tick.
+- Stun cancels the active move and resumes the same destination. Perception/combat
+  preempts patrol; expiration of target memory resumes it.
+- Deleting an active goal filters stale references and starts a new valid route.
+- Death destroys the controller and its owned moves; the dead pawn expires.
+
+All 92 script modules compiled without errors. No script runtime errors,
+Blueprint runtime errors, engine ensures or fatal errors were found in this run.
+The editor exited after PIE cleanup. The optional disk AST serialization issue
+recorded above remains separate from this successful source-backed PIE acceptance.
+The final harness also uses the correct AISense_Hearing noise API and explicitly
+checks inherited UsePathfinding for combat movement.
