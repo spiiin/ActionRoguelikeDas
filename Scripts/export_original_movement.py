@@ -47,10 +47,43 @@ def character(path):
         except Exception as error: data[name] = {'error':str(error)}
     return data
 
+
+def combat_reference():
+    paths = {
+        'enemy':'/Game/ActionRoguelike/AI/MinionRangedBP.MinionRangedBP_C',
+        'projectile':'/Game/ActionRoguelike/Projectiles/BP_MagicProjectile.BP_MagicProjectile_C',
+        'controller':'/Game/ActionRoguelike/AI/MinionControllerBP.MinionControllerBP_C',
+    }
+    data={}
+    for name,path in paths.items():
+        kind=unreal.load_class(None,path)
+        assert kind,path
+        obj=unreal.get_default_object(kind)
+        data[name]={'class':path,'values':properties(obj,['AttackDamage','InitialLifeSpan'] if name=='projectile' else [])}
+        if name=='enemy':
+            data[name]['movement']=properties(obj.get_editor_property('character_movement'),['max_walk_speed'])
+            data[name]['mesh']=properties(obj.get_editor_property('mesh'),['overlay_material','overlay_material_max_draw_distance'])
+            mesh=obj.get_editor_property('mesh')
+            data[name]['mesh']['physics_asset']=mesh.get_skeletal_mesh_asset().get_editor_property('physics_asset').get_path_name() if mesh.get_skeletal_mesh_asset().get_editor_property('physics_asset') else None
+            data[name]['mesh']['skeletal_mesh']=mesh.get_skeletal_mesh_asset().get_path_name() if mesh.get_skeletal_mesh_asset() else None
+            attrs=obj.get_editor_property('ActionSystemComponent').get_editor_property('Attributes')
+            data[name]['attributes']={n:properties(attrs.get_editor_property(n),['Base']) for n in ['MoveSpeed','MoveSpeedMultiplier']}
+    tree=unreal.load_asset('/Game/ActionRoguelike/AI/MinionRangedBT')
+    assert tree
+    tasks=[]
+    task_kind=unreal.load_class(None,'/Script/ActionRoguelike.RogueBTTask_RangedAttack')
+    assert task_kind
+    for obj in unreal.ObjectIterator(task_kind):
+        if obj.get_path_name().startswith(tree.get_path_name()+':') and 'RangedAttack' in obj.get_class().get_name():
+            tasks.append(properties(obj,['MaxBulletSpread','ProjectileClass','MuzzleSocketName']))
+    assert tasks,'No ranged attack task found in the original BehaviorTree'
+    data['ranged_tasks']=tasks
+    return data
+
 try:
     payload = {'passed': True, 'project': unreal.Paths.project_dir(),
         'blueprint': character('/Game/ActionRoguelike/BP_PlayerCharacter.BP_PlayerCharacter_C'),
-        'native': character('/Script/ActionRoguelike.RoguePlayerCharacter')}
+        'native': character('/Script/ActionRoguelike.RoguePlayerCharacter'), 'combat':combat_reference()}
 except Exception:
     import traceback
     payload = {'passed':False,'error':traceback.format_exc()}

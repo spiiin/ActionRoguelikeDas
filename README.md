@@ -119,14 +119,14 @@ RoguePlayerCharacter. GameMode использует BP_RogueCharacter вмест
 W/S — вперёд/назад относительно yaw камеры, A/D — влево/вправо, мышь — обзор,
 Space — прыжок; отпускание Space вызывает StopJumping. E и ЛКМ остаются
 в daScript контроллере. Камера прикреплена к SpringEndpoint у SpringArm длиной
-350 см; персонаж поворачивается по направлению движения. Cone — временная
+175 см, высотой 80 см и плечевым смещением Y=80; корпус следует yaw камеры. Cone — временная
 геометрия из стандартных ресурсов движка, без collision; движение использует
-нативную капсулу Character. Mesh/анимации курса не импортировались.
+нативную капсулу Character. Локальные mesh/анимации подключаются через presentation profile.
 
-WalkSpeed=450, JumpVelocity=500, AirControl=0.2 редактируются в Class Defaults
+WalkSpeed=550, JumpVelocity=420, AirControl=0.05 редактируются в Class Defaults
 BP_RogueCharacter и применяются скриптом в BeginPlay. Состояние ControlsBound
 и счётчики событий доступны для диагностики. Подключены Attributes и первый
-срез смерти игрока; система способностей относится к следующим этапам. Снаряд
+срез смерти игрока и система действий. Снаряд
 запускается от персонажа, а камера выбирает точку прицеливания.
 
 Scripts/prepare_character.py создаёт IA_Move, IA_Look, IA_Jump и IMC_Character,
@@ -162,7 +162,7 @@ LastMuzzleLocation/LastAimPoint/BlockedShots находятся в экземп�
 отдельных нажатия приводят к смерти: Dead=true, DeathCount=1, остановка и
 DisableMovement, DisableInput персонажа и контроллера, блокировка move/look.
 Текст меняется на DEAD. Для повторной проверки остановить и заново запустить
-Play. Анимация смерти, ragdoll, respawn и возрождение пока не реализованы.
+Play. Локальный профиль игрока добавляет death montage; respawn ещё не перенесён.
 Из-за временной геометрии без SkeletalMesh капсула блокирует Projectile; свой
 снаряд продолжает игнорировать Instigator.
 
@@ -177,7 +177,7 @@ Play. Анимация смерти, ragdoll, respawn и возрождение 
 
 Первый срез системы действий перенесён на daScript: RogueAction,
 RogueActionSystemComponent и RogueActionSprint. Удерживайте Left Shift при
-движении: MaxWalkSpeed меняется с 450 на 720 (SpeedMultiplier=1.6). Отпускание
+движении: MaxWalkSpeed меняется с 550 на 880 (SpeedMultiplier=1.6). Отпускание
 Shift возвращает исходную скорость. StatusEffect.Stunned блокирует и отменяет
 Sprint; смерть останавливает действия и запрещает повторный запуск.
 
@@ -315,17 +315,17 @@ AttributeComponent продолжает получать одно событие
 Добавлены `rogue_ai_character.das`, `rogue_ai_controller.das` и
 `rogue_ai_projectile_attack.das`. Вся логика выбора цели, преследования, запроса
 действия, stun и смерти находится в daScript. Native AIPerception создаёт события
-зрения/слуха; generic API DasForUE настраивает senses и предоставляет focus/LOS.
+зрения, слуха и урона; generic API DasForUE настраивает senses и предоставляет focus/LOS.
 Поведение соответствует первому боевому срезу RogueAICharacter/Controller и
-RogueBTTask_RangedAttack оригинала; Behavior Tree, лечение и добыча
-пока не перенесены. Патруль добавлен на отдельной карте ниже.
+RogueBTTask_RangedAttack оригинала; сами BehaviorTree assets ещё не перенесены.
+Лечение, добыча и патруль описаны ниже.
 
 `Scripts/prepare_ai.py` создаёт Blueprint-ассеты в `/Game/DasRogue/AI`, связывает
 AIControllerClass/AutoPossessAI и добавляет противника и открытый пол на ChestTest.
 Эта Python-настройка работает только в редакторе; игровое поведение она не реализует.
 Противник стоит около `(3000, 800, 96)`, игрок начинает у сундука. После
-сборки/подготовки карты: Play, подойти к противнику, стрелять ЛКМ. Четыре обычных
-попадания по 25 урона убивают противника с базовыми 100 HP.
+сборки/подготовки карты: Play, подойти к противнику, стрелять ЛКМ. Два обычных
+попадания по 51 урона убивают противника с базовыми 100 HP.
 
 Настройки контроллера: SightRadius, LoseSightRadius, SightAngle, HearingRadius,
 TargetMemory, AttackRange, ThinkInterval. `UsePathfinding=false` использует
@@ -333,7 +333,8 @@ TargetMemory, AttackRange, ThinkInterval. `UsePathfinding=false` использ�
 NavMesh и `UsePathfinding=true`. Это ограничение первого среза.
 
 Игрок сохраняет прицеливание по камере. AI-способность переопределяет GetAimPoint
-и GetAimRotation для выбранного Actor; у снаряда общий ControllerRef, поэтому
+и GetAimRotation для выбранного Actor, затем добавляет разброс в GetProjectileRotation;
+у снаряда общий ControllerRef, поэтому
 AI-инстигатор корректно проходит через point damage.
 
 Регрессия `rogue-ai` использует реальный PIE: sight/hearing, движение, попадание
@@ -358,16 +359,16 @@ AI-инстигатор корректно проходит через point dam
 ## Внешний вид AI Minion
 
 Необязательный локальный профиль Paragon Minions добавляет модель, движение,
-подготовку атаки, реакцию на попадание, stun и смерть. Установка и генерация
+подготовку атаки и stun. Попадание включает общий overlay; смерть использует ragdoll. Установка и генерация
 описаны в [EXTERNAL_ASSETS.md](EXTERNAL_ASSETS.md#paragon-minion).
 В `BP_RogueAICharacter`, Class Defaults → AI, доступны `UseExternalPresentation`
 и `PresentationProfilePath`. Отсутствующий профиль сохраняет базовый конус.
 Публичные Blueprint не хранят жёстких ссылок на внешние ресурсы.
 
 Для ручной проверки откройте ChestTest, нажмите Play и подойдите к арене около
-`(3000, 800)`. Миньон преследует игрока и готовит выстрел; попадание ЛКМ прерывает
-его подготовку. Проверка `rogue-ai-presentation` дополнительно проверяет изменение
-позы, сокет оружия, восстановление после stun и удержание позы смерти.
+`(3000, 800)`. Миньон преследует игрока и готовит выстрел; попадание ЛКМ включает
+вспышку, сохраняя подготовку атаки. Проверка `rogue-ai-presentation` проверяет изменение
+позы, сокет оружия, восстановление после stun, кадр вспышки и ragdoll на 10 секунд.
 
 
 ## Патруль на NavMesh
@@ -476,3 +477,19 @@ test-suite rogue-attributes-local rogue-attributes repo=C:/src/DasForUE2-main
 Через общий агент: `test-suite rogue-movement-local rogue-movement repo=C:/src/DasForUE2-main`.
 Проверка читает оригинальный проект в C:/src/ActionRoguelike и затем проверяет
 движение, направление корпуса, скорость, торможение и спринт в реальном PIE.
+
+## Боевой паритет с оригиналом
+
+Основной magic projectile наносит 51 урона; игрок движется со скоростью 550,
+AI — 450. Свой снаряд и движение его владельца игнорируют друг друга.
+AI воспринимает Damage наряду со Sight/Hearing, исключая friendly damage stimuli.
+Разброс MaxBulletSpread=5 задаёт pitch [0,5] и yaw [-5,5] от фактической точки вылета.
+
+Игрок и AI используют RogueHitFlashComponent: CustomPrimitiveData[0] хранит время
+попадания, overlay отключается через секунду после последнего удара. Генератор
+Scripts/prepare_hit_flash.py создаёт наш материал M_HitFlash, без внешних ресурсов.
+Урон AI не отменяет готовящийся выстрел. После смерти Minion использует свой PhysicsAsset
+и Ragdoll на 10 секунд; для skeletal ragdoll нужны установленные локальные ресурсы.
+
+Suite: `test-suite combat-parity-local rogue-combat-parity repo=C:/src/DasForUE2-main`.
+Временное project-local отключение дискового кэша компиляции описано в MODULE_CACHE_REPRO.md.

@@ -10,7 +10,7 @@ class RogueMagicProjectile : RogueProjectile {
     // The hit implementation now includes point damage, noise, impulse and effects.
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Projectile") {
-        var AttackDamage : float = 25.0f
+        var AttackDamage : float = 51.0f
         var ImpulseIntensity : float = 200000.0f
         var NoiseLoudness : float = 1.0f
         var EffectOnHit : ObjectClass

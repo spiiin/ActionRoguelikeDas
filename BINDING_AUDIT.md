@@ -433,3 +433,18 @@ the corpse position. Visual/sound settings are authored subsystem properties;
 DeveloperSettings-based asynchronous asset loading is not part of this slice.
 The current currency wallet is an integer adaptation alongside the existing
 partial action/attribute system, rather than the full original AttributeSet.
+
+## Боевой паритет, 4 ноября 2026
+
+Добавлены общие runtime API: `ue_perception_configure_damage`,
+`ue_perception_report_damage`, `ue_controller_is_friendly`,
+`ue_pawn_move_ignore_actor` (Add/Remove). Native stimulus projection различает
+`AISense.Damage=4`, сохраняя прежние значения enum. Конфигурации чувств удерживаются
+native SensesConfig; Actor/Pawn handles проверяются на живой game world.
+
+Overlay/CustomPrimitiveData, Ragdoll, пауза анимации и математика разброса используют
+существующие typed/reflected bindings. Игровой код остаётся в daScript. Новых
+game-specific C++ классов нет. Чтение приватного CustomPrimitiveDataInternal в Python
+не требуется: запись идёт стандартным SetCustomPrimitiveDataFloat, а эффект проверяется
+по времени/таймеру и игровому кадру. Диагностика отдельного warm module-cache crash
+передана в MODULE_CACHE_REPRO.md; serializer в этой задаче не изменялся.

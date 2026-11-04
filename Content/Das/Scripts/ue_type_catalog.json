@@ -104,6 +104,12 @@
 			"reference": "RogueHealthPickupRef"
 		},
 		{
+			"id": "rogue.RogueHitFlashComponent",
+			"name": "RogueHitFlashComponent",
+			"script": "rogue/rogue_hit_flash_component.das",
+			"reference": "RogueHitFlashComponentRef"
+		},
+		{
 			"id": "rogue.RogueInteractionComponent",
 			"name": "RogueInteractionComponent",
 			"script": "rogue/rogue_interaction_component.das",

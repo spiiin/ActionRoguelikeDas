@@ -175,12 +175,12 @@ def tick(delta):
             phase('death');return
         if state=='death':
             if age<.25:return
-            assert enemy.get_editor_property('Dead') and not unreal.SystemLibrary.is_valid(controller)
-            s['checks'].append({'death_destroys_controller_and_owned_moves':True})
+            assert enemy.get_editor_property('Dead') and not controller.is_actor_tick_enabled()
+            s['checks'].append({'death_stops_controller_and_owned_moves':True})
             phase('cleanup');return
         if state=='cleanup':
             if unreal.SystemLibrary.is_valid(enemy):
-                assert age<3,'Dead minion did not expire';return
+                assert age<10.5,'Dead minion did not expire';return
             finish()
     except Exception:finish(traceback.format_exc())
     finally:s['busy']=False

@@ -61,6 +61,9 @@ def controller_details(actor):
 print('MINION_FIXTURE_ENEMY',controller_details(enemy))
 assert enemy.get_controller(),str(controller_details(enemy))
 mesh=enemy.get_editor_property('mesh');profile=enemy.get_editor_property('Presentation')
+flash_material=enemy.get_editor_property('HitFlash').get_editor_property('OverlayMaterial')
+assert mesh.get_overlay_material()==flash_material
+assert unreal.MaterialEditingLibrary.has_material_usage(flash_material,unreal.MaterialUsage.MATUSAGE_SKELETAL_MESH)
 assert enemy.get_editor_property('UsingExternalPresentation') and profile
 assert mesh.get_skeletal_mesh_asset()==profile.get_editor_property('CharacterMesh')
 anim=mesh.get_anim_instance()
@@ -150,15 +153,17 @@ def tick(delta):
             phase('hit');return
         if state=='hit':
             if age<.12:return
-            assert enemy.get_editor_property('HitReactions')==1 and active('HitReactMontage'),'Missing full-body hit reaction'
-            assert not attack.call_method('IsRunning'),'Hit left the pending attack active'
+            assert enemy.get_editor_property('HitReactions')==0 and not active('HitReactMontage'),'Damage introduced a non-course hit montage'
+            assert enemy.get_editor_property('HitFlash').get_editor_property('Visible')
+            assert attack.call_method('IsRunning'),'Damage cancelled the pending attack'
+            capture_frame('MinionHitOverlay')
             unreal.GameplayStatics.apply_damage(enemy,5.0,player,pawn,None)
             phase('hit_cancelled');return
         if state=='hit_cancelled':
             if age<.5:return
-            assert enemy.get_editor_property('HitReactions')==1,'Rapid hits restarted the reaction'
-            assert attack.get_editor_property('ProjectilesFired')==s['shots'],'Cancelled shot still fired'
-            s['checks'].append({'hit_reaction_cancels_windup_and_limits_restarts':True})
+            assert enemy.get_editor_property('HitReactions')==0,'Rapid hits started a reaction montage'
+            assert attack.get_editor_property('ProjectilesFired')==s['shots']+1,'Damage cancelled a pending shot'
+            s['checks'].append({'hit_overlay_preserves_windup':True})
             stun=unreal.load_class(None,'/Game/DasRogue/Actions/BP_RogueActionEffectStun.BP_RogueActionEffectStun_C')
             assert system.call_method('GrantAction',args=(stun,))
             phase('stun');return
@@ -179,21 +184,22 @@ def tick(delta):
             phase('death');return
         if state=='death':
             if age<.6:return
-            assert enemy.get_editor_property('Dead') and enemy.get_editor_property('DeathAnimations')==1
-            assert not system.get_editor_property('Enabled') and not unreal.SystemLibrary.is_valid(enemy.get_controller())
-            assert active('DeathMontage'),'Death pose blended back to idle'
+            assert enemy.get_editor_property('Dead') and enemy.get_editor_property('DeathAnimations')==0
+            assert not system.get_editor_property('Enabled') and not enemy.get_controller().is_actor_tick_enabled()
+            assert str(mesh.get_collision_profile_name())=='Ragdoll' and mesh.get_editor_property('pause_anims')
+            assert any(mesh.is_simulating_physics(mesh.get_bone_name(i)) for i in range(mesh.get_num_bones()))
             s['death_pose']=pose(bone)
             phase('hold')
             capture_frame('MinionDeath')
             return
         if state=='hold':
             if age<.3:return
-            assert (pose(bone)-s['death_pose']).length()<.1,'Death pose is not held'
-            s['checks'].append({'death_holds_pose_and_stops_combat':True})
+            assert unreal.SystemLibrary.is_valid(enemy) and enemy.get_life_span()>8
+            s['checks'].append({'death_ragdoll_persists_and_stops_combat':True})
             phase('cleanup');return
         if state=='cleanup':
             if unreal.SystemLibrary.is_valid(enemy):
-                assert age<3,'Dead actor did not expire';return
+                assert age<10.5,'Dead actor did not expire';return
             s['checks'].append({'death_lifespan_cleans_actor':True})
             finish()
     except Exception:finish(traceback.format_exc())

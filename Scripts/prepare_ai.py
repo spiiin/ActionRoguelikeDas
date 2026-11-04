@@ -1,6 +1,12 @@
 """Wire AI assets and the open test arena. All decisions/combat execute in DAS."""
 import unreal
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+registry=unreal.AssetRegistryHelpers.get_asset_registry()
+# Test-derived classes have their own authored parent copy; update each before its children.
+parents=[str(asset.package_name) for asset in registry.get_assets_by_path('/Game/DasRogue',recursive=True)
+    if str(asset.asset_name)=='BP_RogueAICharacter']
+for path in sorted(parents):
+    unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Reimport '+path)
 for command in [
     'Das.DSL.Interfaces.Apply rogue_projectile_impact_interface.das /Game/DasRogue/Types',
     'Das.DSL.Apply rogue_magic_projectile_demo.das /Game/DasRogue/BP_MagicProjectileDemo roguedemo.RogueMagicProjectileDemo',
@@ -8,6 +14,9 @@ for command in [
     'Das.DSL.Apply rogue_ai_controller.das /Game/DasRogue/AI/BP_RogueAIController rogue.RogueAIController',
     'Das.DSL.Apply rogue_ai_character.das /Game/DasRogue/AI/BP_RogueAICharacter rogue.RogueAICharacter',
 ]:
+    if command.startswith('Das.DSL.Apply '):
+        asset_path=command.split()[2]
+        if unreal.load_asset(asset_path):command='Das.DSL.Reimport '+asset_path
     unreal.SystemLibrary.execute_console_command(world,command)
 enemy_kind=unreal.load_class(None,'/Game/DasRogue/AI/BP_RogueAICharacter.BP_RogueAICharacter_C')
 controller_kind=unreal.load_class(None,'/Game/DasRogue/AI/BP_RogueAIController.BP_RogueAIController_C')

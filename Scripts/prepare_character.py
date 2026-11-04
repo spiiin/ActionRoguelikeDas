@@ -3,6 +3,8 @@ import unreal
 from pathlib import Path
 __import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_attribute_sets.py')))
 
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_hit_flash.py')))
+
 tools=unreal.AssetToolsHelpers.get_asset_tools()
 def asset(name,cls,factory):
     value=unreal.load_asset('/Game/DasRogue/Input/'+name)
@@ -61,6 +63,7 @@ if migration_backup.exists() and migration_source.read_text(encoding='utf-8-sig'
     migration_source.write_bytes(migration_backup.read_bytes())
     migration_backup.unlink()
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_projectile_defaults.py')))
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_presentation_profile.das /Game/DasRogue/Types/BP_RoguePresentationProfile rogue.RoguePresentationProfile')
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_attribute_component.das /Game/DasRogue/BP_RogueAttributeComponent rogue.RogueAttributeComponent')
 for command in [
@@ -87,7 +90,7 @@ for command in [
                 target.set_editor_property('DefaultActions',[])
     # Merge the original 5000 cm aim default without replacing manual overrides.
     if command.startswith('Das.DSL.Apply rogue_action_projectile_attack.das ') and unreal.load_asset('/Game/DasRogue/Actions/BP_RogueActionProjectileAttack'):
-        command='Das.DSL.Reimport /Game/DasRogue/Actions/BP_RogueActionProjectileAttack defaults=preserve_overrides'
+        command='Das.DSL.Reimport /Game/DasRogue/Actions/BP_RogueActionProjectileAttack'
     unreal.SystemLibrary.execute_console_command(world,command)
     if command.startswith('Das.DSL.Interfaces.Apply'):
         interface=unreal.load_asset('/Game/DasRogue/Types/RogueActionHost')

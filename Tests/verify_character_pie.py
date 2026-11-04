@@ -15,7 +15,7 @@ assert camera.get_attach_parent()==boom
 assert str(camera.get_attach_socket_name())=='SpringEndpoint'
 assert boom.get_editor_property('target_arm_length')==350.0
 assert boom.get_editor_property('use_pawn_control_rotation')
-assert movement.get_editor_property('max_walk_speed')==450.0
+assert movement.get_editor_property('max_walk_speed')==550.0
 entries=unreal.load_asset('/Game/DasRogue/Input/IMC_Character').get_editor_property('default_key_mappings').get_editor_property('mappings')
 mappings={str(e.get_editor_property('key').get_editor_property('key_name')):e for e in entries}
 subsystems=[s for s in unreal.ObjectIterator(unreal.EnhancedInputLocalPlayerSubsystem) if s.get_outer().get_class().get_name()=='LocalPlayer']
@@ -120,7 +120,7 @@ def tick(delta):
             inject_action('IA_Fire');phase('impact',now);return
         if s['phase']=='impact':
             hp=s['target'].get_editor_property('Attributes').get_editor_property('Health')
-            if hp==s['health']-25:
+            if hp==s['health']-51:
                 assert attack.get_editor_property('ProjectilesFired')==s['shots']+1
                 s['checks'].append({'fire':True,'target_health':hp})
                 finish();return

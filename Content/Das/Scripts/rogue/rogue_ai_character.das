@@ -1,11 +1,13 @@
 options gen2
 module rogue_ai_character public
 require rogue_attribute_component public
+require rogue_hit_flash_component public
 require rogue_action_system_component public
 require rogue_presentation public
 require rogue_action_drop_loot public
 require rogue_monster_data public
 require ue_ai public
+require ue_perception public
 require ue_vector_math public
 require math public
 
@@ -22,11 +24,14 @@ class RogueAICharacter : Character {
     Attributes : RogueAttributeComponentRef
 
     @ue_component
+    HitFlash : RogueHitFlashComponentRef
+
+    @ue_component
     ActionSystem : RogueActionSystemComponentRef
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category="AI") {
-        var MoveSpeed : float = 250.0f
-        var DeathDelay : float = 2.0f
+        var MoveSpeed : float = 450.0f
+        var DeathDelay : float = 10.0f
         var AttackClass : ObjectClass
         var DropLootActionClass : ObjectClass
         var MonsterData : RogueMonsterDataRef
@@ -93,7 +98,6 @@ class RogueAICharacter : Character {
         if (self.Dead) { return }
         if (delta < 0.0f) { self.Hits += 1 }
         if (health <= 0.0f) { self.HandleDeath() }
-        if (health > 0.0f && delta < 0.0f) { self.ReactToHit() }
         self.RefreshLabel()
     }
 
@@ -106,14 +110,19 @@ class RogueAICharacter : Character {
         self.CharacterMovement.DisableMovement()
         self.CapsuleComponent.SetCollisionEnabled(ECollisionEnabled.NoCollision)
         let controller = ue_character_self().GetController()
-        // Native timer teardown runs outside this damage callback's script context.
-        if (ue_is_valid(controller)) { ue_ref(type<ActorRef>,controller.handle).SetLifeSpan(0.01f) }
-        var duration = 0.0f
-        if (self.UsingExternalPresentation && ue_is_valid(self.Presentation.DeathMontage)) {
-            duration = ue_character_play_montage(ue_character_self(), self.Presentation.DeathMontage)
-            if (duration > 0.0f) { self.DeathAnimations += 1 }
+        // This port's thinker lives on the controller rather than a BehaviorTree brain.
+        if (ue_is_valid(controller)) {
+            controller.StopMovement()
+            let actor = ue_ref(type<ActorRef>,controller.handle)
+            actor.SetActorTickEnabled(false)
+            actor.SetLifeSpan(self.DeathDelay + 0.1f)
         }
-        self.SetLifeSpan(max(self.DeathDelay, duration + 0.1f))
+        // Original death uses physics, with animations paused rather than a death montage.
+        self.Mesh.bPauseAnims = true
+        self.Mesh.SetCollisionProfileName(ue_name_value("Ragdoll"), true)
+        self.Mesh.SetAllBodiesSimulatePhysics(true)
+        self.Label.SetHiddenInGame(true, false)
+        self.SetLifeSpan(self.DeathDelay)
     }
 
     def DropLoot() : void {
@@ -128,15 +137,16 @@ class RogueAICharacter : Character {
         }
     }
 
-    def ReactToHit() : void {
-        if (!self.UsingExternalPresentation || self.Stunned || ue_world_seconds() < self.NextHitReactionAt ||
-            !ue_is_valid(self.Presentation.HitReactMontage)) { return }
-        // A hit cancels the pending shot before the full-body reaction takes over.
-        self.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
-        let duration = ue_character_play_montage(ue_character_self(), self.Presentation.HitReactMontage)
-        if (duration <= 0.0f) { return }
-        self.HitReactions += 1
-        self.NextHitReactionAt = ue_world_seconds() + double(max(duration, 0.15f))
+    [ue_event(source=self, name=OnTakeAnyDamage)]
+    def OnDamage(damaged:ActorRef; amount:float; kind:ObjectRef; instigator:ObjectRef; source:ActorRef) : void {
+        if (amount <= 0.0f || !ue_is_valid(instigator)) { return }
+        let controller = ue_ref(type<ControllerRef>, instigator.handle)
+        let observer = ue_character_self().GetController()
+        if (!ue_is_valid(observer) || ue_controller_is_friendly(observer, ue_ref(type<ActorRef>, controller.handle))) { return }
+        let pawn = controller.K2_GetPawn()
+        if (!ue_is_valid(pawn)) { return }
+        let actor = ue_ref(type<ActorRef>, pawn.handle)
+        ue_perception_report_damage(ue_self_actor(), actor, amount, actor.K2_GetActorLocation(), self.K2_GetActorLocation())
     }
 
     def OnStatusChanged(tag:GameplayTag; count:int) : void {

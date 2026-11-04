@@ -109,6 +109,11 @@ class RogueActionProjectileAttack : RogueAction {
         return rotation
     }
 
+    [ue_function(BlueprintCallable, BlueprintEvent)]
+    def GetProjectileRotation(origin:UEVector; target:UEVector) : UERotator {
+        return ue_direction_rotation(target-origin)
+    }
+
     def FireProjectile() : void {
         let pawn = self.GetPawn()
         if (!ue_object_valid(pawn.handle)) { return }
@@ -144,12 +149,15 @@ class RogueActionProjectileAttack : RogueAction {
             self.BlockedShots += 1
             return
         }
-        let pose = ue_transform(position, ue_direction_rotation(direction), UE_VECTOR_ONE)
+        let pose = ue_transform(position, self.GetProjectileRotation(position,target), UE_VECTOR_ONE)
         self.LastMuzzleLocation = position
         self.LastAimPoint = target
         self.LastProjectile = ue_actor_spawn(type<ActorRef>, self.ProjectileClass, pose,
             ue_ref(type<ActorRef>, controller.handle), "AlwaysSpawn", pawn)
-        if (ue_object_valid(self.LastProjectile.handle)) { self.ProjectilesFired += 1 }
+        if (ue_object_valid(self.LastProjectile.handle)) {
+            ue_pawn_move_ignore_actor(pawn,self.LastProjectile)
+            self.ProjectilesFired += 1
+        }
     }
 }
 

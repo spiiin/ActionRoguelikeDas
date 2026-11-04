@@ -1,6 +1,7 @@
 options gen2
 module rogue_character public
 require rogue_attribute_component public
+require rogue_hit_flash_component public
 require rogue_action_system_component public
 require rogue_presentation public
 require math
@@ -23,6 +24,9 @@ class RogueCharacter : Character {
 
     @ue_component
     Attributes : RogueAttributeComponentRef
+
+    @ue_component
+    HitFlash : RogueHitFlashComponentRef
 
     @ue_component
     HealthLabel : TextRenderComponentRef

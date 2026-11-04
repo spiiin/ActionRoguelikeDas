@@ -40,6 +40,7 @@ class RogueAIController : AIController {
         ue_controller_set_team(ue_ai_self_controller(),0)
         ue_perception_configure(self.Perception,self.SightRadius,self.LoseSightRadius,
             self.SightAngle,self.HearingRadius,self.TargetMemory)
+        ue_perception_configure_damage(self.Perception,self.TargetMemory)
     }
 
     def BindEvents() : void {
@@ -63,6 +64,7 @@ class RogueAIController : AIController {
         match (stimulus.Sense) {
             if (AISense.Sight) { self.SightEvents += 1 }
             if (AISense.Hearing) { self.HearingEvents += 1 }
+            if (AISense.Damage) {}
             if (_) { return }
         }
         enemy.Target = target

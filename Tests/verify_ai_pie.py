@@ -190,9 +190,9 @@ def tick(delta):
             if age<.4:return
             assert enemy.get_editor_property('Dead')
             assert not system.get_editor_property('Enabled')
-            assert not unreal.SystemLibrary.is_valid(controller),'Dead AI controller still running'
+            assert not controller.is_actor_tick_enabled(),'Dead AI thinker still running'
             for action in system.get_editor_property('Actions'):assert not action.call_method('IsRunning')
-            s['checks'].append({'death_shuts_actions_controller_and_perception':True})
+            s['checks'].append({'death_stops_actions_and_controller_thinker':True})
             finish()
     except Exception:finish(traceback.format_exc())
 

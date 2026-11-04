@@ -882,3 +882,43 @@ was updated to include the existing Rage and Coins HUD fields.
 Proof, source hash and receipts: Saved/Tests/rogue_movement_stage_validation.json.
 Packaged execution and the complete original animation state machine are outside
 this movement validation.
+
+### Original combat parity: PASS (2026-11-04)
+
+rogue-combat-parity-v16-20261104: 13 groups PASS in real PIE, with original CDO/BehaviorTree reference.
+The suite measures native owner/foreign projectile sweep collision, native damage
+perception without Sight/Hearing, friendly filtering, native hit timestamps and
+overlay reset/restart timing, preservation of a pending shot, random spread ranges,
+real Minion body simulation and corpse lifetime through ten seconds.
+
+Original reference: BP_MagicProjectile damage 51/lifetime 8; player AttributeSet speed
+550; MinionRangedBP AttributeSet speed 450; MinionRangedBT MaxBulletSpread 5. The original
+uses the same Minion_Lane_Ranged_Dawn mesh and Minion_Lane_Ranged_Physics asset as the
+local port. A generated overlay supplies the source's time/enable/timer mechanism;
+pixel-identical reproduction of MI_HitFlashOverlay is not claimed.
+
+New generic bindings: damage sense configuration/report, stable AISense.Damage value,
+team attitude query, APawn MoveIgnoreActorAdd/Remove. No game-specific C++ was added.
+Existing AI preparation and primary action preparation now use automatic Reimport so
+default and additive changes can migrate while retaining manual overrides.
+
+The editor's new warm disk-module-cache path reproducibly requested ~1.8 TB during
+attribute preparation. Preserved streams, failed/cold jobs and project-local workaround
+are documented in MODULE_CACHE_REPRO.md. This suite runs with das.EditorModuleCache=0;
+source snapshot batching and resident prepared-program caching remain enabled.
+Packaged execution and a serializer-cache root-cause fix were not part of this validation.
+Proof and source hashes: Saved/Tests/rogue_combat_parity_stage_validation.json.
+
+
+Regression completion: rogue-combat-regression-v1-20261104 PASS. Checks by suite:
+{"combat_parity": 13, "character_combat": 6, "ai": 7, "ai_presentation": 9, "patrol": 9}; 44 unique groups including combat parity.
+A final rogue-hit-overlay-render-v1-20261104 run repeated all 9 Minion presentation
+groups after setting the generated material's SkeletalMesh usage. It also checks
+the actual overlay assignment and usage flag. Before that fix UE rendered a fallback
+material despite correct gameplay/overlay state; those earlier screenshots did not
+prove a visible flash. The final MinionHitOverlay.png visibly shows the full-body
+flash; MinionAttack.png is the pre-hit comparison and MinionDeath.png shows ragdoll.
+The final log has no missing-usage or material-compilation diagnostics.
+
+All relevant Python sources parse, the suite manifest is valid, and new native
+helper/type files pass clang-format. This does not claim packaged execution.

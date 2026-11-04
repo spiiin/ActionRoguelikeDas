@@ -58,7 +58,7 @@ def tick(delta):
             if hp==100:
                 assert age<5,'Shot did not reach camera target'
                 return
-            assert hp==75
+            assert hp==49
             assert attack.get_editor_property('ProjectilesFired')==s['shots']+1
             muzzle=attack.get_editor_property('LastMuzzleLocation')
             if 'socket_at_shot' in s:
@@ -90,7 +90,7 @@ def tick(delta):
             assert attack.get_editor_property('ProjectilesFired')==s['shots']+2,'Clipped muzzle should fire into cover'
             muzzle=attack.get_editor_property('LastMuzzleLocation')
             assert 350<muzzle.x<374,'Muzzle spawned beyond cover: '+str(muzzle)
-            assert target.get_editor_property('Attributes').get_editor_property('Health')==75,'Shot passed through cover'
+            assert target.get_editor_property('Attributes').get_editor_property('Health')==49,'Shot passed through cover'
             assert not [a for a in unreal.GameplayStatics.get_all_actors_of_class(w,unreal.Actor) if a.get_class().get_name()=='BP_MagicProjectileDemo_C'],'Covered projectile did not hit near wall'
             s['checks'].append({'near_cover_muzzle_x':muzzle.x,'cover_blocks_damage':True})
             s['wall'].destroy_actor();s['wall']=None
@@ -102,8 +102,8 @@ def tick(delta):
             if hp==100:
                 assert age<5,'Incoming projectile did not damage capsule'
                 return
-            assert hp==75
-            assert str(p.get_editor_property('HealthLabel').get_editor_property('text'))=='HP: 75 / 100 | Rage: 18.75 | Coins: 0'
+            assert hp==49
+            assert str(p.get_editor_property('HealthLabel').get_editor_property('text'))=='HP: 49 / 100 | Rage: 38.25 | Coins: 0'
             assert p.call_method('IsAlive')
             s['checks'].append({'incoming_projectile_health':hp})
             s['hurt']=0;phase('hurt_press',now);return
@@ -112,7 +112,7 @@ def tick(delta):
             phase('hurt_release',now);return
         if s['phase']=='hurt_release':
             if age<0.8:return
-            hp=attributes.get_editor_property('Health');expected=75-25*s['hurt']
+            hp=attributes.get_editor_property('Health');expected=max(49-25*s['hurt'],0)
             assert hp==expected,(hp,expected)
             s['checks'].append({'H_press':s['hurt'],'health':hp})
             if hp>0:phase('hurt_press',now);return
