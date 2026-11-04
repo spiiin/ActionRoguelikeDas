@@ -98,7 +98,10 @@ sprint_class=unreal.load_class(None,'/Game/DasRogue/Actions/BP_RogueActionSprint
 assert action_system and sprint_class, 'Action system import failed; inspect log'
 action_system.modify(True)
 # SprintActionClass and granting the default action are authored in rogue_character.das.
-unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_character.das /Game/DasRogue/BP_RogueCharacter rogue.RogueCharacter')
+character_path='/Game/DasRogue/BP_RogueCharacter'
+character_command=('Das.DSL.Reimport '+character_path if unreal.load_asset(character_path)
+    else 'Das.DSL.Apply rogue_character.das '+character_path+' rogue.RogueCharacter')
+unreal.SystemLibrary.execute_console_command(world,character_command)
 controller=unreal.load_asset('/Game/DasRogue/BP_RoguePlayerController')
 if controller:
     # Archive only the known obsolete bootstrap/input flags, preserving dependent packages.

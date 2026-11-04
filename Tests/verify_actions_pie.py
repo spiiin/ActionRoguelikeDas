@@ -64,8 +64,8 @@ second_system=second.get_editor_property('ActionSystem')
 assert len(second_system.get_editor_property('Actions'))==2
 assert second_system.get_editor_property('Actions')[0]!=action()
 assert second_system.call_method('StartAction',args=(tag('Action.Sprint'),))
-assert abs(second.get_editor_property('character_movement').get_editor_property('max_walk_speed')-720)<.1
-assert abs(speed()-450)<.1
+assert abs(second.get_editor_property('character_movement').get_editor_property('max_walk_speed')-880)<.1
+assert abs(speed()-550)<.1
 assert second_system.call_method('StopAction',args=(tag('Action.Sprint'),))
 checks.append({'per_owner_instances_independent':True})
 assert not system.call_method('StartAction',args=(tag('Action.SpecialAttack'),))
@@ -119,22 +119,22 @@ def tick(delta):
             phase('sprint_hold',now);return
         if s['phase']=='sprint_hold':
             if age<1.0:inject('IA_Sprint');return
-            assert action().call_method('IsRunning') and abs(speed()-720)<.1
+            assert action().call_method('IsRunning') and abs(speed()-880)<.1
             assert action().get_editor_property('Starts')==s['starts']+1,'Held Shift repeated Started'
             s['checks'].append({'shift_speed':speed(),'one_start_per_press':True})
             phase('sprint_release',now);return
         if s['phase']=='sprint_release':
             if age<.8:return
-            assert not action().call_method('IsRunning') and abs(speed()-450)<.1
+            assert not action().call_method('IsRunning') and abs(speed()-550)<.1
             assert system.call_method('StartAction',args=(tag('Action.Sprint'),))
             system.call_method('ApplyAttributeChange',args=(tag('Attribute.MoveSpeedMultiplier'),.5))
-            assert abs(speed()-945)<.1
+            assert abs(speed()-1155)<.1
             system.call_method('AppendActiveTags',args=(tags('StatusEffect.Stunned'),))
-            assert not action().call_method('IsRunning') and abs(speed()-675)<.1
+            assert not action().call_method('IsRunning') and abs(speed()-825)<.1
             assert not system.call_method('StartAction',args=(tag('Action.Sprint'),))
             system.call_method('RemoveActiveTags',args=(tags('StatusEffect.Stunned'),))
             system.call_method('ApplyAttributeChange',args=(tag('Attribute.MoveSpeedMultiplier'),-.5))
-            assert abs(speed()-450)<.1
+            assert abs(speed()-550)<.1
             s['checks'].append({'stun_cancels_and_blocks_sprint':True,'other_speed_modifier_preserved':True})
             assert system.call_method('StartAction',args=(tag('Action.Sprint'),))
             p.get_editor_property('Attributes').call_method('ApplyHealthChange',args=(p,-100.0))
@@ -143,7 +143,7 @@ def tick(delta):
             if age<.5:return
             assert p.get_editor_property('Dead')
             assert not system.get_editor_property('Enabled')
-            assert not action().call_method('IsRunning') and abs(speed()-450)<.1
+            assert not action().call_method('IsRunning') and abs(speed()-550)<.1
             assert not system.call_method('StartAction',args=(tag('Action.Sprint'),))
             s['checks'].append({'death_cancels_actions':True})
             finish()

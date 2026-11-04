@@ -464,3 +464,15 @@ Content/Das/Scripts/rogue/rogue_attribute_set.das.
 ```text
 test-suite rogue-attributes-local rogue-attributes repo=C:/src/DasForUE2-main
 ```
+
+## Движение как в оригинальном Blueprint
+
+Корпус следует yaw камеры. A/D дают стрейф, S — движение назад с сохранением
+направления корпуса. Базовая скорость 550; существующий спринт даёт 880.
+Камера использует исходные настройки BP_PlayerCharacter: arm 175, высота 80,
+плечевое смещение Y=80. JumpZVelocity=420, AirControl=0.05.
+Настройки сверены с реальным Blueprint оригинала 992f860, а не только с C++ defaults.
+
+Через общий агент: `test-suite rogue-movement-local rogue-movement repo=C:/src/DasForUE2-main`.
+Проверка читает оригинальный проект в C:/src/ActionRoguelike и затем проверяет
+движение, направление корпуса, скорость, торможение и спринт в реальном PIE.

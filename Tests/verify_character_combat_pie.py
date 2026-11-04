@@ -103,7 +103,7 @@ def tick(delta):
                 assert age<5,'Incoming projectile did not damage capsule'
                 return
             assert hp==75
-            assert str(p.get_editor_property('HealthLabel').get_editor_property('text'))=='HP: 75 / 100'
+            assert str(p.get_editor_property('HealthLabel').get_editor_property('text'))=='HP: 75 / 100 | Rage: 18.75 | Coins: 0'
             assert p.call_method('IsAlive')
             s['checks'].append({'incoming_projectile_health':hp})
             s['hurt']=0;phase('hurt_press',now);return

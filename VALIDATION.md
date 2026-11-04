@@ -852,3 +852,33 @@ helper identity and the CDO's strong reference to its cooked ScriptObject contra
 Existing character WalkSpeed=450 is retained; the base Pawn set default is 550,
 Monster 450. HealthMax clamps additionally notify Health observers. Coins remain int64.
 Packaged execution for this stage was not run.
+
+### Player movement / original Blueprint parity: PASS (2026-11-04)
+
+rogue-movement-v3-20261104: projectile_attack: 10, character_combat: 7, movement: 12 groups PASS, including clean startup and teardown.
+rogue-movement-v2-20261104 also passed 10 action groups after changing base speed
+and facing; the later camera socket offset was covered by the final suites above.
+
+The reference exporter reads /Game/ActionRoguelike/BP_PlayerCharacter at revision
+992f860. It uses the original Content, Config and game module with a temporary
+minimal plugin descriptor, rebuilt for the current engine. The descriptor is
+removed on exit and original assets are not saved. An absent plugin binary and
+outdated original game-module BuildId prevented the first diagnostic launches.
+
+Confirmed values: controller yaw true, orient-to-movement false, desired rotation
+false, yaw rate 360, attribute base speed 550, jump velocity 420, air control 0.05.
+Spring arm length 175, relative height 80 and socket offset (0,80,0) match the
+original Blueprint. Acceleration, friction, braking and camera collision/lag
+settings are compared as well. The CDO movement component's speed 600 is superseded
+at runtime by the original AttributeSet's 550.
+
+Eight directional input cases cover forward/back/left/right at camera yaw 0 and 90,
+measuring actual velocity, displacement and actor facing. Releasing input brakes
+to rest; real Shift input reaches 880 and release restores 550. The first movement
+attempt caught positional Python Rotator argument ordering in the test setup;
+the camera angle now uses named arguments. Combat's old HP-only label assertion
+was updated to include the existing Rage and Coins HUD fields.
+
+Proof, source hash and receipts: Saved/Tests/rogue_movement_stage_validation.json.
+Packaged execution and the complete original animation state machine are outside
+this movement validation.

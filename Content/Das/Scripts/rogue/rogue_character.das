@@ -33,9 +33,9 @@ class RogueCharacter : Character {
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Input") {
         var UseExternalPresentation : bool = true
         var PresentationProfilePath : string = "/Game/DasRogueExternal/DA_Presentation.DA_Presentation"
-        var WalkSpeed : float = 450.0f
-        var JumpVelocity : float = 500.0f
-        var AirControl : float = 0.2f
+        var WalkSpeed : float = 550.0f
+        var JumpVelocity : float = 420.0f
+        var AirControl : float = 0.05f
         var Controls : InputMappingContextRef
         var Input_Move : InputActionRef
         var Input_Look : InputActionRef
@@ -71,12 +71,13 @@ class RogueCharacter : Character {
         self.Input_TestDamage = ue_asset_default("/Game/DasRogue/Input/IA_TestDamage.IA_TestDamage")
         self.HealthLabel.RelativeLocation = ue_vector(0.0lf, 0.0lf, 120.0lf)
         self.HealthLabel.WorldSize = 20.0f
-        self.bUseControllerRotationYaw = false
+        self.bUseControllerRotationYaw = true
         self.bUseControllerRotationPitch = false
         self.bUseControllerRotationRoll = false
-        self.SpringArmComponent.TargetArmLength = 350.0f
+        self.SpringArmComponent.TargetArmLength = 175.0f
+        self.SpringArmComponent.SocketOffset = ue_vector(0.0lf, 80.0lf, 0.0lf)
         self.SpringArmComponent.bUsePawnControlRotation = true
-        self.SpringArmComponent.RelativeLocation = ue_vector(0.0lf, 0.0lf, 55.0lf)
+        self.SpringArmComponent.RelativeLocation = ue_vector(0.0lf, 0.0lf, 80.0lf)
         self.CameraComponent.bUsePawnControlRotation = false
         self.Visual.StaticMesh = ue_asset_default("/Engine/BasicShapes/Cone.Cone")
         self.Visual.RelativeScale3D = ue_vector(0.65lf, 0.65lf, 1.7lf)
@@ -103,8 +104,9 @@ class RogueCharacter : Character {
         }
         self.CharacterMovement.JumpZVelocity = self.JumpVelocity
         self.CharacterMovement.AirControl = self.AirControl
-        self.CharacterMovement.bOrientRotationToMovement = true
-        self.CharacterMovement.RotationRate = ue_rotator(0.0lf, 540.0lf, 0.0lf)
+        self.CharacterMovement.bOrientRotationToMovement = false
+        self.CharacterMovement.bUseControllerDesiredRotation = false
+        self.CharacterMovement.RotationRate = ue_rotator(0.0lf, 360.0lf, 0.0lf)
         // Visual geometry never contributes collision; the native capsule does.
         self.Visual.SetCollisionProfileName(ue_name_value("NoCollision"), true)
         // The placeholder visual has no skeletal hit mesh; use the capsule.

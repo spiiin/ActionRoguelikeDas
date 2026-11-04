@@ -294,3 +294,17 @@ GenericParents PASS: аддитивные callback/метаданные при �
 отказ при удалении callback, контракт наследника без собственных методов после GC
 и повторного импорта. Исправления находятся в DasForUE2-main; packaged-сборка этого
 этапа отдельно не проверялась. Регрессии соседних систем записываются в VALIDATION.md.
+
+## Движение игрока — сверено с Blueprint 4 ноября 2026
+
+Исправлена камера и ориентация: bUseControllerRotationYaw=true,
+bOrientRotationToMovement=false, bUseControllerDesiredRotation=false.
+Корпус смотрит по yaw камеры; S не разворачивает его назад, A/D дают стрейф.
+WalkSpeed=550, JumpZVelocity=420, AirControl=0.05, RotationRate.Yaw=360.
+SpringArm: TargetArmLength=175, RelativeLocation.Z=80, SocketOffset.Y=80.
+Эти значения взяты из исходного BP_PlayerCharacter 992f860.
+
+Пункт прежнего аудита о скорости игрока 450 теперь закрыт; параметры AI и урона
+в том пункте остаются отдельными задачами. Подготовка персонажа использует
+автоматический Reimport, сохраняя ручные overrides. Движение, спринт и связанные
+проверки стрельбы прошли реальный PIE; подробности в VALIDATION.md.

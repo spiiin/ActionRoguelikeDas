@@ -62,10 +62,10 @@ def tick(delta):
             inject(sprint)
             if age < .1: return
             movement = prop(original, 'character_movement')
-            assert abs(prop(movement, 'max_walk_speed')-720) < .1
+            assert abs(prop(movement, 'max_walk_speed')-880) < .1
             player.call_method('UnPossess', args=())
             assert not prop(original, 'ControlsBound'), 'UnPossessed did not remove character input'
-            assert abs(prop(movement, 'max_walk_speed')-450) < .1, 'Held sprint survived unpossess'
+            assert abs(prop(movement, 'max_walk_speed')-550) < .1, 'Held sprint survived unpossess'
             player.possess(original)
             phase('repossess'); return
         if s['phase'] == 'repossess':

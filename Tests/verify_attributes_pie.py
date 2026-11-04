@@ -48,7 +48,7 @@ def tick(delta):
             assert attributes()==health.get_editor_property('AttributeSet')
             assert attributes().get_outer()==health
             near(value('Health'),100);near(value('HealthMax'),100);near(value('Rage'),0)
-            near(base('MoveSpeed'),450);near(value('MoveSpeedMultiplier'),1)
+            near(base('MoveSpeed'),550);near(value('MoveSpeedMultiplier'),1)
             s['checks'].append({'player_set_defaults_shared_with_damage_bridge':True})
             watch()
             assert change('OverrideBase','Rage',10)
