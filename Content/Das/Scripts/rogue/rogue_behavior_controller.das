@@ -47,7 +47,8 @@ class RogueBehaviorController : RogueAIController {
     }
 
     def override EndPlay(reason:int):void {
-        if (self.TreeStarted && !self.TreeStopped) { ue_ai_brain(ue_ai_self_controller(),"StopLogic","EndPlay") }
+        // Native AAIController teardown stops its BrainComponent and behavior tree.
+        // Managed AI operations require a live session, which EndPlay has ended.
         self.TreeStopped=true
         Super.EndPlay(reason)
     }

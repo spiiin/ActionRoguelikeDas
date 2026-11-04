@@ -2,6 +2,24 @@
 	"schema_version": 3,
 	"classes": [
 		{
+			"id": "rogue.RogueAICharacter",
+			"name": "RogueAICharacter",
+			"script": "rogue/rogue_ai_character.das",
+			"reference": "RogueAICharacterRef"
+		},
+		{
+			"id": "rogue.RogueAIController",
+			"name": "RogueAIController",
+			"script": "rogue/rogue_ai_controller.das",
+			"reference": "RogueAIControllerRef"
+		},
+		{
+			"id": "rogue.RogueAIProjectileAttack",
+			"name": "RogueAIProjectileAttack",
+			"script": "rogue/rogue_ai_projectile_attack.das",
+			"reference": "RogueAIProjectileAttackRef"
+		},
+		{
 			"id": "rogue.RogueAction",
 			"name": "RogueAction",
 			"script": "rogue/rogue_action.das",
@@ -68,24 +86,6 @@
 			"reference": "RogueActionTeleportRef"
 		},
 		{
-			"id": "rogue.RogueAICharacter",
-			"name": "RogueAICharacter",
-			"script": "rogue/rogue_ai_character.das",
-			"reference": "RogueAICharacterRef"
-		},
-		{
-			"id": "rogue.RogueAIController",
-			"name": "RogueAIController",
-			"script": "rogue/rogue_ai_controller.das",
-			"reference": "RogueAIControllerRef"
-		},
-		{
-			"id": "rogue.RogueAIProjectileAttack",
-			"name": "RogueAIProjectileAttack",
-			"script": "rogue/rogue_ai_projectile_attack.das",
-			"reference": "RogueAIProjectileAttackRef"
-		},
-		{
 			"id": "rogue.RogueAnimationComponent",
 			"name": "RogueAnimationComponent",
 			"script": "rogue/rogue_animation_component.das",
@@ -102,12 +102,6 @@
 			"name": "RogueAttributeSet",
 			"script": "rogue/rogue_attribute_set.das",
 			"reference": "RogueAttributeSetRef"
-		},
-		{
-			"id": "rogue.RogueBehaviorController",
-			"name": "RogueBehaviorController",
-			"script": "rogue/rogue_behavior_controller.das",
-			"reference": "RogueBehaviorControllerRef"
 		},
 		{
 			"id": "rogue.RogueBTCheckRange",
@@ -140,6 +134,12 @@
 			"reference": "RogueBTRangedAttackRef"
 		},
 		{
+			"id": "rogue.RogueBehaviorController",
+			"name": "RogueBehaviorController",
+			"script": "rogue/rogue_behavior_controller.das",
+			"reference": "RogueBehaviorControllerRef"
+		},
+		{
 			"id": "rogue.RogueCharacter",
 			"name": "RogueCharacter",
 			"script": "rogue/rogue_character.das",
@@ -152,6 +152,18 @@
 			"reference": "RogueCoinPickupSubsystemRef"
 		},
 		{
+			"id": "rogue.RogueDirectorConfig",
+			"name": "RogueDirectorConfig",
+			"script": "rogue/rogue_director_config.das",
+			"reference": "RogueDirectorConfigRef"
+		},
+		{
+			"id": "rogue.RogueDirectorSlot",
+			"name": "RogueDirectorSlot",
+			"script": "rogue/rogue_director_slot.das",
+			"reference": "RogueDirectorSlotRef"
+		},
+		{
 			"id": "rogue.RogueEQSTarget",
 			"name": "RogueEQSTarget",
 			"script": "rogue/rogue_bt_tasks.das",
@@ -162,6 +174,12 @@
 			"name": "RogueExplosiveBarrel",
 			"script": "rogue/rogue_explosive_barrel.das",
 			"reference": "RogueExplosiveBarrelRef"
+		},
+		{
+			"id": "rogue.RogueHUDComponent",
+			"name": "RogueHUDComponent",
+			"script": "rogue/rogue_hud_component.das",
+			"reference": "RogueHUDComponentRef"
 		},
 		{
 			"id": "rogue.RogueHealthAttributeSet",
@@ -186,12 +204,6 @@
 			"name": "RogueHitFlashComponent",
 			"script": "rogue/rogue_hit_flash_component.das",
 			"reference": "RogueHitFlashComponentRef"
-		},
-		{
-			"id": "rogue.RogueHUDComponent",
-			"name": "RogueHUDComponent",
-			"script": "rogue/rogue_hud_component.das",
-			"reference": "RogueHUDComponentRef"
 		},
 		{
 			"id": "rogue.RogueInteractionComponent",
@@ -290,6 +302,12 @@
 			"reference": "RogueProjectileTeleportRef"
 		},
 		{
+			"id": "rogue.RogueSpawnDirector",
+			"name": "RogueSpawnDirector",
+			"script": "rogue/rogue_spawn_director.das",
+			"reference": "RogueSpawnDirectorRef"
+		},
+		{
 			"id": "roguedemo.RogueBehaviorMinion",
 			"name": "RogueBehaviorMinion",
 			"script": "roguedemo/rogue_behavior_minion.das",
@@ -374,12 +392,6 @@
 			"reference": "CombatProbeRef"
 		},
 		{
-			"id": "roguetest.RogueActionProbe",
-			"name": "RogueActionProbe",
-			"script": "roguetest/rogue_action_probe.das",
-			"reference": "RogueActionProbeRef"
-		},
-		{
 			"id": "roguetest.RogueAIMissingPresentation",
 			"name": "RogueAIMissingPresentation",
 			"script": "roguetest/rogue_ai_missing_presentation.das",
@@ -396,6 +408,12 @@
 			"name": "RogueAIVisualTestCharacter",
 			"script": "roguetest/rogue_ai_visual_test_character.das",
 			"reference": "RogueAIVisualTestCharacterRef"
+		},
+		{
+			"id": "roguetest.RogueActionProbe",
+			"name": "RogueActionProbe",
+			"script": "roguetest/rogue_action_probe.das",
+			"reference": "RogueActionProbeRef"
 		},
 		{
 			"id": "roguetest.RogueAttributeProbe",
@@ -508,6 +526,28 @@
 					"kind": "enum",
 					"id": "rogue.RogueAttributeModifyType",
 					"name": "RogueAttributeModifyType"
+				}
+			]
+		},
+		{
+			"module": "rogue_director_host",
+			"script": "rogue/rogue_director_host.das",
+			"types": [
+				{
+					"kind": "interface",
+					"id": "rogue.RogueDirectorHost",
+					"name": "RogueDirectorHost"
+				}
+			]
+		},
+		{
+			"module": "rogue_director_types",
+			"script": "rogue/rogue_director_types.das",
+			"types": [
+				{
+					"kind": "struct",
+					"id": "rogue.RogueMonsterSpawnData",
+					"name": "RogueMonsterSpawnData"
 				}
 			]
 		},

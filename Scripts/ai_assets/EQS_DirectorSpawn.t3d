@@ -1,0 +1,21 @@
+Begin Object Class=/Script/AIModule.EnvQuery Name="EQS_DirectorSpawn"
+   Begin Object Class=/Script/AIModule.EnvQueryGenerator_Donut Name="Donut"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryOption Name="SpawnOption"
+   End Object
+   Begin Object Name="Donut"
+      InnerRadius=(DefaultValue=500.000000)
+      OuterRadius=(DefaultValue=900.000000)
+      NumberOfRings=(DefaultValue=3)
+      PointsPerRing=(DefaultValue=12)
+      bUseSpiralPattern=True
+      Center="/Script/CoreUObject.Class'/Script/AIModule.EnvQueryContext_Querier'"
+      ProjectionData=(TraceMode=Navigation,VersionNum=1,SerializedChannel=ECC_Visibility)
+      VerNum=1
+   End Object
+   Begin Object Name="SpawnOption"
+      Generator="/Script/AIModule.EnvQueryGenerator_Donut'EQS_DirectorSpawn:Donut'"
+   End Object
+   QueryName="EQS_DirectorSpawn"
+   Options(0)="/Script/AIModule.EnvQueryOption'SpawnOption'"
+End Object

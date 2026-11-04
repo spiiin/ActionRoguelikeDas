@@ -1,0 +1,24 @@
+Begin Object Class=/Script/AIModule.EnvQuery Name="EQS_DirectorEmpty"
+   Begin Object Class=/Script/AIModule.EnvQueryGenerator_ActorsOfClass Name="Actors"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryTest_Distance Name="RejectAll"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryOption Name="EmptyOption"
+   End Object
+   Begin Object Name="Actors"
+      SearchedActorClass="/Script/CoreUObject.Class'/Script/Engine.PlayerStart'"
+      SearchRadius=(DefaultValue=5000000.000000)
+   End Object
+   Begin Object Name="RejectAll"
+      TestPurpose=Filter
+      FilterType=Minimum
+      FloatValueMin=(DefaultValue=1000000000.000000)
+      VerNum=2
+   End Object
+   Begin Object Name="EmptyOption"
+      Generator="/Script/AIModule.EnvQueryGenerator_ActorsOfClass'EQS_DirectorEmpty:Actors'"
+      Tests(0)="/Script/AIModule.EnvQueryTest_Distance'EQS_DirectorEmpty:RejectAll'"
+   End Object
+   QueryName="EQS_DirectorEmpty"
+   Options(0)="/Script/AIModule.EnvQueryOption'EmptyOption'"
+End Object

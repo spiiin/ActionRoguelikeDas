@@ -603,3 +603,37 @@ The generic world-subsystem host now prepares and pins its lifecycle program
 before Initialize while the world has not begun play. It keeps the existing ban
 on compiling source after BeginPlay; later world preparation reuses the artifact.
 This ordering is required by the configured coin subsystem even when testing HUD.
+
+
+## Director / native EQS
+
+`ue_environment_queries.das` wraps native RunEQSQuery and typed FVector-array
+results. A reflected EnvQueryRunRef owns the Blueprint wrapper; its native
+OnQueryFinishedEvent uses typed +=/-= handlers. Only aborting a request needs a new
+native operation, because UEnvQueryManager.AbortQuery is not reflected. The bridge
+checks the wrapper's type and world through the common object validator and calls
+the engine manager with its native query ID. Cancellation detaches the DAS handler
+before aborting, preventing synchronous abort completion from spawning anything.
+
+`ue_random_float` exposes exact FRandomStream.FRandRange and writes back its mutable
+seed, alongside the integer helper. `ue_float_curves` reads CurveFloat through its
+native UFunction; `ue_actor_has_authority` centralizes the reflected authority query.
+Budget, row validation, weighted selection, reservations, wave timing, refunds,
+profile loading, live-monster counting and shutdown remain DAS. DataTables use the
+existing authored-struct adapter and typed soft-object fields. No director policy
+was added to a native host class.
+
+Typed authored-class validation now walks the real native superclass chain and
+accepts the requested authored identity on an ancestor CDO. This permits a
+BehaviorMinion class where RogueAICharacter is required, while rejecting an
+unrelated authored Character. No path/name-only subclass inference is used.
+
+Owned widget removal is a cleanup operation allowed during EndPlay. It retains
+owner/context and widget-type checks, and still rejects construction and event
+collection. Other widget operations keep their live-gameplay-world requirement.
+
+Actor destruction captures the actual Pawn controller before native UnPossess
+clears the relationship. Only that controller (and its components), while being
+destroyed in the scoped call, may deliver nested EndPlay. This complements the
+existing default-controller startup exception; unrelated lifecycle reentry stays
+forbidden. Director cleanup never toggles native tick on a dying owner.

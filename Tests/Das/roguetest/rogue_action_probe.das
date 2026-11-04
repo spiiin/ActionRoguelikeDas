@@ -5,6 +5,8 @@ require ue_native_gameplay public
 require rogue_action public
 require rogue_attribute_component public
 
+typedef ProbeAIClassRef = UEObjectRef("rogue.RogueAICharacter")
+
 // Opaque handles are weak. This observer must never be an owning UPROPERTY.
 var watched : UObjectHandle
 
@@ -60,6 +62,13 @@ class RogueActionProbe : Actor {
             projectile ? ECollisionResponse.ECR_Block : ECollisionResponse.ECR_Ignore)
         mesh.SetCollisionResponseToChannel(ECollisionChannel.ECC_Visibility,
             visibility ? ECollisionResponse.ECR_Block : ECollisionResponse.ECR_Ignore)
+    }
+
+    [ue_function(BlueprintCallable)]
+    def RejectAIClass(kind : ObjectClass) : bool {
+        var rejected = false
+        try { let checked = ue_class_loaded(type<ProbeAIClassRef>, ue_class_path(kind)) } recover { rejected = true }
+        return rejected
     }
 
 }

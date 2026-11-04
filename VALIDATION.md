@@ -1175,3 +1175,39 @@ previous missing-program warning. A full editor build passed before these runs.
 This slice does not claim packaged/standalone rendering, multiple local players,
 or coverage of every viewport resolution/DPI setting. Layouts are portable UMG
 Blueprints; gameplay and widget lifetime policy are DAS.
+
+
+## Director / seeded waves — 4 November 2026
+
+`rogue-director-v9-20261104` passed all 14 PIE checks and the strict runtime,
+Blueprint, ensure/fatal and EndPIE log gates. The editor build passed first;
+the native runtime was rebuilt successfully in v8. Receipt:
+`Saved/Tests/rogue_director_pie.json`. Suite: `rogue-director`.
+
+Two runtime director slots receive independent seeds, filter zero-weight rows,
+and share one alive-plus-inflight limit. Real native EQS finishes asynchronously,
+loads MonsterData, and spawns configured authored descendants with native AI
+controllers and granted actions. The inherited class factory accepts BehaviorMinion
+as RogueAICharacter while rejecting an unrelated authored Character. Weighted
+choices and final mutable seeds match native FRandomStream. Forced GC preserves
+the owned slots and spawned pawns. The harness verifies a complete Recast path
+with an obstacle detour before PIE; the map uses the native navigation system.
+
+Pause prevents late spawns. A dead enemy frees capacity before corpse deletion;
+replacement, reproducible reconfiguration and old-pawn cleanup pass. Failed EQS
+refunds budget/reservation. Unaffordable rows wait without starting a query.
+The native income curve accrues budget even at a full cap. Explicit pause aborts
+a live native query and refunds it. Destroying a director with another live query
+cancels its work and releases owned monsters/controllers without runtime errors.
+
+These runs exposed cleanup paths beyond the earlier HUD/AI fixtures. Health-widget
+EndPlay removes owned UI without toggling native tick on its dying component.
+AIController's native teardown stops its brain; DAS EndPlay no longer calls the
+managed AI API after the session has ended. Nested EndPlay of the actual controller
+destroyed by APawn is now recognized by the generic lifecycle guard. Director
+EndPlay also avoids native tick mutation on the destroyed owner.
+
+This is single-player PIE coverage. It does not claim multiplayer replication,
+packaged builds, cross-map persistence, or a forced missing-profile/asset-load
+failure. Runtime policy and weighted selection remain DAS; editor CSV/Python
+preparation is not used by gameplay.

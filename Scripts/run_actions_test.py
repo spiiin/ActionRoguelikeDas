@@ -45,7 +45,7 @@ def tick(delta):
                 raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
-            allowed_maps = ('ChestTest','PatrolTest','BehaviorTest') if globals().get('WAIT_NAVIGATION') else ('ChestTest',)
+            allowed_maps = globals().get('PREPARATION_MAPS', ('ChestTest','PatrolTest','BehaviorTest') if globals().get('WAIT_NAVIGATION') else ('ChestTest',))
             if not world or world.get_name() not in allowed_maps:
                 return
             unreal.SystemLibrary.execute_console_command(world, 't.IdleWhenNotForeground 0')
@@ -77,7 +77,7 @@ def tick(delta):
             return
         if STATE['phase'] == 'wait_navigation':
             world=editor.get_editor_world()
-            assert world and world.get_name() in ('PatrolTest','BehaviorTest')
+            assert world and world.get_name() in ('PatrolTest','BehaviorTest','DirectorTest')
             STATE.setdefault('nav_started',time.perf_counter())
             nav_age=time.perf_counter()-STATE['nav_started']
             if nav_age>1.0 and not STATE.get('nav_rebuild_requested'):

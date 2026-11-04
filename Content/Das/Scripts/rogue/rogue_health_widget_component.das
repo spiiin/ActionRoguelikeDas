@@ -90,7 +90,10 @@ class RogueHealthWidgetComponent : ActorComponent {
 
     def EndPlay(reason : int) : void {
         if (ue_is_valid(self.Attributes)) { self.Attributes.OnHealthChanged -= self.OnHealthChanged }
-        self.ClearWidget()
+        // Tick is already stopped by Unreal during EndPlay.
+        if (ue_is_valid(self.Widget)) { ue_widget_remove(self.Widget) }
+        self.Widget = default<UserWidgetRef>
+        self.Projected = false
     }
 }
 
