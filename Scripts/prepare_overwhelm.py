@@ -3,6 +3,7 @@ from pathlib import Path
 import unreal
 root=Path(__file__).resolve().parents[1]
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_burning_effect.py')))
 for command in [
     'Das.DSL.Interfaces.Apply rogue_projectile_impact_interface.das /Game/DasRogue/Types',
     'Das.DSL.Apply rogue_magic_projectile.das /Game/DasRogue/BP_RogueMagicProjectile rogue.RogueMagicProjectile',

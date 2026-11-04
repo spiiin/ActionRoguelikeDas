@@ -26,6 +26,12 @@
 			"reference": "RogueActionEffectRef"
 		},
 		{
+			"id": "rogue.RogueActionEffectBurning",
+			"name": "RogueActionEffectBurning",
+			"script": "rogue/rogue_action_effect_burning.das",
+			"reference": "RogueActionEffectBurningRef"
+		},
+		{
 			"id": "rogue.RogueActionEffectOverwhelm",
 			"name": "RogueActionEffectOverwhelm",
 			"script": "rogue/rogue_action_effect_overwhelm.das",
@@ -98,6 +104,42 @@
 			"reference": "RogueAttributeSetRef"
 		},
 		{
+			"id": "rogue.RogueBehaviorController",
+			"name": "RogueBehaviorController",
+			"script": "rogue/rogue_behavior_controller.das",
+			"reference": "RogueBehaviorControllerRef"
+		},
+		{
+			"id": "rogue.RogueBTCheckRange",
+			"name": "RogueBTCheckRange",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueBTCheckRangeRef"
+		},
+		{
+			"id": "rogue.RogueBTFindPatrol",
+			"name": "RogueBTFindPatrol",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueBTFindPatrolRef"
+		},
+		{
+			"id": "rogue.RogueBTHealSelf",
+			"name": "RogueBTHealSelf",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueBTHealSelfRef"
+		},
+		{
+			"id": "rogue.RogueBTLowHealth",
+			"name": "RogueBTLowHealth",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueBTLowHealthRef"
+		},
+		{
+			"id": "rogue.RogueBTRangedAttack",
+			"name": "RogueBTRangedAttack",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueBTRangedAttackRef"
+		},
+		{
 			"id": "rogue.RogueCharacter",
 			"name": "RogueCharacter",
 			"script": "rogue/rogue_character.das",
@@ -108,6 +150,12 @@
 			"name": "RogueCoinPickupSubsystem",
 			"script": "rogue/rogue_coin_pickup_subsystem.das",
 			"reference": "RogueCoinPickupSubsystemRef"
+		},
+		{
+			"id": "rogue.RogueEQSTarget",
+			"name": "RogueEQSTarget",
+			"script": "rogue/rogue_bt_tasks.das",
+			"reference": "RogueEQSTargetRef"
 		},
 		{
 			"id": "rogue.RogueExplosiveBarrel",
@@ -162,6 +210,12 @@
 			"name": "RogueMonsterData",
 			"script": "rogue/rogue_monster_data.das",
 			"reference": "RogueMonsterDataRef"
+		},
+		{
+			"id": "rogue.RogueMonsterSpawner",
+			"name": "RogueMonsterSpawner",
+			"script": "rogue/rogue_monster_spawner.das",
+			"reference": "RogueMonsterSpawnerRef"
 		},
 		{
 			"id": "rogue.RoguePatrolController",
@@ -222,6 +276,12 @@
 			"name": "RogueProjectileTeleport",
 			"script": "rogue/rogue_projectile_teleport.das",
 			"reference": "RogueProjectileTeleportRef"
+		},
+		{
+			"id": "roguedemo.RogueBehaviorMinion",
+			"name": "RogueBehaviorMinion",
+			"script": "roguedemo/rogue_behavior_minion.das",
+			"reference": "RogueBehaviorMinionRef"
 		},
 		{
 			"id": "roguedemo.RogueBlackholeAttackProjectile",
@@ -344,6 +404,12 @@
 			"reference": "RogueBlackholeProbeRef"
 		},
 		{
+			"id": "roguetest.RogueBurningTarget",
+			"name": "RogueBurningTarget",
+			"script": "roguetest/rogue_burning_target.das",
+			"reference": "RogueBurningTargetRef"
+		},
+		{
 			"id": "roguetest.RogueCoinProbe",
 			"name": "RogueCoinProbe",
 			"script": "roguetest/rogue_coin_probe.das",
@@ -360,6 +426,12 @@
 			"name": "RogueMissingPresentation",
 			"script": "roguetest/rogue_missing_presentation.das",
 			"reference": "RogueMissingPresentationRef"
+		},
+		{
+			"id": "roguetest.RogueMonsterProbe",
+			"name": "RogueMonsterProbe",
+			"script": "roguetest/rogue_monster_probe.das",
+			"reference": "RogueMonsterProbeRef"
 		},
 		{
 			"id": "roguetest.RoguePatrolProbe",

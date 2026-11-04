@@ -1,6 +1,8 @@
+from pathlib import Path
 """Migrate authored projectile parents before any demo/attack subclasses."""
 import unreal
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_burning_effect.py')))
 registry=unreal.AssetRegistryHelpers.get_asset_registry()
 unreal.SystemLibrary.execute_console_command(world,
     'Das.DSL.Interfaces.Apply rogue_projectile_impact_interface.das /Game/DasRogue/Types')

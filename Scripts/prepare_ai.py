@@ -1,6 +1,8 @@
+from pathlib import Path
 """Wire AI assets and the open test arena. All decisions/combat execute in DAS."""
 import unreal
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_burning_effect.py')))
 registry=unreal.AssetRegistryHelpers.get_asset_registry()
 # Test-derived classes have their own authored parent copy; update each before its children.
 parents=[str(asset.package_name) for asset in registry.get_assets_by_path('/Game/DasRogue',recursive=True)

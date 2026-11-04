@@ -118,6 +118,7 @@ class RogueActionProjectileAttack : RogueAction {
         return ue_direction_rotation(target-origin)
     }
 
+    [ue_function(BlueprintCallable)]
     def FireProjectile() : void {
         let pawn = self.GetPawn()
         if (!ue_object_valid(pawn.handle)) { return }

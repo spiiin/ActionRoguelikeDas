@@ -1,0 +1,532 @@
+Begin Object Class=/Script/AIModule.BehaviorTree Name="MinionRangedBT" ExportPath="/Script/AIModule.BehaviorTree'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT'"
+   Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraph Name="Behavior Tree" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraph'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree'"
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_0'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_1" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_1'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_2" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_2'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_3'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_4'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite Name="BehaviorTreeGraphNode_Composite_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_6'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator Name="BehaviorTreeGraphNode_Decorator_16" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_16'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator Name="BehaviorTreeGraphNode_Decorator_35" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_35'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator Name="BehaviorTreeGraphNode_Decorator_36" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_36'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator Name="BehaviorTreeGraphNode_Decorator_87" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_87'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Root Name="BehaviorTreeGraphNode_Root_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Root'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Root_0'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service Name="BehaviorTreeGraphNode_Service_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_3'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service Name="BehaviorTreeGraphNode_Service_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_4'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service Name="BehaviorTreeGraphNode_Service_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_6'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_0'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_1" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_1'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_10" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_10'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_11" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_11'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_12" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_12'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_13" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_13'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_2" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_2'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_3'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_4'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_5" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_5'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_6'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_7" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_7'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_8" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_8'"
+      End Object
+      Begin Object Class=/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task Name="BehaviorTreeGraphNode_Task_9" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_9'"
+      End Object
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Selector Name="BTComposite_Selector_0" ExportPath="/Script/AIModule.BTComposite_Selector'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Selector Name="BTComposite_Selector_1" ExportPath="/Script/AIModule.BTComposite_Selector'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Selector_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Sequence Name="BTComposite_Sequence_0" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Sequence Name="BTComposite_Sequence_1" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Sequence Name="BTComposite_Sequence_2" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_2'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTComposite_Sequence Name="BTComposite_Sequence_3" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_3'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTDecorator_Blackboard Name="BTDecorator_Blackboard_0" ExportPath="/Script/AIModule.BTDecorator_Blackboard'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Blackboard_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTDecorator_Blackboard Name="BTDecorator_Blackboard_1" ExportPath="/Script/AIModule.BTDecorator_Blackboard'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Blackboard_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTDecorator_Cooldown Name="BTDecorator_Cooldown_0" ExportPath="/Script/AIModule.BTDecorator_Cooldown'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Cooldown_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTService_DefaultFocus Name="BTService_DefaultFocus_0" ExportPath="/Script/AIModule.BTService_DefaultFocus'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTService_DefaultFocus_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTService_RunEQS Name="BTService_RunEQS_0" ExportPath="/Script/AIModule.BTService_RunEQS'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTService_RunEQS_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_MoveTo Name="BTTask_MoveTo_0" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_MoveTo Name="BTTask_MoveTo_1" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_MoveTo Name="BTTask_MoveTo_2" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_2'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_RunEQSQuery Name="BTTask_RunEQSQuery_0" ExportPath="/Script/AIModule.BTTask_RunEQSQuery'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_RunEQSQuery_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_RunEQSQuery Name="BTTask_RunEQSQuery_1" ExportPath="/Script/AIModule.BTTask_RunEQSQuery'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_RunEQSQuery_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_0" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_1" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_1'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_2" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_2'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_3" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_3'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_4" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_4'"
+   End Object
+   Begin Object Class=/Script/AIModule.BTTask_Wait Name="BTTask_Wait_5" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_5'"
+   End Object
+   Begin Object Class=/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C Name="RogueBTDecorator_IsLowHealth_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTDecorator_IsLowHealth_0'"
+   End Object
+   Begin Object Class=/Game/DasRogue/AI/BT/BP_RogueBTCheckRange.BP_RogueBTCheckRange_C Name="RogueBTService_CheckRangeTo_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTCheckRange.BP_RogueBTCheckRange_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTService_CheckRangeTo_0'"
+   End Object
+   Begin Object Class=/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C Name="RogueBTTask_FindNextPatrolPoint_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_FindNextPatrolPoint_0'"
+   End Object
+   Begin Object Class=/Game/DasRogue/AI/BT/BP_RogueBTHealSelf.BP_RogueBTHealSelf_C Name="RogueBTTask_HealSelf_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTHealSelf.BP_RogueBTHealSelf_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_HealSelf_0'"
+   End Object
+   Begin Object Class=/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack.BP_RogueBTRangedAttack_C Name="RogueBTTask_RangedAttack_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack.BP_RogueBTRangedAttack_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_RangedAttack_0'"
+   End Object
+   Begin Object Name="Behavior Tree" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraph'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree'"
+      Begin Object Name="BehaviorTreeGraphNode_Composite_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_0'"
+         Decorators(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_35'"
+         Decorators(1)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_87'"
+         ClassData=(ClassName="BTComposite_Sequence")
+         NodeInstance="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+         SubNodes(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_35'"
+         SubNodes(1)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_87'"
+         NodePosX=-1744
+         NodePosY=736
+         NodeGuid=4CC14E18423869D66CB6A2BFD8BC5951
+         CustomProperties Pin (PinId=CB055AA8478A0BCFF6DDE789DD51C11E,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_3 BE99F81D4A4FA70ECF29A1B75CF39E94,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=5EF00367434D7ACE3F5A6EB91E54B648,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Task_6 54943C6045D9FC98DB562BA8FE5B05D0,BehaviorTreeGraphNode_Task_10 FBC7B69042411AD084E9E1B05DD3A8F5,BehaviorTreeGraphNode_Task_4 2765FFA04DE936466CA1709ED012AB35,BehaviorTreeGraphNode_Task_3 B82D25C149E8C5973249D9AA6D6BAA27,BehaviorTreeGraphNode_Task_5 2765FFA04DE936466CA1709ED012AB35,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Composite_1" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_1'"
+         ClassData=(ClassName="BTComposite_Sequence")
+         NodeInstance="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_1'"
+         NodePosX=-384
+         NodePosY=1456
+         NodeGuid=0543CE82421336766A30259EE3FD3313
+         CustomProperties Pin (PinId=09233DAD4D82F45FFF65C883B04266DE,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_4 004DB2124D6B8CD227FF7299E8876AE5,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=E8E23920424F38305FA45EADB5BE0426,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Task_9 9853909447DE846ABDAAAAA93ACDAAD8,BehaviorTreeGraphNode_Task_7 FBC7B69042411AD084E9E1B05DD3A8F5,BehaviorTreeGraphNode_Task_0 24C06CAB4B3F4ECF9AC931BF61512F8A,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Composite_2" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_2'"
+         Decorators(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_16'"
+         ClassData=(ClassName="BTComposite_Sequence")
+         NodeInstance="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_2'"
+         SubNodes(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_16'"
+         NodePosX=-736
+         NodePosY=1424
+         NodeGuid=ACE4A47640F8C5D819B86189017546FA
+         CustomProperties Pin (PinId=29A91B454E07CA49BFA376A98B7AB17A,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_4 004DB2124D6B8CD227FF7299E8876AE5,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=E9E9EBB64AFD5ED93CB6509941F4F04F,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Task_1 DF68FE90456A52579803C2888BDBA7C2,BehaviorTreeGraphNode_Task_2 99F8324D4EFA49F03324589403B0DF53,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Composite_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_3'"
+         Services(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_3'"
+         Services(1)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_6'"
+         Services(2)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_4'"
+         ClassData=(ClassName="BTComposite_Selector")
+         NodeInstance="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+         SubNodes(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_3'"
+         SubNodes(1)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_6'"
+         SubNodes(2)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_4'"
+         NodePosX=-176
+         NodePosY=-16
+         NodeGuid=B0C5F9DB415A7B8D6E197CA0FCEC472D
+         CustomProperties Pin (PinId=7F0BCDF9466329CA7B19EE800CFB8B46,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Root_0 FB58D9184063754304507A909AC7975F,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=BE99F81D4A4FA70ECF29A1B75CF39E94,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 CB055AA8478A0BCFF6DDE789DD51C11E,BehaviorTreeGraphNode_Composite_4 DEE83C754D993B21B3A66BBCE55525AA,BehaviorTreeGraphNode_Composite_6 53A414AF406B71B0BD18C09256662BDA,BehaviorTreeGraphNode_Task_8 4050C91A4C678D3B169C08BC6D280118,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Composite_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_4'"
+         Decorators(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_36'"
+         ClassData=(ClassName="BTComposite_Selector")
+         NodeInstance="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_1'"
+         SubNodes(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_36'"
+         NodePosX=-608
+         NodePosY=1232
+         NodeGuid=4BC04B0E4C12CCFE6396249A6A6DD4AA
+         CustomProperties Pin (PinId=DEE83C754D993B21B3A66BBCE55525AA,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_3 BE99F81D4A4FA70ECF29A1B75CF39E94,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=004DB2124D6B8CD227FF7299E8876AE5,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_2 29A91B454E07CA49BFA376A98B7AB17A,BehaviorTreeGraphNode_Composite_1 09233DAD4D82F45FFF65C883B04266DE,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Composite_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Composite_6'"
+         ClassData=(ClassName="BTComposite_Sequence")
+         NodeInstance="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_3'"
+         NodePosX=656
+         NodePosY=1120
+         NodeGuid=2CC7BFFB47BCA24C675FE08FBEE24431
+         CustomProperties Pin (PinId=53A414AF406B71B0BD18C09256662BDA,PinName="In",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_3 BE99F81D4A4FA70ECF29A1B75CF39E94,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+         CustomProperties Pin (PinId=DB629E3646E4647343E4A0B03480D62D,PinName="Out",Direction="EGPD_Output",PinType.PinCategory="MultipleNodes",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Task_11 39ECA1CB484C38DDE66F6097A8497861,BehaviorTreeGraphNode_Task_13 7C2FF0574FD6C25E33F5F2A6D74CAE5E,BehaviorTreeGraphNode_Task_12 6C37F7B54176F5B1855576BFE220B63A,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Decorator_16" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_16'"
+         ClassData=(ClassName="BTDecorator_Blackboard")
+         NodeInstance="/Script/AIModule.BTDecorator_Blackboard'MinionRangedBT:BTDecorator_Blackboard_0'"
+         NodeGuid=A5D22D0A40AB0067EEB20792B263D357
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Decorator_35" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_35'"
+         ClassData=(AssetName="BP_RogueBTLowHealth",GeneratedClassPackage="/Game/DasRogue/AI/BT/BP_RogueBTLowHealth",ClassName="BP_RogueBTLowHealth_C")
+         NodeInstance="/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C'MinionRangedBT:RogueBTDecorator_IsLowHealth_0'"
+         NodeGuid=36B67B3D4F44A10C1F9A47A8957B6DF9
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Decorator_36" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_36'"
+         ClassData=(ClassName="BTDecorator_Blackboard")
+         NodeInstance="/Script/AIModule.BTDecorator_Blackboard'MinionRangedBT:BTDecorator_Blackboard_1'"
+         NodeGuid=CADE955C4A0F19D21CBC1BA3027AE7E5
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Decorator_87" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Decorator'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Decorator_87'"
+         ClassData=(ClassName="BTDecorator_Cooldown")
+         NodeInstance="/Script/AIModule.BTDecorator_Cooldown'MinionRangedBT:BTDecorator_Cooldown_0'"
+         NodeGuid=9B2F9AD74B1C0FAE8C23F59F920D9A7C
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Root_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Root'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Root_0'"
+         BlackboardAsset="/Script/AIModule.BlackboardData'/Game/DasRogue/AI/BT/MinionRangedBB.MinionRangedBB'"
+         NodePosX=-64
+         NodePosY=-176
+         NodeGuid=21D2DA66415F9423DACBD489A91E2DC0
+         CustomProperties Pin (PinId=FB58D9184063754304507A909AC7975F,PinName="In",Direction="EGPD_Output",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_3 7F0BCDF9466329CA7B19EE800CFB8B46,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Service_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_3'"
+         ClassData=(ClassName="BTService_DefaultFocus")
+         NodeInstance="/Script/AIModule.BTService_DefaultFocus'MinionRangedBT:BTService_DefaultFocus_0'"
+         NodeGuid=E481317244A313E2DEBF10A33A2BF681
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Service_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_4'"
+         ClassData=(ClassName="BTService_RunEQS")
+         NodeInstance="/Script/AIModule.BTService_RunEQS'MinionRangedBT:BTService_RunEQS_0'"
+         NodeGuid=44B80540415876D2697A158D97E003CB
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Service_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Service'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Service_6'"
+         ClassData=(AssetName="BP_RogueBTCheckRange",GeneratedClassPackage="/Game/DasRogue/AI/BT/BP_RogueBTCheckRange",ClassName="BP_RogueBTCheckRange_C")
+         NodeInstance="/Game/DasRogue/AI/BT/BP_RogueBTCheckRange.BP_RogueBTCheckRange_C'MinionRangedBT:RogueBTService_CheckRangeTo_0'"
+         NodeGuid=D447B36B4919C6D18239289018F9C062
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_0" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_0'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_0'"
+         NodePosX=32
+         NodePosY=1696
+         NodeGuid=4C1E5E8945F488F3FA9700BE00AADC8E
+         CustomProperties Pin (PinId=24C06CAB4B3F4ECF9AC931BF61512F8A,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_1 E8E23920424F38305FA45EADB5BE0426,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_1" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_1'"
+         ClassData=(AssetName="BP_RogueBTRangedAttack",GeneratedClassPackage="/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack",ClassName="BP_RogueBTRangedAttack_C")
+         NodeInstance="/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack.BP_RogueBTRangedAttack_C'MinionRangedBT:RogueBTTask_RangedAttack_0'"
+         NodePosX=-944
+         NodePosY=1712
+         NodeGuid=3A922D554A5920F5689BD4B83450DBA9
+         CustomProperties Pin (PinId=DF68FE90456A52579803C2888BDBA7C2,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_2 E9E9EBB64AFD5ED93CB6509941F4F04F,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_10" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_10'"
+         ClassData=(ClassName="BTTask_MoveTo")
+         NodeInstance="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_1'"
+         NodePosX=-2000
+         NodePosY=1200
+         NodeGuid=0127BA5A45F102411C3340A9940620C8
+         CustomProperties Pin (PinId=FBC7B69042411AD084E9E1B05DD3A8F5,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 5EF00367434D7ACE3F5A6EB91E54B648,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_11" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_11'"
+         ClassData=(AssetName="BP_RogueBTFindPatrol",GeneratedClassPackage="/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol",ClassName="BP_RogueBTFindPatrol_C")
+         NodeInstance="/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C'MinionRangedBT:RogueBTTask_FindNextPatrolPoint_0'"
+         NodePosX=336
+         NodePosY=1296
+         NodeGuid=A5F0372D49AE09D7A6B0B4AE0888BA45
+         CustomProperties Pin (PinId=39ECA1CB484C38DDE66F6097A8497861,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_6 DB629E3646E4647343E4A0B03480D62D,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_12" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_12'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_5'"
+         NodePosX=944
+         NodePosY=1568
+         NodeGuid=5B8F371547088C5F39BFB89ADA1EF21E
+         CustomProperties Pin (PinId=6C37F7B54176F5B1855576BFE220B63A,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_6 DB629E3646E4647343E4A0B03480D62D,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_13" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_13'"
+         ClassData=(ClassName="BTTask_MoveTo")
+         NodeInstance="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_2'"
+         NodePosX=640
+         NodePosY=1440
+         NodeGuid=9C1300654DB125C152B5CE86353542B5
+         CustomProperties Pin (PinId=7C2FF0574FD6C25E33F5F2A6D74CAE5E,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_6 DB629E3646E4647343E4A0B03480D62D,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_2" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_2'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_1'"
+         NodePosX=-720
+         NodePosY=1712
+         NodeGuid=0FADF37C4FC304EF76804D97A374ACC1
+         CustomProperties Pin (PinId=99F8324D4EFA49F03324589403B0DF53,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_2 E9E9EBB64AFD5ED93CB6509941F4F04F,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_3" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_3'"
+         ClassData=(AssetName="BP_RogueBTHealSelf",GeneratedClassPackage="/Game/DasRogue/AI/BT/BP_RogueBTHealSelf",ClassName="BP_RogueBTHealSelf_C")
+         NodeInstance="/Game/DasRogue/AI/BT/BP_RogueBTHealSelf.BP_RogueBTHealSelf_C'MinionRangedBT:RogueBTTask_HealSelf_0'"
+         NodePosX=-1616
+         NodePosY=1344
+         NodeGuid=4833C74C49F19EF3996501A7B5EC4261
+         CustomProperties Pin (PinId=B82D25C149E8C5973249D9AA6D6BAA27,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 5EF00367434D7ACE3F5A6EB91E54B648,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_4" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_4'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_3'"
+         NodePosX=-1776
+         NodePosY=1296
+         NodeGuid=863CBADA40FA7E04D98FEE92AB508D22
+         CustomProperties Pin (PinId=2765FFA04DE936466CA1709ED012AB35,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 5EF00367434D7ACE3F5A6EB91E54B648,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_5" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_5'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_2'"
+         NodePosX=-1408
+         NodePosY=1424
+         NodeGuid=C38E2428400593195D1BCB8602DB0F0E
+         CustomProperties Pin (PinId=2765FFA04DE936466CA1709ED012AB35,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 5EF00367434D7ACE3F5A6EB91E54B648,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_6" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_6'"
+         ClassData=(ClassName="BTTask_RunEQSQuery")
+         NodeInstance="/Script/AIModule.BTTask_RunEQSQuery'MinionRangedBT:BTTask_RunEQSQuery_1'"
+         NodePosX=-2208
+         NodePosY=1072
+         NodeGuid=A57CB94E4AD894D14C406BA951F47F06
+         CustomProperties Pin (PinId=54943C6045D9FC98DB562BA8FE5B05D0,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_0 5EF00367434D7ACE3F5A6EB91E54B648,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_7" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_7'"
+         ClassData=(ClassName="BTTask_MoveTo")
+         NodeInstance="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_0'"
+         NodePosX=-208
+         NodePosY=1680
+         NodeGuid=B203310E4994A848BC852FB07312F5D0
+         CustomProperties Pin (PinId=FBC7B69042411AD084E9E1B05DD3A8F5,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_1 E8E23920424F38305FA45EADB5BE0426,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_8" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_8'"
+         ClassData=(ClassName="BTTask_Wait")
+         NodeInstance="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_4'"
+         NodePosX=1120
+         NodePosY=912
+         NodeGuid=F2939DA648E8F3A03E574698E6D707BE
+         CustomProperties Pin (PinId=4050C91A4C678D3B169C08BC6D280118,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_3 BE99F81D4A4FA70ECF29A1B75CF39E94,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="BehaviorTreeGraphNode_Task_9" ExportPath="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree.BehaviorTreeGraphNode_Task_9'"
+         ClassData=(ClassName="BTTask_RunEQSQuery")
+         NodeInstance="/Script/AIModule.BTTask_RunEQSQuery'MinionRangedBT:BTTask_RunEQSQuery_0'"
+         NodePosX=-512
+         NodePosY=1648
+         NodeGuid=1A9781EB4EAF2DA611F9E494B7ED1166
+         CustomProperties Pin (PinId=9853909447DE846ABDAAAAA93ACDAAD8,PinName="In",PinType.PinCategory="SingleComposite",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PinType.bSerializeAsSinglePrecisionFloat=False,LinkedTo=(BehaviorTreeGraphNode_Composite_1 E8E23920424F38305FA45EADB5BE0426,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      ModCounter=111
+      bIsUsingModCounter=True
+      GraphVersion=3
+      Nodes(0)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Root'BehaviorTreeGraphNode_Root_0'"
+      Nodes(1)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_7'"
+      Nodes(2)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_0'"
+      Nodes(3)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_1'"
+      Nodes(4)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_1'"
+      Nodes(5)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_2'"
+      Nodes(6)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_3'"
+      Nodes(7)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_2'"
+      Nodes(8)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_9'"
+      Nodes(9)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_0'"
+      Nodes(10)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_3'"
+      Nodes(11)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_5'"
+      Nodes(12)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_4'"
+      Nodes(13)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_6'"
+      Nodes(14)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_10'"
+      Nodes(15)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_4'"
+      Nodes(16)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_8'"
+      Nodes(17)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Composite'BehaviorTreeGraphNode_Composite_6'"
+      Nodes(18)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_11'"
+      Nodes(19)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_13'"
+      Nodes(20)="/Script/BehaviorTreeEditor.BehaviorTreeGraphNode_Task'BehaviorTreeGraphNode_Task_12'"
+      GraphGuid=A6CB3EA94962E1B9BDA7A2BA49F27D82
+   End Object
+   Begin Object Name="BTComposite_Selector_0" ExportPath="/Script/AIModule.BTComposite_Selector'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Selector_0'"
+      Children(0)=(ChildComposite="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'",Decorators=("/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C'MinionRangedBT:RogueBTDecorator_IsLowHealth_0'","/Script/AIModule.BTDecorator_Cooldown'MinionRangedBT:BTDecorator_Cooldown_0'"))
+      Children(1)=(ChildComposite="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_1'",Decorators=("/Script/AIModule.BTDecorator_Blackboard'MinionRangedBT:BTDecorator_Blackboard_1'"))
+      Children(2)=(ChildComposite="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_3'")
+      Children(3)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_4'")
+      Services(0)="/Script/AIModule.BTService_DefaultFocus'MinionRangedBT:BTService_DefaultFocus_0'"
+      Services(1)="/Game/DasRogue/AI/BT/BP_RogueBTCheckRange.BP_RogueBTCheckRange_C'MinionRangedBT:RogueBTService_CheckRangeTo_0'"
+      Services(2)="/Script/AIModule.BTService_RunEQS'MinionRangedBT:BTService_RunEQS_0'"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+   End Object
+   Begin Object Name="BTComposite_Selector_1" ExportPath="/Script/AIModule.BTComposite_Selector'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Selector_1'"
+      Children(0)=(ChildComposite="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_2'",Decorators=("/Script/AIModule.BTDecorator_Blackboard'MinionRangedBT:BTDecorator_Blackboard_0'"))
+      Children(1)=(ChildComposite="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_1'")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTComposite_Sequence_0" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_0'"
+      Children(0)=(ChildTask="/Script/AIModule.BTTask_RunEQSQuery'MinionRangedBT:BTTask_RunEQSQuery_1'")
+      Children(1)=(ChildTask="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_1'")
+      Children(2)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_3'")
+      Children(3)=(ChildTask="/Game/DasRogue/AI/BT/BP_RogueBTHealSelf.BP_RogueBTHealSelf_C'MinionRangedBT:RogueBTTask_HealSelf_0'")
+      Children(4)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_2'")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTComposite_Sequence_1" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_1'"
+      Children(0)=(ChildTask="/Script/AIModule.BTTask_RunEQSQuery'MinionRangedBT:BTTask_RunEQSQuery_0'")
+      Children(1)=(ChildTask="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_0'")
+      Children(2)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_0'")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_1'"
+   End Object
+   Begin Object Name="BTComposite_Sequence_2" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_2'"
+      Children(0)=(ChildTask="/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack.BP_RogueBTRangedAttack_C'MinionRangedBT:RogueBTTask_RangedAttack_0'")
+      Children(1)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_1'")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_1'"
+   End Object
+   Begin Object Name="BTComposite_Sequence_3" ExportPath="/Script/AIModule.BTComposite_Sequence'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTComposite_Sequence_3'"
+      Children(0)=(ChildTask="/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C'MinionRangedBT:RogueBTTask_FindNextPatrolPoint_0'")
+      Children(1)=(ChildTask="/Script/AIModule.BTTask_MoveTo'MinionRangedBT:BTTask_MoveTo_2'")
+      Children(2)=(ChildTask="/Script/AIModule.BTTask_Wait'MinionRangedBT:BTTask_Wait_5'")
+      NodeName="Patrol Sequence"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTDecorator_Blackboard_0" ExportPath="/Script/AIModule.BTDecorator_Blackboard'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Blackboard_0'"
+      CachedDescription="WithinRange is Is Set"
+      BlackboardKey=(SelectedKeyName="WithinRange")
+      FlowAbortMode=LowerPriority
+      NodeName="Is Within Range?"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_1'"
+   End Object
+   Begin Object Name="BTDecorator_Blackboard_1" ExportPath="/Script/AIModule.BTDecorator_Blackboard'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Blackboard_1'"
+      CachedDescription="TargetActor is Is Set"
+      BlackboardKey=(SelectedKeyName="TargetActor")
+      FlowAbortMode=Both
+      NodeName="Has Target?"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTDecorator_Cooldown_0" ExportPath="/Script/AIModule.BTDecorator_Cooldown'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTDecorator_Cooldown_0'"
+      CoolDownTime=(DefaultValue=20.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTService_DefaultFocus_0" ExportPath="/Script/AIModule.BTService_DefaultFocus'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTService_DefaultFocus_0'"
+      BlackboardKey=(SelectedKeyName="TargetActor")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTService_RunEQS_0" ExportPath="/Script/AIModule.BTService_RunEQS'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTService_RunEQS_0'"
+      EQSRequest=(QueryTemplate="/Script/AIModule.EnvQuery'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection'")
+      BlackboardKey=(SelectedKeyName="TargetActor")
+      NodeName="Select Best Target"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTTask_MoveTo_0" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_0'"
+      BlackboardKey=(SelectedKeyName="MoveToLocation")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_1'"
+   End Object
+   Begin Object Name="BTTask_MoveTo_1" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_1'"
+      BlackboardKey=(SelectedKeyName="MoveToLocation")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Name="BTTask_MoveTo_2" ExportPath="/Script/AIModule.BTTask_MoveTo'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_MoveTo_2'"
+      AcceptableRadius=(DefaultValue=25.000000)
+      bTrackMovingGoal=(DefaultValue=False)
+      BlackboardKey=(SelectedKeyName="CurrentPatrolPoint")
+      NodeName="Move To Patrol Point"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_3'"
+   End Object
+   Begin Object Name="BTTask_RunEQSQuery_0" ExportPath="/Script/AIModule.BTTask_RunEQSQuery'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_RunEQSQuery_0'"
+      EQSRequest=(QueryTemplate="/Script/AIModule.EnvQuery'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget'",RunMode=RandomBest25Pct)
+      BlackboardKey=(SelectedKeyName="MoveToLocation")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_1'"
+   End Object
+   Begin Object Name="BTTask_RunEQSQuery_1" ExportPath="/Script/AIModule.BTTask_RunEQSQuery'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_RunEQSQuery_1'"
+      EQSRequest=(QueryTemplate="/Script/AIModule.EnvQuery'/Game/DasRogue/AI/BT/EQS_MoveToCover.EQS_MoveToCover'")
+      BlackboardKey=(SelectedKeyName="MoveToLocation")
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Name="BTTask_Wait_0" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_0'"
+      WaitTime=(DefaultValue=1.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_1'"
+   End Object
+   Begin Object Name="BTTask_Wait_1" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_1'"
+      WaitTime=(DefaultValue=1.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_2'"
+   End Object
+   Begin Object Name="BTTask_Wait_2" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_2'"
+      WaitTime=(DefaultValue=1.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Name="BTTask_Wait_3" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_3'"
+      WaitTime=(DefaultValue=1.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Name="BTTask_Wait_4" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_4'"
+      WaitTime=(DefaultValue=1.000000)
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="BTTask_Wait_5" ExportPath="/Script/AIModule.BTTask_Wait'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:BTTask_Wait_5'"
+      WaitTime=(DefaultValue=0.300000)
+      NodeName="Wait at Destination"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_3'"
+   End Object
+   Begin Object Name="RogueBTDecorator_IsLowHealth_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTDecorator_IsLowHealth_0'"
+      FlowAbortMode=LowerPriority
+      NodeName="Is low Health?"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="RogueBTService_CheckRangeTo_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTCheckRange.BP_RogueBTCheckRange_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTService_CheckRangeTo_0'"
+      MaxAttackRange=1000.000000
+      Interval=0.200000
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Selector'MinionRangedBT:BTComposite_Selector_0'"
+   End Object
+   Begin Object Name="RogueBTTask_FindNextPatrolPoint_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_FindNextPatrolPoint_0'"
+      NodeName="Find Next Patrol Point"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_3'"
+   End Object
+   Begin Object Name="RogueBTTask_HealSelf_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTHealSelf.BP_RogueBTHealSelf_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_HealSelf_0'"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_0'"
+   End Object
+   Begin Object Name="RogueBTTask_RangedAttack_0" ExportPath="/Game/DasRogue/AI/BT/BP_RogueBTRangedAttack.BP_RogueBTRangedAttack_C'/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:RogueBTTask_RangedAttack_0'"
+      TreeAsset="/Script/AIModule.BehaviorTree'MinionRangedBT'"
+      ParentNode="/Script/AIModule.BTComposite_Sequence'MinionRangedBT:BTComposite_Sequence_2'"
+   End Object
+   RootNode="/Script/AIModule.BTComposite_Selector'BTComposite_Selector_0'"
+   BTGraph="/Script/BehaviorTreeEditor.BehaviorTreeGraph'Behavior Tree'"
+   LastEditedDocuments(0)=(EditedObjectPath="/Game/DasRogue/AI/BT/MinionRangedBT.MinionRangedBT:Behavior Tree",SavedViewOffset=(X=-1.717407,Y=960.367676),SavedZoomAmount=1.000000)
+   BlackboardAsset="/Script/AIModule.BlackboardData'/Game/DasRogue/AI/BT/MinionRangedBB.MinionRangedBB'"
+End Object

@@ -7,6 +7,7 @@ require rogue_presentation public
 require rogue_action_drop_loot public
 require rogue_monster_data public
 require ue_ai public
+require ue_behavior_tree public
 require ue_perception public
 require ue_vector_math public
 require math public
@@ -41,6 +42,8 @@ class RogueAICharacter : Character {
     }
 
     state = ue_properties(BlueprintReadWrite) {
+        var AppliedMonsterData : RogueMonsterDataRef
+        var DataActionsGranted : int = 0
         var Target : ActorRef
         var Dead : bool = false
         var Stunned : bool = false
@@ -87,8 +90,30 @@ class RogueAICharacter : Character {
                 rogue_apply_attack(ue_ref(type<RogueProjectileAttackRef>, action.handle), self.Presentation)
             }
         }
+        self.ConfigureMonsterData(self.MonsterData)
         self.RefreshLabel()
         ue_self_actor().SetActorTickEnabled(false)
+    }
+
+    // Spawned and pre-placed monsters share the same idempotent data application.
+    [ue_function(BlueprintCallable)]
+    def ConfigureMonsterData(data : RogueMonsterDataRef) : bool {
+        if (self.Dead || !ue_is_valid(data) || !self.ActionSystem.Enabled) { return false }
+        if (ue_same_object(data, self.AppliedMonsterData)) { return true }
+        self.MonsterData = data
+        self.AppliedMonsterData = data
+        for (kind in data.Actions) {
+            if (!ue_class_valid(kind)) { continue }
+            var alreadyGranted = false
+            for (action in self.ActionSystem.Actions) {
+                if (!action.IsEffect() && ue_class_path(action.GrantedClass) == ue_class_path(kind)) {
+                    alreadyGranted = true
+                    break
+                }
+            }
+            if (!alreadyGranted && ue_is_valid(self.ActionSystem.GrantAction(kind))) { self.DataActionsGranted += 1 }
+        }
+        return true
     }
 
     def BindEvents() : void {
@@ -112,8 +137,9 @@ class RogueAICharacter : Character {
         self.CharacterMovement.DisableMovement()
         self.CapsuleComponent.SetCollisionEnabled(ECollisionEnabled.NoCollision)
         let controller = ue_character_self().GetController()
-        // This port's thinker lives on the controller rather than a BehaviorTree brain.
+        // Both the direct thinker and the native BehaviorTree stop with the owner.
         if (ue_is_valid(controller)) {
+            ue_ai_brain(ue_ref(type<AIControllerRef>,controller.handle),"StopLogic","Killed")
             controller.StopMovement()
             let actor = ue_ref(type<ActorRef>,controller.handle)
             actor.SetActorTickEnabled(false)
@@ -128,8 +154,10 @@ class RogueAICharacter : Character {
     }
 
     def DropLoot() : void {
-        if (!ue_class_valid(self.DropLootActionClass)) { return }
-        let action = self.ActionSystem.GrantAction(self.DropLootActionClass)
+        var action = self.ActionSystem.FindAction(ue_tag("Action.DropLoot"))
+        if (!ue_is_valid(action) && ue_class_valid(self.DropLootActionClass)) {
+            action = self.ActionSystem.GrantAction(self.DropLootActionClass)
+        }
         if (!ue_is_valid(action)) { return }
         let loot = ue_ref(type<RogueActionDropLootRef>, action.handle)
         loot.CreditsToDrop = ue_is_valid(self.MonsterData) ? max(self.MonsterData.LootCoins, 0) : 10

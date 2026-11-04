@@ -521,3 +521,56 @@ managed interface. This bool-returning function preserves UE override dispatch;
 Teleport supplies its own delayed sequence, while the base supplies ordinary
 impact/damage/destruction. ApplyProjectileDamage remains the separate damage
 hook. Preparation migrates the interface before reimporting its implementers.
+
+
+### Gameplay Burning
+
+No new C++ bridge was needed. RogueActionEffectBurning uses the existing managed
+effect timers/stacking and native ApplyDamage. The original Blueprint applies
+DamageToApply * StackCount to its owning component's actor, with empty instigator,
+causer and damage-type pins. Duration=3, Period=1, DamageToApply=5 and refresh=true
+were read from the original Blueprint; its SHA-256 matches pinned revision 992f860.
+GameplayTag fields are empty. Source inspection is reproducible with
+Scripts/export_original_burning.py, running read-only in the original editor.
+
+The DAS handler additionally rejects an invalid/inactive host and invalid or
+nonpositive damage. In particular, death-triggered shutdown cannot reenter the
+last-tick path and apply damage again. Native damage semantics, Health/Rage notifications,
+period cadence, boundary expiry and owner/world teardown are exercised in PIE.
+The boundary check in RogueActionEffect now uses ue_timer_is_active separately
+from remaining time: Unreal can return negative remaining time for an active
+overdue timer. This preserves the last due tick without treating cancelled timers
+as overdue. The previous 0.6/0.1-second six-tick case is also covered.
+The flagged generic Actor case is compared with direct UGameplayStatics::ApplyDamage;
+both deliver damage in this engine. No additional immunity policy is introduced.
+
+
+## Native Blueprint event adapters for AI
+
+DasBlueprintService accepts a checked override of a native Blueprint event on a
+generic UObject parent, in addition to authored-parent overrides. Native roots
+must expose FUNC_Event | FUNC_BlueprintEvent; final/static functions and mismatched
+signatures (including const, pure and parameter direction) remain rejected.
+This enables DAS BT tasks/services/decorators and const EQS contexts without
+game-specific native host classes. The const ProvideSingleActor contract retains
+its out Actor parameter through the existing frame-output bridge.
+
+ue_behavior_tree adds native-root markers and small reflection helpers for BT
+completion, blackboard access and RunBehaviorTree/StopLogic. AIBrainPause is the
+only new runtime native operation: authority/world validation plus native
+PauseLogic/ResumeLogic, which are not UFunctions. Scheduling and EQS are engine
+code; healing, range checks, patrol selection, projectile use and target context
+remain DAS. The editor-only Das.AI.ImportText is restricted to new /Game
+BehaviorTree, BlackboardData and EnvQuery roots, refuses PIE and existing packages,
+and does not save. Runtime never reads these authoring text files.
+
+EQS runtime contexts are duplicated CDOs owned by UEnvQueryManager. Unreal preserves RF_ArchetypeObject on these copies. The object adapter clears that flag only for a non-CDO Blueprint EQS context whose direct manager owns the same active game world. Real CDOs, editor templates and other archetypes retain their existing rejection rules.
+
+
+Native affiliation uses IGenericTeamAgentInterface on the perceived pawn, not
+only its controller. Generic ADasPawn and ADasCharacter now forward GetGenericTeamId
+to their controller (NoTeam when unpossessed), as the original AI character does.
+ue_perception_configure accepts enemies/friendlies/neutrals flags for both sight
+and hearing; defaults preserve the earlier broad subscription API. The native-BT
+controller explicitly uses enemies-only, so PerceivedActors cannot prefer its own
+friendly pawn over the player. Team numbers are still chosen in DAS (bot=0/player=1).

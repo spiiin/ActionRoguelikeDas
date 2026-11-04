@@ -1068,3 +1068,70 @@ DAS component through existing managed delegate/call-frame APIs on the game
 thread. No per-frame DAS tag polling or animation-worker DAS execution was added.
 Licensed source assets and the adapted Blueprint remain local and gitignored.
 No packaged build or pixel-for-pixel comparison of every transition is claimed.
+
+
+### Gameplay Burning: PASS (2026-11-04)
+
+Original Blueprint defaults and graph were read without compilation or saving;
+the asset SHA-256 equals the file at pinned course revision 992f860:
+6e419147bb9521f2c85d33b117b9a6bbdb4e5e7c8c8bac13c99b9a7279fe2745.
+Source graph: ApplyDamage(GetOwningComponent().GetOwner(), DamageToApply*StackCount),
+empty instigator/causer/type. Native magic projectile CDO references this effect.
+Reference receipt: Saved/Tests/original_burning_reference.json.
+
+Shared-agent rogue-burning-v3-20261104: PASS, 16 real PIE checks, 123 scripts
+compiled with zero failures, strict runtime/Blueprint/ensure/fatal and teardown
+checks passed. Real PIE receipt: Saved/Tests/rogue_burning_pie.json.
+
+- source_defaults_and_gameplay_projectile_configuration
+- no_immediate_damage_and_explicit_removal_before_first_tick
+- fractional_period_regression_keeps_six_boundary_ticks
+- native_any_damage_and_Rage_with_original_null_attribution
+- one_instance_stacking_scales_damage_without_restarting_period
+- three_due_ticks_including_duration_boundary_exactly_once
+- no_refresh_option_expires_on_original_deadline
+- flagged_generic_actor_matches_direct_engine_ApplyDamage
+- zero_damage_does_not_emit_native_damage_events
+- manual_removal_death_and_owner_destruction_cancel_timers
+- refreshed_duration_expires_with_all_stacks_removed
+- reapplying_expired_effect_creates_fresh_state
+- real_projectile_applies_direct_damage_then_Burning
+- Burning_outlives_projectile_and_preserves_native_Rage
+- lethal_projectile_cleans_effect_before_first_period
+- EndPIE_with_pending_Burning_timer
+
+Strict runtime/Blueprint/ensure/fatal and teardown checks passed. The pending
+effect at EndPIE was stopped or collected, without executing its first tick.
+No packaged build or Burning icon/HUD presentation is claimed for this stage.
+
+
+## Native BT/EQS and MonsterData — 4 November 2026
+
+Actual PIE on BehaviorTest: 13 checks passed (`rogue-behavior-v10-20261104`).
+The native BehaviorTreeComponent and Blackboard run the course selector structure;
+DAS LowHealth is false at exactly 30 percent, true below it. FindPatrol selects
+connected points and native MoveTo follows Recast. A real hearing stimulus enters
+native PerceivedActors EQS; CheckRange and RangedAttack cause actual native damage.
+The manager-owned EQS context's const/out event returns the Blackboard player actor,
+and enemies-only affiliation excludes the bot itself. The cover query, movement,
+one-second pre-heal wait and +100 heal complete. Stun pauses the native brain and
+movement; removal resumes it. The 20-second cooldown blocks reentry, then healing
+works again. Death stops the brain. EndPIE with another live tree/EQS service passes
+the strict runtime/Blueprint/ensure/fatal log gates.
+
+The test raises only its runtime enemy to 300 HP so +100 can be distinguished from
+a full heal. It emits repeatable native hearing stimuli during cover/cooldown to
+keep a perceived threat present; it never writes TargetActor or WithinRange itself.
+Earlier failures exposed native EQS CDO-copy archetype flags and missing pawn team
+forwarding; both were fixed in generic DasForUE code. They were not bypassed in EQS.
+
+MonsterData: 8 actual PIE checks. Null/incompatible profiles do not spawn actors;
+the valid profile chooses the class, assigns data and grants actions. Reapplying
+the same profile does not duplicate actions, which survive forced GC. The
+profile-granted DropLoot starts once with its LootCoins. Explicit cleanup and owner
+EndPlay remove owned pawns and their native controllers. Receipts are
+`Saved/Tests/rogue_monster_data_pie.json` and `rogue_behavior_tree_pie.json`.
+
+Generic-parent automation and all 35 inherited-handler checks also pass on the
+updated runtime (`rogue-behavior-v9-20261104`). Packaged/standalone and HUD rendering
+are not claimed by this stage. HealthWidgetClass is still reserved for the HUD step.

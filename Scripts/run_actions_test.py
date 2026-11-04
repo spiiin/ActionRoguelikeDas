@@ -36,7 +36,7 @@ def tick(delta):
         level = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem) or unreal.get_default_object(unreal.LevelEditorSubsystem)
         # Compile/import preparation must not consume the gameplay test budget.
         if STATE['phase'] == 'test':
-            if time.perf_counter()-STATE['test_started'] > 75:
+            if time.perf_counter()-STATE['test_started'] > globals().get('TEST_TIMEOUT',75):
                 detail=STATE.get('test',{}).get('s',{}).get('phase','unknown')
                 raise RuntimeError('Gameplay test timed out in '+str(detail))
         elif STATE['phase'] not in ('stop','cleanup'):
@@ -45,7 +45,7 @@ def tick(delta):
                 raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':
             world = editor.get_editor_world()
-            allowed_maps = ('ChestTest','PatrolTest') if globals().get('WAIT_NAVIGATION') else ('ChestTest',)
+            allowed_maps = ('ChestTest','PatrolTest','BehaviorTest') if globals().get('WAIT_NAVIGATION') else ('ChestTest',)
             if not world or world.get_name() not in allowed_maps:
                 return
             unreal.SystemLibrary.execute_console_command(world, 't.IdleWhenNotForeground 0')
@@ -77,7 +77,7 @@ def tick(delta):
             return
         if STATE['phase'] == 'wait_navigation':
             world=editor.get_editor_world()
-            assert world and world.get_name()=='PatrolTest'
+            assert world and world.get_name() in ('PatrolTest','BehaviorTest')
             STATE.setdefault('nav_started',time.perf_counter())
             nav_age=time.perf_counter()-STATE['nav_started']
             if nav_age>1.0 and not STATE.get('nav_rebuild_requested'):
@@ -104,7 +104,7 @@ def tick(delta):
             startup_results = re.findall(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=(\d+)',log)
             if startup_results and int(startup_results[-1]):
                 raise RuntimeError('Startup compilation failed; inspect DAS_EDITOR_COMPILE_ALL and BlueprintLog')
-            if not re.search(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=0',log):
+            if globals().get('WAIT_EDITOR_COMPILE',True) and not re.search(r'DAS_EDITOR_COMPILE_ALL scripts=\d+ failed=0',log):
                 return
             STATE['warm_ticks']+=1
             if STATE['warm_ticks']<4:return

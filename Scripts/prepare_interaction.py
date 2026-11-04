@@ -42,6 +42,8 @@ for name,key_name in [('IA_SecondaryAttack','F'),('IA_SpecialAttack','Q')]:
 if not saving.save_packages([x.get_outer() for x in [mapping,action,fire,*additional]],False):
     raise RuntimeError("Cannot save input assets")
 
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_burning_effect.py')))
+
 for command in [
     "Das.DSL.Interfaces.Apply rogue_projectile_impact_interface.das /Game/DasRogue/Types",
     "Das.DSL.Interfaces.Apply rogue_interaction_interface.das /Game/DasRogue/Types",

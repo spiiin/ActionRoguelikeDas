@@ -3,6 +3,7 @@ from pathlib import Path
 __import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_attribute_sets.py')))
 ROOT=Path(r"C:/src/ActionRoguelikeDas")
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+__import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_burning_effect.py')))
 import unreal
 assets=unreal.AssetToolsHelpers.get_asset_tools()
 path='/Game/DasRogue/Materials/M_TargetHealth'

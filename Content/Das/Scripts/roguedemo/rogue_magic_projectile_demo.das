@@ -9,6 +9,7 @@ class RogueMagicProjectileDemo : RogueMagicProjectile {
     Visual : StaticMeshComponentRef
 
     defaults = ue_defaults() {
+        self.EffectOnHit = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionEffectBurning.BP_RogueActionEffectBurning_C")
         self.ExplosionSound = ue_asset_default("/Engine/EngineSounds/1kSineTonePing.1kSineTonePing")
         self.ExplosionEffect = ue_asset_default("/Niagara/DefaultAssets/Templates/Systems/RadialBurst.RadialBurst")
         self.Visual.StaticMesh = ue_asset_default("/Engine/BasicShapes/Sphere.Sphere")

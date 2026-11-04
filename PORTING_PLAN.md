@@ -357,7 +357,7 @@ CDO CharacterMovement показывает 600, но BeginPlay использу�
 Дисковый editor module cache временно отключён только в этом проекте из-за
 воспроизводимого warm-start падения; передача диагностики — MODULE_CACHE_REPRO.md.
 
-### Что ещё нужно перенести
+### Исторический список пробелов на 3 ноября — актуальный остаток ниже
 
 1. **Blackhole — закончить текущий срез.** Реализация уже существует в
    rogue_projectile_blackhole.das. Последний доступный на момент сверки receipt
@@ -433,3 +433,35 @@ SpringArm: TargetArmLength=175, RelativeLocation.Z=80, SocketOffset.Y=80.
 также подтверждены и перенесены в последующем этапе боевого паритета. Подготовка персонажа использует
 автоматический Reimport, сохраняя ручные overrides. Движение, спринт и связанные
 проверки стрельбы прошли реальный PIE; подробности в VALIDATION.md.
+
+
+## Burning — проверено в PIE 4 ноября 2026
+
+Перенесён Blueprint ActionEffect_Burning из 992f860: DamageToApply=5, Duration=3,
+Period=1, рост StackCount с обновлением длительности и сохранением cadence.
+Урон идёт через ApplyDamage без instigator/causer, как в исходном графе.
+RogueMagicProjectileDemo назначает этот эффект по умолчанию; нейтральный базовый
+RogueMagicProjectile остаётся без EffectOnHit. Icon/UI — часть будущего HUD,
+VFX/audio не добавлены, поскольку в исходном графе Burning они не запускаются.
+
+### Актуальный остаток
+
+Blackhole, Teleport, дополнительные атаки, их input и мост к оригинальному
+Anim Blueprint уже закрыты. Burning также закрыт; подтверждения — VALIDATION.md.
+
+1. Полный AI/BT/EQS закрыт: native assets и узлы DAS, 13 PIE-проверок.
+2. MonsterData: класс, действия и DropLoot закрыты, 8 PIE-проверок; HealthWidgetClass — в этапе HUD.
+3. HUD/мировые widgets: HP/Rage, прицел, эффекты/иконки, DPI-проекция.
+4. Director и игровой цикл: бюджет, таблицы/веса, seed, spawn/EQS, лимиты и очистка мира.
+5. Blueprint-only окружение (Lever/ProjectileSpammer) и единая игровая карта.
+6. Проверка standalone/packaged, смены карт и работы без внешних ресурсов.
+
+
+## AI / MonsterData — завершён основной runtime-срез
+
+BehaviorTest использует native BT/EQS с DAS-задачами, сервисом, декоратором и
+контекстом. Generic Pawn/Character передают native perception команду контроллера;
+новый BT-контроллер воспринимает только противников. World-owned EQS context
+обрабатывается отдельно от настоящего CDO в общем object adapter. Тесты и точные
+границы проверки перечислены в VALIDATION.md. Следующий этап — HUD и health widgets,
+затем director/волны и итоговая карта. Базовый спавнер уже готов для director.

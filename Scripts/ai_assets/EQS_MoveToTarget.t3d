@@ -1,0 +1,39 @@
+Begin Object Class=/Script/AIModule.EnvQuery Name="EQS_MoveToTarget" ExportPath="/Script/AIModule.EnvQuery'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget'"
+   Begin Object Class=/Script/AIModule.EnvQueryGenerator_Donut Name="EnvQueryGenerator_Donut_0" ExportPath="/Script/AIModule.EnvQueryGenerator_Donut'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryGenerator_Donut_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryOption Name="EnvQueryOption_0" ExportPath="/Script/AIModule.EnvQueryOption'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryOption_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryTest_Distance Name="EnvQueryTest_Distance_0" ExportPath="/Script/AIModule.EnvQueryTest_Distance'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryTest_Distance_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryTest_Trace Name="EnvQueryTest_Trace_0" ExportPath="/Script/AIModule.EnvQueryTest_Trace'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryTest_Trace_0'"
+   End Object
+   Begin Object Name="EnvQueryGenerator_Donut_0" ExportPath="/Script/AIModule.EnvQueryGenerator_Donut'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryGenerator_Donut_0'"
+      InnerRadius=(DefaultValue=600.000000)
+      bUseSpiralPattern=True
+      Center="/Script/CoreUObject.Class'/Game/DasRogue/AI/BT/BP_RogueEQSTarget.BP_RogueEQSTarget_C'"
+      ProjectionData=(VersionNum=1,SerializedChannel=ECC_Visibility)
+      VerNum=1
+   End Object
+   Begin Object Name="EnvQueryOption_0" ExportPath="/Script/AIModule.EnvQueryOption'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryOption_0'"
+      Generator="/Script/AIModule.EnvQueryGenerator_Donut'EQS_MoveToTarget:EnvQueryGenerator_Donut_0'"
+      Tests(0)="/Script/AIModule.EnvQueryTest_Trace'EQS_MoveToTarget:EnvQueryTest_Trace_0'"
+      Tests(1)="/Script/AIModule.EnvQueryTest_Distance'EQS_MoveToTarget:EnvQueryTest_Distance_0'"
+   End Object
+   Begin Object Name="EnvQueryTest_Distance_0" ExportPath="/Script/AIModule.EnvQueryTest_Distance'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryTest_Distance_0'"
+      TestOrder=1
+      TestPurpose=Score
+      FilterType=Minimum
+      FloatValueMin=(DefaultValue=500.000000)
+      ScoringFactor=(DefaultValue=-1.000000)
+      VerNum=2
+   End Object
+   Begin Object Name="EnvQueryTest_Trace_0" ExportPath="/Script/AIModule.EnvQueryTest_Trace'/Game/DasRogue/AI/BT/EQS_MoveToTarget.EQS_MoveToTarget:EnvQueryTest_Trace_0'"
+      TraceData=(VersionNum=1,SerializedChannel=ECC_Visibility)
+      Context="/Script/CoreUObject.Class'/Game/DasRogue/AI/BT/BP_RogueEQSTarget.BP_RogueEQSTarget_C'"
+      TestPurpose=Filter
+      BoolValue=(DefaultValue=False)
+      VerNum=2
+   End Object
+   QueryName="EQS_MoveToTarget"
+   Options(0)="/Script/AIModule.EnvQueryOption'EnvQueryOption_0'"
+End Object

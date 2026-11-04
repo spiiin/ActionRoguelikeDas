@@ -1,0 +1,23 @@
+Begin Object Class=/Script/AIModule.EnvQuery Name="EQS_TargetSelection" ExportPath="/Script/AIModule.EnvQuery'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection'"
+   Begin Object Class=/Script/AIModule.EnvQueryGenerator_PerceivedActors Name="EnvQueryGenerator_PerceivedActors_0" ExportPath="/Script/AIModule.EnvQueryGenerator_PerceivedActors'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryGenerator_PerceivedActors_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryOption Name="EnvQueryOption_0" ExportPath="/Script/AIModule.EnvQueryOption'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryOption_0'"
+   End Object
+   Begin Object Class=/Script/AIModule.EnvQueryTest_Distance Name="EnvQueryTest_Distance_0" ExportPath="/Script/AIModule.EnvQueryTest_Distance'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryTest_Distance_0'"
+   End Object
+   Begin Object Name="EnvQueryGenerator_PerceivedActors_0" ExportPath="/Script/AIModule.EnvQueryGenerator_PerceivedActors'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryGenerator_PerceivedActors_0'"
+      VerNum=1
+   End Object
+   Begin Object Name="EnvQueryOption_0" ExportPath="/Script/AIModule.EnvQueryOption'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryOption_0'"
+      Generator="/Script/AIModule.EnvQueryGenerator_PerceivedActors'EQS_TargetSelection:EnvQueryGenerator_PerceivedActors_0'"
+      Tests(0)="/Script/AIModule.EnvQueryTest_Distance'EQS_TargetSelection:EnvQueryTest_Distance_0'"
+   End Object
+   Begin Object Name="EnvQueryTest_Distance_0" ExportPath="/Script/AIModule.EnvQueryTest_Distance'/Game/DasRogue/AI/BT/EQS_TargetSelection.EQS_TargetSelection:EnvQueryTest_Distance_0'"
+      TestPurpose=Score
+      FilterType=Minimum
+      ScoringFactor=(DefaultValue=-1.000000)
+      VerNum=2
+   End Object
+   QueryName="EQS_TargetSelection"
+   Options(0)="/Script/AIModule.EnvQueryOption'EnvQueryOption_0'"
+End Object

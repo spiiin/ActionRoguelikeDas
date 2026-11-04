@@ -317,7 +317,8 @@ AttributeComponent продолжает получать одно событие
 действия, stun и смерти находится в daScript. Native AIPerception создаёт события
 зрения, слуха и урона; generic API DasForUE настраивает senses и предоставляет focus/LOS.
 Поведение соответствует первому боевому срезу RogueAICharacter/Controller и
-RogueBTTask_RangedAttack оригинала; сами BehaviorTree assets ещё не перенесены.
+RogueBTTask_RangedAttack оригинала. Полное дерево перенесено отдельным контроллером
+RogueBehaviorController; описание — ниже.
 Лечение, добыча и патруль описаны ниже.
 
 `Scripts/prepare_ai.py` создаёт Blueprint-ассеты в `/Game/DasRogue/AI`, связывает
@@ -602,3 +603,75 @@ The simpler generated ABP_Locomotion is still available when installing without
 
 The `rogue-course-animation` suite serializes source export and target PIE through
 the shared build agent; it requires the local source comparison project.
+
+
+## Burning — gameplay effect
+
+`rogue_action_effect_burning.das` implements the original ActionEffect_Burning:
+Duration=3 s, Period=1 s, DamageToApply=5, one instance per target/class. Reapplication
+increments StackCount and normally refreshes duration, without restarting the
+period timer. Each due tick applies `5 * StackCount` through native ApplyDamage.
+The final due tick at duration expiry is preserved exactly once. Resetting duration
+can be disabled through ResetDurationOnStackIncrease, as in the source effect.
+
+Instigator and damage causer intentionally remain empty, matching the original
+Blueprint's unwired pins. Damage therefore goes through normal native damage
+events and the existing Health/Rage policy; it is not a direct Health assignment.
+The source effect has no ActionName/GrantTags/BlockedTags and does not start VFX
+or audio. Its optional icon belongs to the later HUD/presentation stage.
+
+The playable `RogueMagicProjectileDemo` now defaults EffectOnHit to Burning, as
+the original BP_MagicProjectile does. The generic RogueMagicProjectile remains
+unconfigured. Designer overrides are preserved by normal reimport. Run
+`Scripts/prepare_burning_effect.py` before importing projectile subclasses; the
+standard preparation scripts already do this. `Scripts/prepare_burning.py`
+prepares the isolated PIE test. Suite: `rogue-burning`.
+
+For a manual check, open ChestTest, press Play and fire a single LMB shot at the
+combat target with an action system. With 100 initial HP and no other hits,
+the original 51 direct damage leaves 49 HP, then Burning changes it to
+44, 39 and 34 at one-second intervals. Repeated hits increase the effect's stack
+count, provided the target survives. No acquired assets are needed for this logic.
+
+
+## Native Behavior Tree и daScript
+
+Карта `/Game/DasRogue/Maps/BehaviorTest` использует `BP_RogueBehaviorController`.
+Само дерево `/Game/DasRogue/AI/BT/MinionRangedBT`, Blackboard и три EQS-запроса —
+Unreal assets. Их структура и настройки перенесены из исходного 992f860:
+лечение → бой → патруль → ожидание. Старые ChestTest и PatrolTest сохраняют
+свои изолированные сценарии и контроллеры.
+
+Собственные узлы находятся в `rogue/rogue_bt_tasks.das`: HealSelf, LowHealth,
+CheckRange, RangedAttack, FindPatrol и TargetActor EQS context. Это обычные
+Blueprint-классы с native родителями BTTask/BTService/BTDecorator/EQSContext.
+Unreal вызывает их Blueprint events, а сгенерированный DasForUE adapter
+выполняет методы daScript. MoveTo, Wait, Cooldown, focus и выполнение EQS
+оставлены штатному движку. RangedAttack использует общий DAS FireProjectile
+сразу, без задержки player action. Дальность в дереве — 1000, условие LowHealth
+строго меньше 0.3, HealSelf добавляет 100 HP. Ветка лечения ищет укрытие,
+идёт туда, ждёт 1 секунду, лечится, ждёт ещё 1 секунду; cooldown — 20 секунд.
+
+Blackboard хранит `TargetActor`, `WithinRange`, `MoveToLocation`,
+`CurrentPatrolPoint`, `PreviousPatrolPoint`. `ue_behavior_tree.das` предоставляет
+обращения к живому UBlackboardComponent; JSON-файла для передачи состояния нет.
+PerceivedActors EQS выбирает ближайшую воспринимаемую цель. TargetActor context
+читает Blackboard для запросов позиции атаки и укрытия. Стан ставит native brain
+на паузу; смерть останавливает его до отключения tick контроллера.
+
+`Scripts/prepare_behavior_tree.py` подготавливает assets и карту.
+`Scripts/ai_assets/*.t3d` — редакторские описания структуры, а не runtime input.
+Команда DasForUE `Das.AI.ImportText` создаёт только новые BT/Blackboard/EQS assets,
+не перезаписывает и не сохраняет существующие. Двухэтапный импорт Unreal
+создаёт объекты до заполнения ссылок, не вызывая промежуточный PostEditImport
+у графовых узлов. Игра загружает готовые `.uasset`.
+Исходное дерево можно повторно прочитать без изменения оригинальных assets
+через `Scripts/export_original_ai.py` в редакторе оригинального проекта.
+
+`roguedemo/rogue_behavior_minion.das` назначает новый контроллер для спавна.
+`rogue/rogue_monster_spawner.das` выбирает класс из MonsterData, применяет Actions,
+сохраняет список созданных монстров и очищает его при EndPlay. Повторное применение
+того же профиля не дублирует действия. DropLoot использует уже выданное действие
+и LootCoins из профиля. Бюджет и волны относятся к следующему этапу director.
+HealthWidgetClass пока остаётся контрактом для следующего этапа HUD; отображение
+здоровья в текущей версии по-прежнему использует TextRender.

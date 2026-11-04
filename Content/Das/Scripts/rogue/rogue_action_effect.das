@@ -36,8 +36,9 @@ class RogueActionEffect : RogueAction {
         if (!self.bIsRunning || self.Stopping) { return }
         self.Stopping = true
         let remaining = ue_timer_remaining("EffectPeriod")
-        // Preserve the last due tick when duration and period expire together.
-        if (self.Period > 0.0f && remaining >= 0.0f && remaining < 0.0001f) { self.PeriodElapsed() }
+        // Active overdue timers have negative remaining time in Unreal. Check
+        // activity separately so a due tick is kept, but a cancelled timer is not.
+        if (self.Period > 0.0f && ue_timer_is_active("EffectPeriod") && remaining < 0.0001f) { self.PeriodElapsed() }
         ue_timer_cancel("EffectDuration")
         ue_timer_cancel("EffectPeriod")
         Super.StopAction()
