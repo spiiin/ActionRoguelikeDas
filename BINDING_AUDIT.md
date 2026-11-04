@@ -434,6 +434,42 @@ DeveloperSettings-based asynchronous asset loading is not part of this slice.
 The current currency wallet is an integer adaptation alongside the existing
 partial action/attribute system, rather than the full original AttributeSet.
 
+
+## Explosive barrel
+
+Added the generic `RadialForceComponentRef = UENativeObjectRef(...)` declaration
+and regenerated native bindings. FireImpulse and editable native component
+properties use the existing typed transport; no handwritten C++ gameplay was
+introduced. Existing damage events, default subobjects, vector constants,
+physics methods and owner-managed timers cover the remaining behavior.
+
+Physics simulation is enabled in BeginPlay. Navigation and radial-force defaults
+are configured before registration via ue_defaults, including the native
+bCanEverAffectNavigation property. Burning components are owned default subobjects.
+EndPlay updates only script state: native mutation on a destroying owner is
+forbidden, and Unreal already tears down the owned Niagara/audio components.
+The original ApplyDamage-to-fuse path, blast radius, mass-sensitive radial
+impulse and mass-independent own-barrel impulses are exercised in real PIE.
+
+
+## Blackhole
+
+The collision bridge adds RemoveRadialForceCollisionChannel: a checked generic
+game-thread conversion from ECollisionChannel to EObjectTypeQuery followed by
+the existing native radial-force operation. This avoids encoding Pawn's object
+query index in gameplay. The DAS ue_radial_force_remove_channel wrapper owns
+the reflection frame; gameplay calls it with ECollisionChannel.ECC_Pawn.
+
+RogueProjectile now has an editable CollisionProfile defaulting to Projectile.
+The subclass selects BlackholeCore, preserving the native overlap-only profile.
+Inherited sphere overlap is configured at BeginPlay through the existing typed
+setter rather than requiring an inherited Blueprint component-template override.
+The force and movement themselves remain native engine components; their policy,
+overlap handler, simulation check and absorption count live entirely in DAS.
+Foreign actor collision is disabled immediately, with destruction deferred by a
+short native lifespan (1 ms) to avoid entering another actor's EndPlay inside the current VM.
+
+
 ## Боевой паритет, 4 ноября 2026
 
 Добавлены общие runtime API: `ue_perception_configure_damage`,
@@ -448,3 +484,40 @@ game-specific C++ классов нет. Чтение приватного Custo
 не требуется: запись идёт стандартным SetCustomPrimitiveDataFloat, а эффект проверяется
 по времени/таймеру и игровому кадру. Диагностика отдельного warm module-cache crash
 передана в MODULE_CACHE_REPRO.md; serializer в этой задаче не изменялся.
+
+
+### Original player animation graph
+
+The course Anim Blueprint is reused locally instead of translating pose graphs
+or thread-safe Blueprint calculations into DAS. Its native RogueAnimInstance
+parent contributed only sprint/stun state and a gameplay-tag subscription.
+The local export reparents a duplicate to Engine.AnimInstance, substitutes local
+flags and exposes a two-bool adapter function. RogueAnimationComponent subscribes
+using the existing managed `+=` mechanism, initializes from authoritative active
+tags and updates on matching changes. Engine/component teardown owns subscription
+cleanup. Fallback presentation never invokes the external adapter.
+
+Existing UObject call frames cover GetAnimInstance and the generated Blueprint
+function. No game-specific native AnimInstance host, worker-thread DAS invocation,
+per-frame tag polling or new C++ reflection bypass was introduced. The original
+pose graph reads the reflected flags through Unreal's normal animation update.
+
+### Teleport and shared projectile impact
+
+K2_TeleportTo, actor collision/visibility, audio stop and Niagara deactivation
+use existing typed bindings. ProjectileMovementComponent now has a canonical
+receiver declaration in ue_projectile_movement_types, included in native and
+runtime generation, so StopMovementImmediately is available through the generated
+API. ue_projectile_movement_stop is the small public convenience helper.
+
+Derived authored classes now emit their own module-private packing adapters for
+inherited containers/structs. Blackhole's inherited ActivationCost table exposed
+the missing adapter and its runtime cost check exercises both read and write.
+GenerateRuntimeBindings preserves unchanged output files, avoiding unnecessary
+native header rebuilds. No game-specific C++ was introduced.
+
+The sphere hit callback invokes RogueImpactHandler.HandleImpact through the
+managed interface. This bool-returning function preserves UE override dispatch;
+Teleport supplies its own delayed sequence, while the base supplies ordinary
+impact/damage/destruction. ApplyProjectileDamage remains the separate damage
+hook. Preparation migrates the interface before reimporting its implementers.

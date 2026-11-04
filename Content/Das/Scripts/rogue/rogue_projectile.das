@@ -28,6 +28,7 @@ class RogueProjectile : Actor {
         var InitialSpeed : float = 2000.0f
         var GravityScale : float = 0.0f
         var CollisionRadius : float = 16.0f
+        var CollisionProfile : string = "Projectile"
         var ExplosionEffect : NiagaraSystemRef
         var ExplosionSound : SoundBaseRef
     }
@@ -44,7 +45,7 @@ class RogueProjectile : Actor {
 
     def BeginPlay() : void {
         self.SphereComponent.SetSphereRadius(self.CollisionRadius, false)
-        self.SphereComponent.SetCollisionProfileName(ue_name_value("Projectile"), true)
+        self.SphereComponent.SetCollisionProfileName(ue_name_value(self.CollisionProfile), true)
         let actor = ue_ref(type<ActorRef>, ue_self_object())
         let instigator = self.Instigator
         if (ue_object_valid(instigator.handle)) {
@@ -58,7 +59,13 @@ class RogueProjectile : Actor {
 
     [ue_event(source=SphereComponent, name=OnComponentHit)]
     def OnActorHit(component : ObjectRef; other : ActorRef; otherComponent : ObjectRef; impulse : UEVector; hit : CollisionHit) : void {
-        if (self.HasImpacted) { return }
+        let impact = ue_ref(type<RogueImpactHandlerRef>, ue_self_object())
+        impact.HandleImpact(other, hit)
+    }
+
+    [ue_function(BlueprintEvent, Category="Projectile")]
+    def HandleImpact(other : ActorRef; hit : CollisionHit) : bool {
+        if (self.HasImpacted) { return false }
         self.HasImpacted = true
         self.ImpactCount += 1
         self.LastImpactActor = other
@@ -70,6 +77,7 @@ class RogueProjectile : Actor {
         // OnTakeAnyDamage is queued while this managed callback runs. Keep the
         // damage causer alive until its notifications have been delivered.
         ue_actor_destroy_self_next_tick()
+        return true
     }
 
     // Reflected event dispatch preserves overrides on derived projectile classes.

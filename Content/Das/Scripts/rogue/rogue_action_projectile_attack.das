@@ -41,7 +41,11 @@ class RogueActionProjectileAttack : RogueAction {
     def override Setup() : void {
         Super.Setup()
         if (!ue_tag_valid(self.ActionName)) { self.ActionName = ue_tag("Action.PrimaryAttack") }
-        if (ue_tags_count(self.BlockedTags) == 0) { self.BlockedTags = ue_tags(ue_tag("StatusEffect.Stunned")) }
+        if (ue_tags_count(self.GrantTags) == 0) { self.GrantTags = ue_tags(ue_tag("StatusEffect.Attacking")) }
+        if (ue_tags_count(self.BlockedTags) == 0) {
+            var blocked <- [ue_tag("StatusEffect.Attacking"), ue_tag("StatusEffect.Sprinting"), ue_tag("StatusEffect.Stunned")]
+            self.BlockedTags = ue_tags(blocked)
+        }
     }
 
     def GetPawn() : NativePawnRef {

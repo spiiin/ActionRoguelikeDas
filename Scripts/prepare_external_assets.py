@@ -26,12 +26,21 @@ tracks=montage.get_editor_property('slot_anim_tracks')
 assert tracks,'Attack montage contains no slot track'
 slot=tracks[0].get_editor_property('slot_name')
 # Course Run_Direction uses direction on X and ground speed on Y.
-anim,error=unreal.DasAnimationAssetLibrary.create_locomotion_blueprint(
-    '/Game/DasRogueExternal/ABP_Locomotion',skeleton,blend,1,0,slot)
-assert anim,error
+course_animation=receipt.get('course_animation',False)
+if course_animation:
+    assert unreal.load_class(None,'/Script/PropertyAccessNode.K2Node_PropertyAccess'), 'Enable PropertyAccessNode before loading the course Anim Blueprint'
+    config=json.loads((ROOT/'ExternalAssets.json').read_text())['course_animation']
+    assert (ROOT/'Saved/ExternalAssets/course_animation.json').is_file(), 'Run Scripts/export_course_animation.py in the source course editor first'
+    anim=unreal.load_asset(config['adapted_blueprint'])
+    assert anim and unreal.BlueprintEditorLibrary.compile_blueprint(anim), 'Adapted course Anim Blueprint failed to compile'
+    assert anim.get_editor_property('target_skeleton')==skeleton, 'Course Anim Blueprint skeleton mismatch'
+else:
+    anim,error=unreal.DasAnimationAssetLibrary.create_locomotion_blueprint(
+        '/Game/DasRogueExternal/ABP_Locomotion',skeleton,blend,1,0,slot)
+    assert anim,error
 # The course death montage uses DefaultSlot, while its attack uses UpperBody.
 # Adapt a local duplicate to our one-slot graph, preserving the acquired original.
-if loaded.get('DeathMontage'):
+if loaded.get('DeathMontage') and not course_animation:
     if (ROOT/'Content/DasRogueExternal/AM_Death.uasset').is_file():
         death=unreal.load_asset('/Game/DasRogueExternal/AM_Death.AM_Death')
     else:
@@ -57,12 +66,13 @@ if loaded.get('ProjectileSound'):
 for name,value in loaded.items():
     if name!='Locomotion':profile.set_editor_property(name,value)
 profile.set_editor_property('AnimationClass',anim.generated_class())
+profile.set_editor_property('UseCourseAnimationBlueprint',course_animation)
 profile.set_editor_property('MeshLocation',unreal.Vector(0,0,-90))
 profile.set_editor_property('MeshRotation',unreal.Rotator(pitch=0,yaw=-90,roll=0))
 profile.set_editor_property('MuzzleSocket','Muzzle_01')
 packages=[profile.get_outer(),anim.get_outer(),loaded['DeathMontage'].get_outer(),unreal.load_asset('/Game/DasRogue/Types/BP_RoguePresentationProfile').get_outer()]
 if loaded.get('ProjectileSound'):packages.append(loaded['ProjectileSound'].get_outer())
 assert unreal.EditorLoadingAndSavingUtils.save_packages(packages,False)
-result={'profile':profile.get_path_name(),'mesh':mesh.get_path_name(),'animation_class':anim.generated_class().get_path_name(),'montage_slot':str(slot),'assets':receipt['assets']}
+result={'profile':profile.get_path_name(),'mesh':mesh.get_path_name(),'animation_class':anim.generated_class().get_path_name(),'montage_slot':str(slot),'course_animation':course_animation,'assets':receipt['assets']}
 dest=ROOT/'Saved/ExternalAssets/prepared.json';dest.write_text(json.dumps(result,indent=2))
 unreal.log('DAS_EXTERNAL_PRESENTATION_PREPARED '+json.dumps(result))

@@ -18,12 +18,16 @@ class RoguePlayerController : PlayerController {
         var Input_Interact : InputActionRef
         var TeamId : int = 1
         var Input_Fire : InputActionRef
+        var Input_SecondaryAttack : InputActionRef
+        var Input_SpecialAttack : InputActionRef
     }
 
     defaults = ue_defaults() {
         self.Controls = ue_asset_default("/Game/DasRogue/Input/IMC_Rogue.IMC_Rogue")
         self.Input_Interact = ue_asset_default("/Game/DasRogue/Input/IA_Interact.IA_Interact")
         self.Input_Fire = ue_asset_default("/Game/DasRogue/Input/IA_Fire.IA_Fire")
+        self.Input_SecondaryAttack = ue_asset_default("/Game/DasRogue/Input/IA_SecondaryAttack.IA_SecondaryAttack")
+        self.Input_SpecialAttack = ue_asset_default("/Game/DasRogue/Input/IA_SpecialAttack.IA_SpecialAttack")
     }
 
     state = ue_properties(BlueprintReadWrite) {
@@ -43,6 +47,8 @@ class RoguePlayerController : PlayerController {
         let player = ue_ref(type<PlayerControllerRef>, ue_self_object())
         verify(ue_is_valid(self.Controls) && ue_is_valid(self.Input_Interact) && ue_is_valid(self.Input_Fire),
             "Controller input assets are not configured")
+        verify(ue_is_valid(self.Input_SecondaryAttack) && ue_is_valid(self.Input_SpecialAttack),
+            "Additional attack input assets are not configured")
         verify(ue_player_controls_ready(player), "SetupInputComponent requires local Enhanced Input")
         ue_enhanced_add_context(player, self.Controls, 0)
         ue_bind_inputs()
@@ -53,11 +59,25 @@ class RoguePlayerController : PlayerController {
     [ue_input(action="Input_Fire", Triggered)]
     def OnFire(value : bool) : void {
         if (!value) { return }
+        self.StartAttack(ue_tag("Action.PrimaryAttack"))
+    }
+
+    [ue_input(action="Input_SecondaryAttack", Triggered)]
+    def OnSecondaryAttack(value : bool) : void {
+        if (value) { self.StartAttack(ue_tag("Action.SecondaryAttack")) }
+    }
+
+    [ue_input(action="Input_SpecialAttack", Triggered)]
+    def OnSpecialAttack(value : bool) : void {
+        if (value) { self.StartAttack(ue_tag("Action.SpecialAttack")) }
+    }
+
+    def StartAttack(name : GameplayTag) : void {
         let pawn = ue_ref(type<PlayerControllerRef>, ue_self_object()).K2_GetPawn()
         if (!ue_is_valid(pawn)) { return }
         let component = ue_component_get(type<RogueActionSystemComponentRef>,
             ue_ref(type<ActorRef>, pawn.handle), "ActionSystem")
-        if (ue_is_valid(component)) { component.StartAction(ue_tag("Action.PrimaryAttack")) }
+        if (ue_is_valid(component)) { component.StartAction(name) }
     }
 
     [ue_input(action="Input_Interact", Started)]

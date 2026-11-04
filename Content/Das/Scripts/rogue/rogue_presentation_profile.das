@@ -13,6 +13,7 @@ class RoguePresentationProfile : DataAsset {
     properties = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Presentation") {
         var CharacterMesh : RogueSkeletalMeshRef
         var AnimationClass : ObjectClass
+        var UseCourseAnimationBlueprint : bool = false
         var AttackMontage : AnimMontageRef
         var DeathMontage : AnimMontageRef
         var HitReactMontage : AnimMontageRef
@@ -24,6 +25,10 @@ class RoguePresentationProfile : DataAsset {
         var ProjectileSound : SoundBaseRef
         var ImpactEffect : NiagaraSystemRef
         var ImpactSound : SoundBaseRef
+        var BlackholeEffect : NiagaraSystemRef
+        var BlackholeSound : SoundBaseRef
+        var TeleportImpactEffect : NiagaraSystemRef
+        var TeleportImpactSound : SoundBaseRef
         var MuzzleSocket : string = "Muzzle_01"
         var MeshLocation : UEVector = ue_vector(0.0lf, 0.0lf, -90.0lf)
         var MeshRotation : UERotator = ue_rotator(0.0lf, -90.0lf, 0.0lf)

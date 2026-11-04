@@ -64,7 +64,7 @@ Suite `rogue-interaction` проверяет настоящий PIE и ввод 
 
 `rogue_projectile_demo.das` добавляет видимую сферу из Engine/BasicShapes и отключает её собственную коллизию. Авторские ассеты курса не используются. Базовые ExplosionSound/ExplosionEffect опциональны. Демонстрационный потомок назначает engine sound 1kSineTonePing и Niagara template RadialBurst; их можно заменить своими ресурсами. Зацикленные эффекты по умолчанию пусты.
 
-Текущий `RoguePlayerController` привязывает Boolean `IA_Fire` к Started для ЛКМ. Он запрашивает Action.PrimaryAttack у компонента персонажа. RogueActionProjectileAttack выдерживает задержку каста и создаёт экземпляр ProjectileClass с Owner=controller и Instigator=pawn. Поведение стрельбы написано на daScript. E продолжает открывать сундук.
+Текущий `RoguePlayerController` привязывает Boolean `IA_Fire` к Triggered для ЛКМ. Он запрашивает Action.PrimaryAttack у компонента персонажа. RogueActionProjectileAttack выдерживает задержку каста и создаёт экземпляр ProjectileClass с Owner=controller и Instigator=pawn. Удержание ЛКМ повторяет атаку с учётом cooldown. Поведение стрельбы написано на daScript. E продолжает открывать сундук.
 
 Подготовка карты: редакторский `Scripts/prepare_projectile.py` создаёт input assets, импортирует классы и добавляет стену для попаданий. Он использует общую настройку `prepare_interaction.py`. В PIE щёлкнуть viewport для захвата мыши, затем ЛКМ стреляет по направлению камеры. Одно нажатие даёт один снаряд.
 
@@ -466,6 +466,51 @@ Content/Das/Scripts/rogue/rogue_attribute_set.das.
 test-suite rogue-attributes-local rogue-attributes repo=C:/src/DasForUE2-main
 ```
 
+
+## Взрывающаяся бочка
+
+Откройте `Content/DasRogue/Maps/BarrelTest` и нажмите Play. Перед игроком стоит
+`Explosive barrel - shoot once - 3 second fuse`. Наведитесь на цилиндр и стреляйте
+ЛКМ: попадание запускает трёхсекундный фитиль. Близкий куб получает физический
+импульс, дальний находится вне радиуса. Сама бочка подбрасывается и вращается.
+Взрыв не наносит radial damage и не удаляет бочку — это поведение исходника.
+
+`BP_RogueExplosiveBarrel` находится в `Content/DasRogue/World`. В Details доступны
+`ExplosionDelay`, необязательные Niagara/audio для горения и взрыва. На компоненте
+`RadialForceComponent` задаются `Radius` (750 см) и `ImpulseStrength` (150000).
+Пока эффекты не назначены, демонстрация использует engine cylinder и кубы.
+Гравитация тестовых кубов отключена для воспроизводимой проверки дальности.
+
+Повторные попадания не продлевают фитиль. Повторный вызов `Explode` не создаёт
+новый импульс; прямой вызов во время горения отменяет ожидающий таймер.
+Некорректная неположительная/нечисловая задержка не запускает горение.
+`Scripts/prepare_barrels.py` повторно собирает арену; игровое поведение находится
+в `rogue/rogue_explosive_barrel.das`. Suite `rogue-barrels` проверяет восемь групп
+в реальном PIE, отчёт — `Saved/Tests/rogue_barrels_pie.json`.
+
+
+## Blackhole
+
+Откройте `Content/DasRogue/Maps/BlackholeTest` и нажмите Play. Видимая тёмная сфера
+перед игроком притягивает два физических куба и поглощает их при достижении ядра.
+Через 5 секунд сфера исчезает. Повторный Play восстанавливает демонстрацию.
+У кубов включён Generate Overlap Events; без него поглощение не происходит.
+
+`Content/DasRogue/Projectiles/BP_RogueProjectileBlackhole` — основной снаряд:
+500 см/с, lifespan 5 секунд, ядро 20 см, ForceStrength=-800000 и Radius=1200 см.
+Он проходит сквозь стены и не вызывает базовый взрыв при попадании. Pawn исключён
+из radial force. Ядро с профилем BlackholeCore пересекается только с PhysicsBody
+и удаляет актор при условии IsSimulatingPhysics у пересёкшего компонента.
+В `BP_BlackholeDemo` скорость намеренно равна нулю и добавлен видимый engine mesh;
+это отдельное оформление из roguedemo, а не изменение скорости основного класса.
+
+Для выстрела используется BP_BlackholeAttackProjectile: он сохраняет движение
+основного класса и добавляет локальное оформление. BP_BlackholeDemo остаётся
+неподвижным примером для арены. Подготовка арены: `Scripts/prepare_blackhole.py`.
+Suite `rogue-blackhole` проверяет восемь групп настоящего PIE, включая регрессию
+обычного снаряда; отчёт — `Saved/Tests/rogue_blackhole_pie.json`.
+
+
 ## Движение как в оригинальном Blueprint
 
 Корпус следует yaw камеры. A/D дают стрейф, S — движение назад с сохранением
@@ -477,6 +522,7 @@ test-suite rogue-attributes-local rogue-attributes repo=C:/src/DasForUE2-main
 Через общий агент: `test-suite rogue-movement-local rogue-movement repo=C:/src/DasForUE2-main`.
 Проверка читает оригинальный проект в C:/src/ActionRoguelike и затем проверяет
 движение, направление корпуса, скорость, торможение и спринт в реальном PIE.
+
 
 ## Боевой паритет с оригиналом
 
@@ -493,3 +539,66 @@ Scripts/prepare_hit_flash.py создаёт наш материал M_HitFlash, 
 
 Suite: `test-suite combat-parity-local rogue-combat-parity repo=C:/src/DasForUE2-main`.
 Временное project-local отключение дискового кэша компиляции описано в MODULE_CACHE_REPRO.md.
+
+## Дополнительные атаки
+
+`Scripts/prepare_additional_attacks.py` импортирует способности и добавляет ввод
+в IMC_Rogue: **F — Blackhole**, **Q — Teleport**. ЛКМ остаётся основной атакой.
+Клавиши и теги соответствуют Blueprint исходного курса. Персонаж выдаёт все три
+атаки через ActionSystem; windup, cooldown и блокировка оглушением общие.
+Как в исходных Blueprint, во время windup действует StatusEffect.Attacking:
+атаки не совмещаются между собой и со спринтом. Blackhole расходует 25 Rage.
+В ChestTest для одной пробной атаки нажмите H дважды, затем F; H наносит
+тестовый урон, который даёт Rage. Teleport не требует Rage.
+
+Teleport: 6000 см/с, детонация при попадании или через 0,2 с, остановка движения,
+выключение коллизии и ещё 0,2 с до переноса Instigator. Native K2_TeleportTo
+разрешает проникновение в геометрию; при неудаче игрок остаётся на месте.
+Уничтожение снаряда отменяет таймер. Потерянный Instigator безопасно пропускается.
+
+Сторонние эффекты и звуки хранятся только в локальном профиле DasRogueExternal.
+После обновления ExternalAssets.json повторите установку ресурсов с
+`--with-course-effects` и подготовку дополнительных атак. Без ресурсов остаются
+простые видимые engine meshes. Для звука используются исходные SoundWave,
+а не MetaSound-миксеры оригинала.
+
+Проверка через общую очередь: `test-suite teleport-local rogue-additional-attacks repo=C:/src/DasForUE2-main`.
+
+
+## Original player Animation Blueprint
+
+The optional course animation profile retains GideonManny_AnimBlueprint's pose
+graphs and Blueprint calculations: locomotion, jumps, aim offset, turn in place,
+sprint/stun branches and the original montage slots. Gameplay remains daScript.
+RogueAnimationComponent replaces the native parent's tag subscription and writes
+only sprint/stun flags when relevant tags change. It does not tick or run DAS on
+the animation worker thread.
+
+Install acquired course assets with `Scripts/setup_external_assets.py
+--source-content C:/src/ActionRoguelike/Content --with-course-effects
+--with-course-animation` (add `--with-minions` to retain the AI profile).
+In the original course editor, stop PIE, enable PropertyAccessNode and run:
+
+```python
+import runpy
+runpy.run_path('C:/src/ActionRoguelikeDas/Scripts/export_course_animation.py',
+              init_globals={'PORT_ROOT': 'C:/src/ActionRoguelikeDas'})
+```
+
+The export changes only a temporary duplicate, then removes it. It checks the
+source Blueprint's SHA-256 before/after. The duplicate uses Engine.AnimInstance,
+replaces two inherited flags with local variables, and adds the small
+SetGameplayAnimationState adapter. A zero vector is materialized explicitly for
+UE 5.8's const-reference validation; its value is unchanged. No original C++
+module is needed to run the exported graph in the DAS project.
+
+Then open ActionRoguelikeDas with PropertyAccessNode enabled and run
+`Scripts/prepare_external_assets.py` from the editor's Python console. Its local
+DA_Presentation selects ABP_CoursePlayer and SKM_Manny. The acquired assets,
+exported Blueprint and generated presentation profile remain gitignored.
+Without these external assets the public example retains its basic shape fallback.
+The simpler generated ABP_Locomotion is still available when installing without
+`--with-course-animation`.
+
+The `rogue-course-animation` suite serializes source export and target PIE through
+the shared build agent; it requires the local source comparison project.

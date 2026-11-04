@@ -17,7 +17,9 @@ class RogueActionSprint : RogueAction {
         Super.Setup()
         if (!ue_tag_valid(self.ActionName)) { self.ActionName = ue_tag("Action.Sprint") }
         if (ue_tags_count(self.GrantTags) == 0) { self.GrantTags = ue_tags(ue_tag("StatusEffect.Sprinting")) }
-        if (ue_tags_count(self.BlockedTags) == 0) { self.BlockedTags = ue_tags(ue_tag("StatusEffect.Stunned")) }
+        if (ue_tags_count(self.BlockedTags) == 0) {
+            self.BlockedTags = ue_tags(ue_tag("StatusEffect.Attacking"), ue_tag("StatusEffect.Stunned"))
+        }
     }
 
     [ue_function(BlueprintCallable, BlueprintEvent)]

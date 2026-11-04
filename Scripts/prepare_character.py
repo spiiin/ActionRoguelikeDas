@@ -65,6 +65,7 @@ if migration_backup.exists() and migration_source.read_text(encoding='utf-8-sig'
 world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 __import__('runpy').run_path(str(Path(__file__).resolve().with_name('prepare_projectile_defaults.py')))
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_presentation_profile.das /Game/DasRogue/Types/BP_RoguePresentationProfile rogue.RoguePresentationProfile')
+unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_animation_component.das /Game/DasRogue/BP_RogueAnimationComponent rogue.RogueAnimationComponent')
 unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Apply rogue_attribute_component.das /Game/DasRogue/BP_RogueAttributeComponent rogue.RogueAttributeComponent')
 for command in [
     'Das.DSL.Interfaces.Apply rogue_action_host_interface.das /Game/DasRogue/Types',

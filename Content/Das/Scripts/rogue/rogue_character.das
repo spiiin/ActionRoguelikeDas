@@ -4,6 +4,7 @@ require rogue_attribute_component public
 require rogue_hit_flash_component public
 require rogue_action_system_component public
 require rogue_presentation public
+require rogue_animation_component public
 require math
 require ue_vector_math public
 
@@ -29,12 +30,16 @@ class RogueCharacter : Character {
     HitFlash : RogueHitFlashComponentRef
 
     @ue_component
+    AnimationState : RogueAnimationComponentRef
+
+    @ue_component
     HealthLabel : TextRenderComponentRef
 
     @ue_component
     ActionSystem : RogueActionSystemComponentRef
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Input") {
+        var DefaultAttributeSetClass : ObjectClass
         var UseExternalPresentation : bool = true
         var PresentationProfilePath : string = "/Game/DasRogueExternal/DA_Presentation.DA_Presentation"
         var WalkSpeed : float = 550.0f
@@ -47,6 +52,8 @@ class RogueCharacter : Character {
         var Input_Sprint : InputActionRef
         var SprintActionClass : ObjectClass
         var AttackActionClass : ObjectClass
+        var SecondaryAttackClass : ObjectClass
+        var SpecialAttackClass : ObjectClass
         var Input_TestDamage : InputActionRef
         var TestDamage : float = 25.0f
     }
@@ -65,6 +72,7 @@ class RogueCharacter : Character {
     }
 
     defaults = ue_defaults() {
+        self.DefaultAttributeSetClass = ue_class_default("/Game/DasRogue/Attributes/BP_RoguePlayerAttributeSet.BP_RoguePlayerAttributeSet_C")
         self.Controls = ue_asset_default("/Game/DasRogue/Input/IMC_Character.IMC_Character")
         self.Input_Move = ue_asset_default("/Game/DasRogue/Input/IA_Move.IA_Move")
         self.Input_Look = ue_asset_default("/Game/DasRogue/Input/IA_Look.IA_Look")
@@ -72,6 +80,8 @@ class RogueCharacter : Character {
         self.Input_Sprint = ue_asset_default("/Game/DasRogue/Input/IA_Sprint.IA_Sprint")
         self.SprintActionClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionSprint.BP_RogueActionSprint_C")
         self.AttackActionClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionProjectileAttack.BP_RogueActionProjectileAttack_C")
+        self.SecondaryAttackClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionBlackhole.BP_RogueActionBlackhole_C")
+        self.SpecialAttackClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionTeleport.BP_RogueActionTeleport_C")
         self.Input_TestDamage = ue_asset_default("/Game/DasRogue/Input/IA_TestDamage.IA_TestDamage")
         self.HealthLabel.RelativeLocation = ue_vector(0.0lf, 0.0lf, 120.0lf)
         self.HealthLabel.WorldSize = 20.0f
@@ -89,10 +99,11 @@ class RogueCharacter : Character {
     }
 
     def BeginPlay() : void {
-        self.ActionSystem.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RoguePlayerAttributeSet.BP_RoguePlayerAttributeSet_C"))
+        self.ActionSystem.ConfigureAttributeSet(self.DefaultAttributeSetClass)
         if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
             rogue_apply_mesh(self.Mesh, self.Presentation)
+            self.AnimationState.Configure(self.Mesh, self.Presentation.UseCourseAnimationBlueprint)
             self.Visual.SetHiddenInGame(true, false)
             self.UsingExternalPresentation = true
         }
@@ -102,6 +113,13 @@ class RogueCharacter : Character {
         }
         if (ue_class_valid(self.AttackActionClass)) {
             let action = self.ActionSystem.GrantAction(self.AttackActionClass)
+            if (ue_is_valid(action) && ue_is_valid(self.Presentation)) {
+                rogue_apply_attack(ue_ref(type<RogueProjectileAttackRef>, action.handle), self.Presentation)
+            }
+        }
+        for (kind in [self.SecondaryAttackClass, self.SpecialAttackClass]) {
+            if (!ue_class_valid(kind)) { continue }
+            let action = self.ActionSystem.GrantAction(kind)
             if (ue_is_valid(action) && ue_is_valid(self.Presentation)) {
                 rogue_apply_attack(ue_ref(type<RogueProjectileAttackRef>, action.handle), self.Presentation)
             }
@@ -142,6 +160,8 @@ class RogueCharacter : Character {
         if (!self.ControlsBound) { return }
         self.ActionSystem.StopAction(ue_tag("Action.Sprint"))
         self.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
+        self.ActionSystem.StopAction(ue_tag("Action.SecondaryAttack"))
+        self.ActionSystem.StopAction(ue_tag("Action.SpecialAttack"))
         self.StopJumping()
         self.CharacterMovement.StopMovementImmediately()
         ue_unbind_inputs()

@@ -31,7 +31,15 @@ fire.set_editor_property("value_type",unreal.InputActionValueType.BOOLEAN)
 mouse=unreal.Key()
 mouse.set_editor_property("key_name","LeftMouseButton")
 mapping.map_key(fire,mouse)
-if not saving.save_packages([mapping.get_outer(),action.get_outer(),fire.get_outer()],False):
+additional=[]
+for name,key_name in [('IA_SecondaryAttack','F'),('IA_SpecialAttack','Q')]:
+    attack=asset(name,unreal.InputAction,unreal.InputAction_Factory)
+    attack.set_editor_property('value_type',unreal.InputActionValueType.BOOLEAN)
+    key=unreal.Key()
+    key.set_editor_property('key_name',key_name)
+    mapping.map_key(attack,key)
+    additional.append(attack)
+if not saving.save_packages([x.get_outer() for x in [mapping,action,fire,*additional]],False):
     raise RuntimeError("Cannot save input assets")
 
 for command in [

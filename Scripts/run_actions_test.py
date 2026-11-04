@@ -40,7 +40,7 @@ def tick(delta):
                 detail=STATE.get('test',{}).get('s',{}).get('phase','unknown')
                 raise RuntimeError('Gameplay test timed out in '+str(detail))
         elif STATE['phase'] not in ('stop','cleanup'):
-            preparation_limit=600 if globals().get('EXTERNAL_PRESENTATION') or globals().get('AI_PRESENTATION') or globals().get('WAIT_NAVIGATION') or globals().get('PICKUP_TEST') else 240
+            preparation_limit=globals().get('PREPARATION_TIMEOUT', 600)
             if time.perf_counter()-STATE['started'] > preparation_limit:
                 raise RuntimeError('Preparation timed out in '+STATE['phase'])
         if STATE['phase'] == 'prepare':

@@ -42,7 +42,11 @@ C++ используется внутри DasForUE для универсальн
 
 ### Этап 2 Снаряды и физика
 
-Статус на 2 ноября 2026: RogueProjectile и демонстрационный запуск по ЛКМ реализованы на daScript и проходят целевой PIE-тест. Остальные классы этапа ещё не перенесены.
+Статус на 4 ноября 2026: базовый/магический снаряды, ExplosiveBarrel и Blackhole
+реализованы и проверены в PIE. Teleport и действия Blackhole/Teleport также
+прошли 10 групп PIE-проверок: rogue-teleport-20261104y. Управление
+соответствует исходному IMC_DefaultPlayer: F — SecondaryAttack/Blackhole,
+Q — SpecialAttack/Teleport. Итог приёмки фиксируется в VALIDATION.md.
 
 Классы: ARogueProjectile, ARogueExplosiveBarrel, ARogueProjectileBlackhole, ARogueProjectileTeleport.
 
@@ -82,8 +86,7 @@ C++ используется внутри DasForUE для универсальн
 
 ### Этап 6 Подбор предметов и монеты
 
-Статус на 3 ноября 2026: базовый pickup и лечение реализованы и проверены в PIE.
-Монеты, генератор монет и DropLoot остаются впереди.
+Статус на 3 ноября 2026: pickup, лечение, подсистема монет, генератор и DropLoot реализованы и проверены в PIE. Остаётся конфигурация ресурсов через DeveloperSettings и асинхронная загрузка, как в оригинале.
 
 Классы: ARoguePickupActor, ARogueHealthPickup, URogueCoinPickupSubsystem, ARogueCoinTestActor, URogueAction_DropLoot.
 
@@ -138,7 +141,7 @@ C++ используется внутри DasForUE для универсальн
 - Проверена игровая логика внутри Blueprint assets; оставшаяся визуальная настройка отделена от скриптового поведения.
 - Разрешение на публикацию и лицензии кода и ресурсов оформлены до публичного распространения.
 
-## Текущее состояние
+## История переноса
 
 На 2 ноября 2026 перенесены RogueInteractionInterface, RogueItemChest,
 RogueInteractionComponent, RoguePlayerController и RogueProjectile. На карте
@@ -295,21 +298,39 @@ GenericParents PASS: аддитивные callback/метаданные при �
 и повторного импорта. Исправления находятся в DasForUE2-main; packaged-сборка этого
 этапа отдельно не проверялась. Регрессии соседних систем записываются в VALIDATION.md.
 
-## Движение игрока — сверено с Blueprint 4 ноября 2026
 
-Исправлена камера и ориентация: bUseControllerRotationYaw=true,
-bOrientRotationToMovement=false, bUseControllerDesiredRotation=false.
-Корпус смотрит по yaw камеры; S не разворачивает его назад, A/D дают стрейф.
-WalkSpeed=550, JumpZVelocity=420, AirControl=0.05, RotationRate.Yaw=360.
-SpringArm: TargetArmLength=175, RelativeLocation.Z=80, SocketOffset.Y=80.
-Эти значения взяты из исходного BP_PlayerCharacter 992f860.
+## ExplosiveBarrel — проверено в PIE
 
-Пункт прежнего аудита о скорости игрока 450 закрыт. Скорость AI=450 и урон=51
-также подтверждены и перенесены в последующем этапе боевого паритета. Подготовка персонажа использует
-автоматический Reimport, сохраняя ручные overrides. Движение, спринт и связанные
-проверки стрельбы прошли реальный PIE; подробности в VALIDATION.md.
+RogueExplosiveBarrel перенесён на daScript: PhysicsActor mesh, отключённое влияние
+на навигацию, прикреплённый RadialForceComponent, фитиль 3 секунды, однократный
+импульс 150000 в радиусе 750 и собственные линейный/угловой импульсы по 1000
+с изменением скорости. Radial damage не добавлен. Визуальные эффекты необязательны.
 
-## Боевой паритет — 4 ноября 2026
+Горение использует заранее созданные дочерние Niagara/audio-компоненты вместо
+динамического SpawnAttached. Взрыв явно останавливает их; при EndPlay завершение
+компонентов выполняет Unreal, а таймер отменяется управляемым teardown владельца.
+Явная защита от повторного Explode и отказ при некорректной задержке — улучшения
+по сравнению с исходником 992f860. Native OnTakeAnyDamage адаптирует игровой
+путь ApplyDamage; C++ игровой логики бочки нет.
+
+`rogue-barrels-v6-20261103`: восемь групп PIE PASS, журнал runtime/ensure/teardown
+чистый. Отдельная карта BarrelTest исключает зависимость от текущего состояния AI.
+Следующие классы этапа 2: RogueProjectileBlackhole и RogueProjectileTeleport.
+
+
+## Повторная сверка с оригиналом — 3 ноября 2026
+
+Сравнение исходников 992f860 с портом ac7c332 и текущим рабочим деревом.
+Учтены новые, ещё не закоммиченные бочка и blackhole. Это статическая повторная
+сверка кода и существующих receipts; новых запусков PIE для аудита не было.
+Численные defaults ниже относятся к объявлениям кода: итоговые значения оригинальных
+Blueprint/CDO необходимо отдельно подтвердить перед изменением баланса.
+
+Закрыты прежние пробелы: Triggered/удержание основной атаки, дистанция 5000 и канал
+Projectile, point damage/noise/impulse/effect-on-hit, Base/Modifier/OverrideBase,
+наборы атрибутов и Rage, эффекты/Overwhelm/stun, NavMesh-патруль, лечение,
+пакетные монеты и DropLoot. Для AttributeSet и соседних систем есть 65 групп PIE PASS.
+Бочка отдельно прошла восемь групп (rogue-barrels-v6-20261103).
 
 ### Что исправить в уже перенесённом поведении — шесть пунктов закрыты 4 ноября 2026
 
@@ -335,3 +356,80 @@ CDO CharacterMovement показывает 600, но BeginPlay использу�
 Проверка: `rogue-combat-parity`; доказательства и ограничения — VALIDATION.md.
 Дисковый editor module cache временно отключён только в этом проекте из-за
 воспроизводимого warm-start падения; передача диагностики — MODULE_CACHE_REPRO.md.
+
+### Что ещё нужно перенести
+
+1. **Blackhole — закончить текущий срез.** Реализация уже существует в
+   rogue_projectile_blackhole.das. Последний доступный на момент сверки receipt
+   rogue_blackhole_pie.json завершился отказом импорта класса; успешной приёмки
+   пока нет. Не считать его ни отсутствующим исходником, ни готовой системой.
+2. **Teleport projectile.** Две задержки по 0.2 секунды по умолчанию, переход по hit
+   или таймеру, остановка движения/loop-эффектов, TeleportTo instigator и очистка таймеров.
+3. **Остальные игровые способности и input.** Настройки Action_Blackhole и
+   Action_Teleport, SecondaryAttack/SpecialAttack, их цены Rage, cooldown и presentation.
+   Текущая фабрика и ProjectileAttack могут использоваться повторно.
+4. **Игровой Burning effect.** Базовый периодический эффект есть и проверен, но
+   конфигурация/поведение исходного ActionEffect_Burning ещё не представлены игровым
+   классом. Тестовый периодический эффект сам по себе этот Blueprint не переносит.
+5. **Полный AI-сценарий.** Behavior Tree/blackboard, LowHealth и HealSelf, ranged task,
+   EQS AlivePlayers/TargetActor. Патруль, perception и прямое преследование уже есть;
+   их нужно связать с этим сценарием. В MinionRangedBT найдены зависимости четырёх
+   исходных native task/service/decorator классов.
+6. **MonsterData целиком.** Сейчас используется LootCoins; MonsterClass,
+   Actions и HealthWidgetClass объявлены, но полный runtime-путь их применения
+   через director/spawn и UI ещё отсутствует.
+7. **HUD и мировые widgets.** RogueHUD, MainHUD/WorldUserWidget, экранная проекция
+   с DPI, health/rage, crosshair и effect bar/slots, игровые обработчики из UMG Blueprint.
+   Текущие TextRender-метки — демонстрационное представление.
+8. **RogueAnimInstance и состояние анимаций.** Locomotion и montage уже подключены;
+   переходы состояния по GameplayTag Sprinting/Stunned ещё не перенесены как
+   эквивалент исходного AnimInstance.
+9. **Игровой цикл.** PrimaryGameMode/directors с кредитами по кривой, weighted
+   DataTable, seed, bot limit, EQS spawn, async MonsterData, deferred spawn и выдача
+   Actions; GameInstance.AliveMonsters и очистка при смене мира. DeveloperSettings
+   с soft mesh/sound и их async загрузкой для монет.
+10. **Blueprint-only окружение и итоговая карта.** Отдельно разобрать BP_Lever и
+    BP_ProjectileSpammer. Собрать единый игровой сценарий с NavMesh, противниками,
+    спавном, UI и способностями; ChestTest/PatrolTest/BarrelTest пока проверяют срезы.
+
+Осознанные отличия, которые не следует автоматически считать дефектами: защита
+выстрела от ближнего укрытия, отмена pending cast при stun/удалении, int64-кошелёк,
+фильтр интерфейса при выборе interaction target, E по Started вместо Triggered,
+расширенный E/respawn demo pickup, Jump по Started/Completed и дополнительные
+уведомления при HealthMax clamp. Для строгого паритета каждое решение согласовывать отдельно.
+
+Приоритет: закончить blackhole → teleport и две дополнительные атаки → damage sense,
+ragdoll и hit feedback → полный AI/MonsterData → HUD/AnimInstance → director и итоговая карта.
+
+
+## ProjectileBlackhole — проверено в PIE
+
+RogueProjectileBlackhole наследует RogueProjectile на daScript. Новый параметр
+CollisionProfile у базового снаряда сохраняет Projectile по умолчанию и позволяет
+blackhole использовать BlackholeCore из исходного DefaultEngine.ini 992f860.
+Сохранены скорость 500, lifespan 5, ядро 20 и постоянная radial force -800000
+в радиусе 1200 с исключением канала Pawn. Родительский hit не срабатывает при
+прохождении мира; физические PhysicsBody-акторы поглощаются через native overlap.
+
+Адаптация удаления: коллизия поглощённого актора отключается сразу, а удаление
+планируется через native lifespan с задержкой 1 мс. Это сохраняет однократное
+поглощение и позволяет выполнить чужой EndPlay вне текущего script callback.
+GenerateOverlapEvents включается перед запуском в BeginPlay. Видимая неподвижная
+RogueBlackholeDemo находится отдельно в roguedemo. Карта — BlackholeTest.
+Все восемь групп rogue-blackhole-v7-20261104 прошли с проверкой журнала и teardown.
+Следующий класс этапа 2 — RogueProjectileTeleport.
+
+
+## Движение игрока — сверено с Blueprint 4 ноября 2026
+
+Исправлена камера и ориентация: bUseControllerRotationYaw=true,
+bOrientRotationToMovement=false, bUseControllerDesiredRotation=false.
+Корпус смотрит по yaw камеры; S не разворачивает его назад, A/D дают стрейф.
+WalkSpeed=550, JumpZVelocity=420, AirControl=0.05, RotationRate.Yaw=360.
+SpringArm: TargetArmLength=175, RelativeLocation.Z=80, SocketOffset.Y=80.
+Эти значения взяты из исходного BP_PlayerCharacter 992f860.
+
+Пункт прежнего аудита о скорости игрока 450 закрыт. Скорость AI=450 и урон=51
+также подтверждены и перенесены в последующем этапе боевого паритета. Подготовка персонажа использует
+автоматический Reimport, сохраняя ручные overrides. Движение, спринт и связанные
+проверки стрельбы прошли реальный PIE; подробности в VALIDATION.md.

@@ -39,7 +39,11 @@
     "ProjectileEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_Projectile",
     "ProjectileSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Loop",
     "ImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_HitWorld",
-    "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Impact-001"
+    "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Impact-001",
+    "BlackholeEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Ultimate",
+    "BlackholeSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Secondary_Loop",
+    "TeleportImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Portal_Entrance_Close",
+    "TeleportImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_DashProj_Impact-001"
   },
   "ai_download_folders": [
     "Content/ParagonMinions",
@@ -52,5 +56,10 @@
     "HitAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/HitReact_FullBody_A",
     "DeathAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Death_Front_A",
     "StunAnimation": "/Game/ParagonMinions/Characters/Minions/Down_Minions/Animations/Ranged/Stun"
+  },
+  "course_animation": {
+    "source_blueprint": "/Game/ControlRig/Characters/Mannequins/Animations/Gideon/GideonManny_AnimBlueprint",
+    "adapted_blueprint": "/Game/DasRogueExternal/ABP_CoursePlayer",
+    "CharacterMesh": "/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Manny"
   }
 }

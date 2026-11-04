@@ -37,6 +37,10 @@
     {
       "Name": "ControlRig",
       "Enabled": true
+    },
+    {
+      "Name": "PropertyAccessNode",
+      "Enabled": true
     }
   ],
   "DisableEnginePluginsByDefault": true

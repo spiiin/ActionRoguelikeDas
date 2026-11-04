@@ -8,6 +8,12 @@
 			"reference": "RogueActionRef"
 		},
 		{
+			"id": "rogue.RogueActionBlackhole",
+			"name": "RogueActionBlackhole",
+			"script": "rogue/rogue_action_blackhole.das",
+			"reference": "RogueActionBlackholeRef"
+		},
+		{
 			"id": "rogue.RogueActionDropLoot",
 			"name": "RogueActionDropLoot",
 			"script": "rogue/rogue_action_drop_loot.das",
@@ -50,6 +56,12 @@
 			"reference": "RogueActionSystemComponentRef"
 		},
 		{
+			"id": "rogue.RogueActionTeleport",
+			"name": "RogueActionTeleport",
+			"script": "rogue/rogue_action_teleport.das",
+			"reference": "RogueActionTeleportRef"
+		},
+		{
 			"id": "rogue.RogueAICharacter",
 			"name": "RogueAICharacter",
 			"script": "rogue/rogue_ai_character.das",
@@ -66,6 +78,12 @@
 			"name": "RogueAIProjectileAttack",
 			"script": "rogue/rogue_ai_projectile_attack.das",
 			"reference": "RogueAIProjectileAttackRef"
+		},
+		{
+			"id": "rogue.RogueAnimationComponent",
+			"name": "RogueAnimationComponent",
+			"script": "rogue/rogue_animation_component.das",
+			"reference": "RogueAnimationComponentRef"
 		},
 		{
 			"id": "rogue.RogueAttributeComponent",
@@ -90,6 +108,12 @@
 			"name": "RogueCoinPickupSubsystem",
 			"script": "rogue/rogue_coin_pickup_subsystem.das",
 			"reference": "RogueCoinPickupSubsystemRef"
+		},
+		{
+			"id": "rogue.RogueExplosiveBarrel",
+			"name": "RogueExplosiveBarrel",
+			"script": "rogue/rogue_explosive_barrel.das",
+			"reference": "RogueExplosiveBarrelRef"
 		},
 		{
 			"id": "rogue.RogueHealthAttributeSet",
@@ -188,6 +212,30 @@
 			"reference": "RogueProjectileRef"
 		},
 		{
+			"id": "rogue.RogueProjectileBlackhole",
+			"name": "RogueProjectileBlackhole",
+			"script": "rogue/rogue_projectile_blackhole.das",
+			"reference": "RogueProjectileBlackholeRef"
+		},
+		{
+			"id": "rogue.RogueProjectileTeleport",
+			"name": "RogueProjectileTeleport",
+			"script": "rogue/rogue_projectile_teleport.das",
+			"reference": "RogueProjectileTeleportRef"
+		},
+		{
+			"id": "roguedemo.RogueBlackholeAttackProjectile",
+			"name": "RogueBlackholeAttackProjectile",
+			"script": "roguedemo/rogue_blackhole_attack_projectile.das",
+			"reference": "RogueBlackholeAttackProjectileRef"
+		},
+		{
+			"id": "roguedemo.RogueBlackholeDemo",
+			"name": "RogueBlackholeDemo",
+			"script": "roguedemo/rogue_blackhole_demo.das",
+			"reference": "RogueBlackholeDemoRef"
+		},
+		{
 			"id": "roguedemo.RogueChestDemo",
 			"name": "RogueChestDemo",
 			"script": "roguedemo/rogue_chest_demo.das",
@@ -242,6 +290,12 @@
 			"reference": "RogueTargetDummyRef"
 		},
 		{
+			"id": "roguedemo.RogueTeleportDemo",
+			"name": "RogueTeleportDemo",
+			"script": "roguedemo/rogue_teleport_demo.das",
+			"reference": "RogueTeleportDemoRef"
+		},
+		{
 			"id": "roguetest.CombatProbe",
 			"name": "CombatProbe",
 			"script": "roguetest/rogue_combat_probe.das",
@@ -276,6 +330,18 @@
 			"name": "RogueAttributeProbe",
 			"script": "roguetest/rogue_attribute_probe.das",
 			"reference": "RogueAttributeProbeRef"
+		},
+		{
+			"id": "roguetest.RogueBarrelProbe",
+			"name": "RogueBarrelProbe",
+			"script": "roguetest/rogue_barrel_probe.das",
+			"reference": "RogueBarrelProbeRef"
+		},
+		{
+			"id": "roguetest.RogueBlackholeProbe",
+			"name": "RogueBlackholeProbe",
+			"script": "roguetest/rogue_blackhole_probe.das",
+			"reference": "RogueBlackholeProbeRef"
 		},
 		{
 			"id": "roguetest.RogueCoinProbe",
@@ -318,6 +384,12 @@
 			"name": "RoguePointDamageTarget",
 			"script": "roguetest/rogue_point_damage_target.das",
 			"reference": "RoguePointDamageTargetRef"
+		},
+		{
+			"id": "roguetest.RogueTeleportProbe",
+			"name": "RogueTeleportProbe",
+			"script": "roguetest/rogue_teleport_probe.das",
+			"reference": "RogueTeleportProbeRef"
 		},
 		{
 			"id": "roguetest.RogueUnrelatedObject",

@@ -7,6 +7,7 @@ require math
 [ue_class(module_id="rogue", type_folder="/Game/DasRogue/Types", Blueprintable)]
 class RogueAttributeComponent : ActorComponent {
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category="Attributes") {
+        var DefaultAttributeSetClass : ObjectClass
         var HealthMax : float = 100.0f
     }
 
@@ -22,6 +23,11 @@ class RogueAttributeComponent : ActorComponent {
     events = ue_properties(BlueprintAssignable, Category="Attributes") {
         var OnHealthChanged : RogueHealthChanged
         var OnAttributeChanged : RogueAttributeChanged
+    }
+
+    // A reflected class reference loads and retains this dependency with the Blueprint.
+    defaults = ue_defaults() {
+        self.DefaultAttributeSetClass = ue_class_default("/Game/DasRogue/Attributes/BP_RogueHealthAttributeSet.BP_RogueHealthAttributeSet_C")
     }
 
     def BeginPlay() : void {
@@ -67,7 +73,7 @@ class RogueAttributeComponent : ActorComponent {
 
     [ue_function(BlueprintCallable)]
     def GetAttributeSet() : RogueAttributeSetRef {
-        if (!ue_is_valid(self.AttributeSet)) { self.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RogueHealthAttributeSet.BP_RogueHealthAttributeSet_C")) }
+        if (!ue_is_valid(self.AttributeSet)) { self.ConfigureAttributeSet(self.DefaultAttributeSetClass) }
         return self.AttributeSet
     }
 

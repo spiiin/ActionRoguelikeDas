@@ -30,6 +30,7 @@ class RogueAICharacter : Character {
     ActionSystem : RogueActionSystemComponentRef
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category="AI") {
+        var DefaultAttributeSetClass : ObjectClass
         var MoveSpeed : float = 450.0f
         var DeathDelay : float = 10.0f
         var AttackClass : ObjectClass
@@ -55,6 +56,7 @@ class RogueAICharacter : Character {
     }
 
     defaults = ue_defaults() {
+        self.DefaultAttributeSetClass = ue_class_default("/Game/DasRogue/Attributes/BP_RogueMonsterAttributeSet.BP_RogueMonsterAttributeSet_C")
         self.Visual.StaticMesh = ue_asset_default("/Engine/BasicShapes/Cone.Cone")
         self.Visual.RelativeScale3D = ue_vector(0.65lf, 0.65lf, 1.7lf)
         self.Visual.RelativeRotation = UE_ROTATOR_ZERO
@@ -64,7 +66,7 @@ class RogueAICharacter : Character {
     }
 
     def BeginPlay() : void {
-        self.ActionSystem.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RogueMonsterAttributeSet.BP_RogueMonsterAttributeSet_C"))
+        self.ActionSystem.ConfigureAttributeSet(self.DefaultAttributeSetClass)
         if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
             rogue_apply_mesh(self.Mesh, self.Presentation)

@@ -6,6 +6,9 @@ require ue_projectile_components public
 class RogueImpactHandler {
 
     [ue_function(BlueprintCallable, Category="Projectile")]
+    def HandleImpact(other : ActorRef; hit : CollisionHit) : bool {}
+
+    [ue_function(BlueprintCallable, Category="Projectile")]
     def ApplyProjectileDamage(other : ActorRef; hit : CollisionHit) : bool {}
 }
 

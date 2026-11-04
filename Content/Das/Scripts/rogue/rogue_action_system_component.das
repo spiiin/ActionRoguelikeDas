@@ -15,6 +15,7 @@ let ROGUE_MAX_COIN_BALANCE : int64 = 9223372036854775807l
 class RogueActionSystemComponent : ActorComponent {
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Actions") {
+        var DefaultAttributeSetClass : ObjectClass
         var DefaultActions : array<ObjectClass>
         var BaseMoveSpeed : float = 450.0f
     }
@@ -39,6 +40,11 @@ class RogueActionSystemComponent : ActorComponent {
         var OnActionAdded : RogueActionChanged
         var OnActionRemoved : RogueActionChanged
         var GameplayTagUpdated : RogueGameplayTagUpdated
+    }
+
+    // A reflected class reference loads and retains this dependency with the Blueprint.
+    defaults = ue_defaults() {
+        self.DefaultAttributeSetClass = ue_class_default("/Game/DasRogue/Attributes/BP_RoguePawnAttributeSet.BP_RoguePawnAttributeSet_C")
     }
 
     def BeginPlay() : void {
@@ -202,7 +208,7 @@ class RogueActionSystemComponent : ActorComponent {
         if (ue_is_valid(bridge) && ue_is_valid(bridge.AttributeSet) && !ue_same_object(self.AttributeSet, bridge.AttributeSet)) {
             self.AttachAttributeSet(bridge.AttributeSet)
         }
-        if (!ue_is_valid(self.AttributeSet)) { self.ConfigureAttributeSet(ue_class_loaded(type<ObjectClass>, "/Game/DasRogue/Attributes/BP_RoguePawnAttributeSet.BP_RoguePawnAttributeSet_C")) }
+        if (!ue_is_valid(self.AttributeSet)) { self.ConfigureAttributeSet(self.DefaultAttributeSetClass) }
         return self.AttributeSet
     }
 

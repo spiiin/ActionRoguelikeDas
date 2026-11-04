@@ -853,6 +853,74 @@ Existing character WalkSpeed=450 is retained; the base Pawn set default is 550,
 Monster 450. HealthMax clamps additionally notify Health observers. Coins remain int64.
 Packaged execution for this stage was not run.
 
+
+### ExplosiveBarrel PIE acceptance: PASS (2026-11-03)
+
+Serial-agent job `rogue-barrels-v6-20261103`: build/native registry preparation
+PASS, rogue-barrels PASS, eight real PIE groups. Runtime/Blueprint errors,
+engine ensures/fatals and teardown errors are rejected by the suite. Receipt:
+`Saved/Tests/rogue_barrels_pie.json`; editor exited after cleanup.
+
+- course_physics_and_radial_defaults
+- native_damage_arms_once_and_repeated_damage_keeps_original_fuse
+- three_second_owner_timer_explodes_once
+- radial_impulse_moves_near_body_leaves_far_body_and_applies_no_damage
+- own_barrel_receives_upward_and_angular_velocity_changes
+- direct_and_damage_reentry_cannot_repeat_explosion
+- destroying_burning_owner_cancels_pending_callback
+- manual_explosion_cancels_fuse_without_second_impulse
+
+The first acceptance attempts exposed unrelated actor initialization dependencies
+in the shared map. BarrelTest is now separate and prepares the common character
+and PlayerAttributeSet before PIE. The strict log check also caught illegal
+Deactivate/Stop calls during destruction; EndPlay now leaves owned component
+cleanup to Unreal. Native discovery regression: 22 Python checks PASS.
+Optional effect asset appearance and audible playback were not validated by
+this -NoSound run. No packaged build is claimed for this stage.
+
+
+### ProjectileBlackhole acceptance: PASS (2026-11-04)
+
+Shared-agent run rogue-blackhole-v7-20261104: native binding preparation PASS,
+rogue-blackhole PASS, eight real PIE groups, strict runtime/Blueprint/ensure/fatal
+and teardown log checks PASS. Receipt: Saved/Tests/rogue_blackhole_pie.json.
+
+- inherited_projectile_uses_course_defaults_and_nonblocking_profile
+- continuous_force_pulls_physics_bodies_but_excludes_Pawn_and_outside_radius
+- native_core_overlap_consumes_actor_once_and_requires_overlap_events
+- overlapping_nonsimulated_PhysicsBody_is_preserved
+- native_five_second_lifespan_removes_core_and_force
+- 500cm_per_second_projectile_passes_through_world_wall_without_base_impact
+- destroying_active_projectile_stops_native_force_without_late_callbacks
+- base_projectile_retains_2000_speed_30_second_lifespan_and_wall_collision
+
+The base projectile's unchanged 2000 cm/s, 30-second lifespan, Projectile profile
+and native wall collision are checked inside the current port PIE arena. The
+older opt-in rogue-projectile smoke fixture remains incompatible with first-use
+self-referencing interface bootstrap; it failed before gameplay and was not used
+as acceptance evidence. No broad interface-bootstrap changes were made here.
+Native discovery Python regression: 22 checks PASS. No packaged build or optional
+Niagara/audio asset playback is claimed for this stage.
+
+
+### Cold editor startup: PASS (2026-11-04)
+
+Fixed RogueCharacter.BeginPlay failing to create the player attribute set after
+opening BlackholeTest directly. A loaded-class lookup did not load the referenced
+Blueprint; test preparation had hidden the missing dependency. Character, AI,
+health component and action-system component now serialize DefaultAttributeSetClass
+as a reflected class property, assigned by ue_class_default in their Blueprint defaults.
+Removed the explicit player attribute preload from barrel/blackhole map preparation.
+
+Reimported and saved the four Blueprints, exited the editor, then started a fresh
+editor directly on BlackholeTest without prepare scripts or explicit class loads.
+Tests/verify_cold_start_pie.py passed in two consecutive gameplay PIE sessions:
+no runtime errors; player attribute set created and shared by both components;
+attribute defaults initialized; controls bound; positive health. Receipt:
+Saved/Tests/rogue_cold_start_pie.json. The editor log contains no PIE runtime errors,
+ensures or fatal errors. No wrapper C++ changes were needed for this fix.
+
+
 ### Player movement / original Blueprint parity: PASS (2026-11-04)
 
 rogue-movement-v3-20261104: projectile_attack: 10, character_combat: 7, movement: 12 groups PASS, including clean startup and teardown.
@@ -882,6 +950,7 @@ was updated to include the existing Rage and Coins HUD fields.
 Proof, source hash and receipts: Saved/Tests/rogue_movement_stage_validation.json.
 Packaged execution and the complete original animation state machine are outside
 this movement validation.
+
 
 ### Original combat parity: PASS (2026-11-04)
 
@@ -922,3 +991,80 @@ The final log has no missing-usage or material-compilation diagnostics.
 
 All relevant Python sources parse, the suite manifest is valid, and new native
 helper/type files pass clang-format. This does not claim packaged execution.
+
+## Teleport and additional attacks — 2026-11-04
+
+`rogue-teleport-20261104y` PASS, suite `rogue-additional-attacks`, 10 PIE groups.
+Receipt: `Saved/Tests/rogue_additional_attacks_pie.json`. F/Q are injected through
+Enhanced Input. Checks cover Blackhole's 25 Rage cost and insufficient-resource
+rejection, attack/sprint exclusion, windup/cooldown, Teleport's 6000 cm/s flight,
+0.2 s detonation and 0.2 s secondary delay, real swept hits, exactly one native
+teleport attempt, collision refusal, destroyed instigator, destroyed projectile,
+windup cancellation and stunned/sprinting tags. The final log has no managed
+runtime, timer, call-frame or teardown failures. Source startup: 121 scripts,
+failed=0. All new dynamically spawned classes are explicitly prepared before PIE.
+
+Original inputs and class defaults were read from the pinned course editor:
+F = SecondaryAttack/Blackhole, Q = SpecialAttack/Teleport, cooldown 0.5 s.
+Serialized source Blueprint properties additionally confirm Attacking grant tag,
+Attacking/Sprinting/Stunned blocked tags, Blackhole cost Attribute.Rage=25,
+and Sprint's Attacking/Stunned blockers. Source hashes and decoded properties:
+`Saved/Tests/original_additional_attacks_reference.json`.
+
+The failure fixture uses two opposing overlapping boxes. A single box allows
+native de-penetration and is not a reliable failure case. The test observes the
+actual result from a DAS probe in PostUpdateWork; it disables movement again
+after successful teleports because CharacterMovement can resume falling.
+Gameplay uses native K2_TeleportTo, preserves pawn rotation and destroys the
+projectile after either success or failure. A missing instigator is skipped
+safely. Owner-session teardown cancels managed timers; EndPlay does not invoke
+timer APIs after the session starts ending.
+
+Generic wrapper regression `actor-component` passed in
+`rogue-abilities-regression-20261104s` (3 checks). New C++ adapter block formatting,
+changed Python syntax and JSON manifests pass their targeted checks.
+This validation covers PIE; packaged execution and pixel-identical MetaSound
+mixing are not claimed. Optional local effects use the acquired Niagara assets
+and source SoundWave variants, with engine meshes as the resource-free fallback.
+
+Final regression `rogue-abilities-regression-20261104z` PASS:
+`rogue-character-combat` 6 groups and `rogue-blackhole` 8 groups. This verifies
+ordinary magic damage/aim/cover/death, the base projectile's hit/destruction
+path, Blackhole attraction/consumption/filtering, speed, lifespan and teardown
+after the interface dispatch change. Total: 24 PIE groups for this stage,
+plus the separate Actor/Component DSL regression. Final source hashes and
+receipts: `Saved/Tests/rogue_additional_attacks_stage_validation.json`.
+
+
+### Original course player Anim Blueprint: PASS (2026-11-04)
+
+Source export in rogue-course-animation-v1-20261104 passed: duplicate/reparent,
+two local status flags, generated state adapter, explicit zero-vector value node,
+compile/save, original source SHA-256 unchanged, temporary source asset removed;
+no export ensure/fatal diagnostic. The first target preparation stopped on stale
+additional-attack Blueprint dependencies before gameplay. Preparation now imports
+those abilities before the character.
+
+Shared-agent rogue-course-animation-v2-20261104: rogue-course-animation-pie PASS,
+eleven real PIE checks, 121 scripts compiled with zero failures, strict runtime,
+Blueprint, ensure/fatal and teardown checks PASS. Receipt:
+Saved/Tests/rogue_course_animation_pie.json.
+
+- original_graph_initializes_on_DAS_character
+- event_driven_state_bridge_has_no_tick
+- original_locomotion_updates_speed_and_bone_pose
+- original_jump_state_follows_DAS_character
+- original_aim_offset_updates_from_control_rotation
+- DAS_sprint_tags_update_original_animation_branch
+- stun_and_unrelated_tags_are_handled_without_polling
+- original_UpperBody_attack_montage_plays
+- original_DefaultSlot_death_montage_plays
+- public_gameplay_assets_do_not_hard_reference_licensed_content
+- disabled_and_missing_external_profiles_keep_basic_fallback
+
+The target runs the adapted original graph on Engine.AnimInstance; it does not
+load the original ActionRoguelike C++ module. State changes are delivered by the
+DAS component through existing managed delegate/call-frame APIs on the game
+thread. No per-frame DAS tag polling or animation-worker DAS execution was added.
+Licensed source assets and the adapted Blueprint remain local and gitignored.
+No packaged build or pixel-for-pixel comparison of every transition is claimed.
