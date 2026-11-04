@@ -37,6 +37,8 @@ class RogueCoinProbe : RogueActionProbe {
     def ConfigureEnemy(actor : ActorRef; data : RogueMonsterDataRef) : void {
         let enemy = ue_ref(type<RogueAICharacterRef>, actor.handle)
         enemy.MonsterData = data
+        // Keep the ownership/loot-expiry check short; game defaults retain the course delay.
+        enemy.DeathDelay = 0.5f
         let controller = ue_ref(type<CoinAIControllerRef>, ue_ref(type<CharacterRef>, actor.handle).GetController().handle)
         if (ue_is_valid(controller)) { controller.BrainEnabled = false; controller.ForgetTarget() }
     }

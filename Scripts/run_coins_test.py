@@ -1,3 +1,4 @@
+WAIT_EDITOR_COMPILE=False  # Native PIE preflight prepares the configured roots in unattended tests.
 from pathlib import Path
 PREPARE_SCRIPT='Scripts/prepare_coins_test.py'
 WAIT_NAVIGATION=True

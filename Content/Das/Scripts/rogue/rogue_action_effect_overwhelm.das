@@ -24,6 +24,7 @@ class RogueActionEffectOverwhelm : RogueActionEffect {
     }
 
     defaults = ue_defaults() {
+        self.DisplayName = "Overwhelm"
         self.EffectOnThreshold = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionEffectStun.BP_RogueActionEffectStun_C")
     }
 

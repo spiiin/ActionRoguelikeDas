@@ -19,6 +19,7 @@ class RogueActionEffectBurning : RogueActionEffect {
     }
 
     defaults = ue_defaults() {
+        self.DisplayName = "Burning"
         self.Duration = 3.0f
         self.Period = 1.0f
         self.ResetDurationOnStackIncrease = true

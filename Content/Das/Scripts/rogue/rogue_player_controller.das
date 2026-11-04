@@ -3,6 +3,7 @@ module rogue_player_controller public
 require ue_native_gameplay public
 require rogue_interaction_component public
 require rogue_action_system_component public
+require rogue_hud_component public
 require math
 require ue_vector_math public
 
@@ -10,6 +11,9 @@ require ue_vector_math public
 // Game behavior lives in daScript; PlayerController is the generic DasForUE host.
 [ue_class(module_id="rogue", Blueprintable)]
 class RoguePlayerController : PlayerController {
+    @ue_component
+    HUD : RogueHUDComponentRef
+
     @ue_component
     InteractionComponent : RogueInteractionComponentRef
 

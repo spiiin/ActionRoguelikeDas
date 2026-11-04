@@ -574,3 +574,32 @@ ue_perception_configure accepts enemies/friendlies/neutrals flags for both sight
 and hearing; defaults preserve the earlier broad subscription API. The native-BT
 controller explicitly uses enemies-only, so PerceivedActors cannot prefer its own
 friendly pawn over the player. Team numbers are still chosen in DAS (bot=0/player=1).
+
+
+## HUD / world health widgets
+
+Gameplay uses the existing owned UserWidget service, typed `ue_widget_layout`
+views, typed multicast subscriptions and reflected native UMG methods. Progress,
+text, image brushes, panel insertion, viewport placement and native DPI projection
+need no game-specific C++ host. HUD and health widget policy lives in DAS components.
+Widget Blueprints contain layout only. Optional effect IconPath is converted to a
+typed soft Texture2D value on row creation; the existing async image-brush adapter
+handles loading and owner lifetime. Reflected typed soft-reference properties are
+not added by this slice; IconPath is an editable string asset path.
+
+`Das.UI.SetRoot` supplies the editor operation Python cannot perform on the
+protected WidgetTree.RootWidget. It accepts an unparented widget in the same tree,
+an empty/matching root or a direct wrapper of the existing root. It rejects PIE,
+marks the Blueprint dirty and never saves it. It contains no gameplay policy.
+
+Structural migration snapshots now accept a dependent DataAsset instance even
+when its class does not derive from the class being migrated. The old check
+incorrectly rejected MonsterData referencing Action classes. The root-specific
+InstanceAsset checks used elsewhere remain intact. The preparation script updates
+all three existing Action roots (gameplay, AI and tests), retaining their consumers.
+
+Cold WorldSubsystem.Initialize precedes OnPostWorldInitialization in Unreal.
+The generic world-subsystem host now prepares and pins its lifecycle program
+before Initialize while the world has not begun play. It keeps the existing ban
+on compiling source after BeginPlay; later world preparation reuses the artifact.
+This ordering is required by the configured coin subsystem even when testing HUD.

@@ -3,6 +3,10 @@ module rogue_action public
 require rogue_action_host_interface public
 require math
 require ue_result public
+require ue_soft_references public
+
+typedef RogueActionTextureRef = UENativeObjectRef("/Script/Engine.Texture2D")
+typedef RogueActionIcon = $UESoftObject<RogueActionTextureRef>
 
 // Script-only diagnostic; Blueprint's CanStart contract remains bool.
 enum RogueActionStartFailure {
@@ -20,6 +24,9 @@ enum RogueActionStartFailure {
 class RogueAction : ScriptObject {
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Actions") {
+        var DisplayName : string
+        // Optional texture asset path; resolved asynchronously only when the row is created.
+        var IconPath : string
         var ActionName : GameplayTag
         var GrantTags : GameplayTagContainer
         var BlockedTags : GameplayTagContainer

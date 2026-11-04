@@ -6,6 +6,7 @@ require rogue_action_system_component public
 require rogue_presentation public
 require rogue_action_drop_loot public
 require rogue_monster_data public
+require rogue_health_widget_component public
 require ue_ai public
 require ue_behavior_tree public
 require ue_perception public
@@ -15,6 +16,9 @@ require math public
 // First combat slice of Tom Looman's RogueAICharacter (992f860); gameplay is daScript.
 [ue_class(module_id="rogue", Blueprintable)]
 class RogueAICharacter : Character {
+    @ue_component
+    HealthWidget : RogueHealthWidgetComponentRef
+
     @ue_component
     Visual : StaticMeshComponentRef
 
@@ -102,6 +106,8 @@ class RogueAICharacter : Character {
         if (ue_same_object(data, self.AppliedMonsterData)) { return true }
         self.MonsterData = data
         self.AppliedMonsterData = data
+        self.HealthWidget.Configure(data.HealthWidgetClass)
+        self.Label.SetHiddenInGame(ue_class_valid(data.HealthWidgetClass), false)
         for (kind in data.Actions) {
             if (!ue_class_valid(kind)) { continue }
             var alreadyGranted = false

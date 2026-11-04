@@ -5,7 +5,10 @@ require rogue_action_effect public
 [ue_class(module_id="rogue", Blueprintable)]
 class RogueActionEffectStun : RogueActionEffect {
 
-    defaults = ue_defaults() { self.Duration = 2.5f }
+    defaults = ue_defaults() {
+        self.DisplayName = "Stunned"
+        self.Duration = 2.5f
+    }
 
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override Setup() : void {

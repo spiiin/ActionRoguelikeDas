@@ -21,6 +21,11 @@ class RogueActionEffect : RogueAction {
         var Stopping : bool = false
     }
 
+    [ue_function(BlueprintPure)]
+    def GetDurationRemaining() : float {
+        return self.Duration > 0.0f ? max(0.0f, ue_timer_remaining("EffectDuration")) : -1.0f
+    }
+
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override IsEffect() : bool { return true }
 

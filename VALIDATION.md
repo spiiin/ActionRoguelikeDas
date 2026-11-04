@@ -1135,3 +1135,43 @@ EndPlay remove owned pawns and their native controllers. Receipts are
 Generic-parent automation and all 35 inherited-handler checks also pass on the
 updated runtime (`rogue-behavior-v9-20261104`). Packaged/standalone and HUD rendering
 are not claimed by this stage. HealthWidgetClass is still reserved for the HUD step.
+
+
+## HUD / world health widgets — 4 November 2026
+
+`rogue-hud-v6-20261104`: 16 actual PIE checks passed on ChestTest, including
+the strict runtime/Blueprint/ensure/fatal and teardown gates. The local HUD binds
+to the possessed pawn; HP/Rage and exact 5,000,000,000-coin text update through
+typed events. Unbinding clears vitals safely at a zero maximum. A running effect
+creates a nonzero-size row with its display name, stack and remaining duration;
+an engine Texture2D supplied as a default is applied through the async soft-image
+adapter. Stacking reuses the row, forced GC retains the effect/widgets, and removal
+releases the row. The icon fixture sets defaults before GrantAction, because the
+OnActionAdded event creates the row synchronously; it restores those defaults.
+
+MonsterData chooses the health layout. First nonlethal damage creates one widget;
+healing updates it. Its position matches native UMG's DPI-corrected projection;
+moving the enemy behind the camera hides it and moving it back restores it.
+Death removes it. MonsterData's loot value survives the Action schema migration.
+Rebinding does not duplicate attribute callbacks. Native component destruction
+removes the main HUD and unsubscribes it while the ActionSystem remains live.
+Receipt: `Saved/Tests/rogue_hud_pie.json`. The captured real Slate/PIE frame is
+`Saved/Tests/rogue_hud_ui00000.png`; the HUD, bars, coins, crosshair and effect row
+were visually inspected. The map retains its existing debug TextRender displays.
+
+`rogue-b-coins-v5-20261104`: all 15 coin/DropLoot PIE checks passed on the same
+runtime, including native ticking/audio/GC, owner expiry, navigation fallback,
+zero rewards, int64 overflow protection and EndPIE cleanup. The test fixture now
+sets its enemy's DeathDelay to 0.5 seconds explicitly; production keeps 10 seconds.
+Coin tests use unattended startup and the native preflight rather than waiting
+for the interactive editor's complete script scan.
+
+Cold runs exposed WorldSubsystem.Initialize preceding OnPostWorldInitialization.
+The generic host now pins the subsystem's lifecycle program before Initialize
+while the world has not begun play; the subsequent world preparation reuses it.
+Both successful runs show the early single-program preparation without the
+previous missing-program warning. A full editor build passed before these runs.
+
+This slice does not claim packaged/standalone rendering, multiple local players,
+or coverage of every viewport resolution/DPI setting. Layouts are portable UMG
+Blueprints; gameplay and widget lifetime policy are DAS.
