@@ -27,21 +27,23 @@ class RoguePatrolPoint : Actor {
 
     [ue_function(BlueprintCallable)]
     def RebuildConnections(points : array<ActorRef>) : bool {
+        self.ConnectionsReady = false
+        if (ue_navigation_is_building()) { return false }
         var previous := self.NearbyPatrolPoints
         var connected : array<ActorRef>
         let owner = ue_self_actor()
         let origin = owner.K2_GetActorLocation()
         let limit = double(max(self.MaxPathLength, 0.0f))
+        // This checks for registered navigation data without depending on another point.
+        // A same-position query succeeds even for an isolated/off-mesh point.
+        if (ue_navigation_distance(origin, origin).Status != NavigationQueryStatus.Success) { return false }
         for (point in points) {
             if (!ue_is_valid(point) || ue_same_object(owner, point)) { continue }
             let destination = point.K2_GetActorLocation()
             if (length_sq(destination-origin) > limit*limit) { continue }
             let distance = ue_navigation_distance(origin, destination)
-            if (distance.Status == NavigationQueryStatus.Error || distance.Status == NavigationQueryStatus.Invalid) {
-                // Preserve the previous graph until a complete rebuild is possible.
-                self.ConnectionsReady = false
-                return false
-            }
+            // A missing route (including a failed endpoint projection) is local to
+            // this pair. Keep collecting the other connections on the ready NavMesh.
             if (distance.Status == NavigationQueryStatus.Success && distance.Length <= limit) {
                 push(connected, point)
             }

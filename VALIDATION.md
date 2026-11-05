@@ -1212,6 +1212,135 @@ packaged builds, cross-map persistence, or a forced missing-profile/asset-load
 failure. Runtime policy and weighted selection remain DAS; editor CSV/Python
 preparation is not used by gameplay.
 
+
+## Lever / ProjectileSpammer — 4 November 2026
+
+`rogue-environment-reference-v3-20261104` read the original Blueprint graphs,
+CDO tick settings and component templates without saving source assets. BP_Lever
+only broadcasts its parameterless OnHandlePulled on every Interact. There is no
+handle animation or toggle in that graph. BP_ProjectileSpammer derives from Pawn,
+starts with tick disabled and uses a 0.5-second native tick interval. StartSpawning
+only enables ticking. Tick spawns BP_MagicProjectile at Arrow's world transform,
+with self as instigator, no Owner and Undefined collision handling. Transform
+scale uses the engine's default MultiplyWithRoot behavior.
+
+`rogue-environment-v4-20261104` passed all 9 checks in real single-player PIE,
+plus the strict runtime/Blueprint/ensure/fatal and EndPIE log gates. The full native
+editor build passed first. Receipt: `Saved/Tests/rogue_environment_pie.json`.
+The test confirms disabled native ticking, Pawn hosting and the original interval;
+real Enhanced Input E selects the lever through RogueInteractionComponent and
+broadcasts exactly once. Actual projectiles retain the spammer instigator, have
+no Owner and move natively. A full second produces two projectiles. Forced GC and
+another E preserve a single binding and do not toggle spawning off. Explicit stop
+halts native ticking. After rotating the Pawn and moving/rotating/scaling Arrow,
+the next projectile's native position, forward vector, velocity and scale match
+that component's world transform. Destroying the spammer leaves a safe inert
+subscriber; destroying the wiring removes its handler before another interaction.
+
+The reuse boundary is deliberate: RogueLever and RogueProjectileSpammer are in
+rogue; portable engine meshes and the level-specific subscription are in roguedemo.
+The original ExampleContent switch meshes are not copied. StartSpawning preserves
+upstream behavior; StopSpawning is an additional explicit control. The test covers
+acceptance of Undefined in real spawning, not an exhaustive matrix of blocked
+spawn/collision policies. Packaged builds, multiplayer and the final unified map
+remain separate stages. No game-specific native class was introduced.
+
+
+## Original course world — 5 November 2026
+
+`rogue-course-world-v20-20261105` passed all 8 checks in real PIE after an editor
+build. The strict runtime, Blueprint, engine ensure/fatal and EndPIE gates passed.
+Receipt: `Saved/Tests/rogue_course_world_pie.json`. The reference export suite
+`rogue-world-reference-v7-20261105` loaded every original world-partition actor
+read-only and exported the native scene plus gameplay poses and Level Blueprint.
+
+The local generated map retains 64 original Landscape proxies, component world
+transforms, static geometry, lighting and player start. Editor poses are checked
+before physics; movable props can settle in PIE. Native E input starts the source
+spammer from the first lever and creates 1000 batched coins from the second.
+The original chest meshes open at the rear hinge, a potion heals on overlap,
+coins reach the int64 wallet, and the placed MonsterData minion drops 100 credits.
+The actual original Donut/Distance/Pathfinding EQS query returns a distant native
+navigation location using the DAS ProvideActorsSet alive-player context.
+Coordinates use tolerances because Unreal recomputes relative double transforms.
+
+The geometry is loaded as one persistent level. World Partition streaming,
+packaging and multiplayer remain unverified. Audio resources are assigned;
+automated verification runs with NoSound and does not judge audible playback.
+Original source assets and their referencing generated map remain gitignored.
+
+
+A normal editor launch (with audio enabled and startup auto-reimport active) also
+passed the same 8 checks through Unreal MCP; its EndPIE finished and its receipt
+is `Saved/Tests/course_world_review.json`. Director DataTables retained their
+rows and MonsterData references after the required class migration. An earlier
+PIE after repeated live asset reimports refused an idle DropLoot artifact;
+this did not reproduce in the clean automated or normal editor runs. Runtime
+cache-miss diagnostics now identify source/environment misses if it recurs.
+
+
+A second Play/Stop cycle in the same normal editor passed all 8 checks again
+without reimporting assets; cache-miss diagnostics remained silent. The editor
+was left on the generated source-layout map with PIE stopped for manual review.
+
+
+The final normal-editor run repeated all 8 checks after correcting Python
+Rotator construction to named pitch/yaw/roll arguments. Actor rotations now
+match the reference in both editor setup and PIE, including upright levers and
+chests at source yaw 180. The coin material's InstancedStaticMeshes usage is set
+during preparation and saved, avoiding the default-material fallback. This final
+run also exercised reimport followed by Play/Stop without a cache miss.
+
+
+## Original coin presentation — 5 November 2026
+
+`rogue-course-coins-v2-20261105` passed all 9 course-map PIE checks, strict runtime
+and EndPIE gates. The added check confirms SM_Pickup_Coin, its original ISM-capable
+M_Pickup_Coin material, identity instance rotation, unit scale, +50 cm offset,
+MSS_Interactables_CurrencyPickup and CoinPickedUp trigger. Collection initializes
+world audio and still reaches the int64 wallet; MonsterData death still drops
+100 credits. NoSound automation checks audio wiring, not audible output.
+
+The earlier idle DropLoot artifact failure was reproduced while loading the
+coin presentation. The platform IO tracker queued unrelated directory deletions
+as script hierarchy changes and discarded the compiler lookup. Directory scope
+filtering fixes this; `rogue-coins-cache-v2-20261105` passed ProgramCache,
+PreparedPrograms and fresh-process artifact export/load, including the new
+unrelated-directory deletion regression. The course map then passed cleanly.
+
+The presentation uses local, ignored acquired assets. Editor installation reads
+the manifest and assigns refs on the ignored map; gameplay uses reflected refs.
+The original material provides per-instance vertex animation without a DAS
+transform-update loop. Public subsystem defaults remain resource-independent.
+
+2026-11-05: coin bulk transport and course effects: container-transport,
+rogue-coin-profile (10 checks), program-cache (fresh process), rogue-course-effects
+(10 checks with audio) PASS. See Docs/COIN_PERFORMANCE.md and Docs/COURSE_EFFECTS.md.
+
+
+## Landscape edit-layer import correction
+
+`rogue-landscape-surface-v2-20261105`: PASS, 12 PIE checks, clean runtime and
+teardown. All 256 components are collision-traced against samples decoded from
+the original merged heightmaps. The live editor comparison had maximum error
+0.073 cm; the original central floor is Z=0, replacing the erroneous Z=356.25
+at (0,0). All 256 final TextureSourceData payloads remain unchanged by baking.
+
+UE's text-imported proxies do not have the PostLoad-only edit-layer state flag.
+Initial registration copied already merged heights into the base layer, after
+which Flat Middle was added again. Geometry version 6 imports final source
+heightmaps and lets UE create one native layer, preserving hills and the flat
+middle. Full source layer history remains in the ignored original export.
+
+The corrected terrain also reconnects the sixth original patrol point. The
+course regression now expects all six original points to connect; explicitly
+unreachable-point coverage remains in the dedicated Behavior Tree test.
+Navigation is rebuilt before the 1000-coin interaction check. Resources and the
+repaired umap remain local/ignored. A pre-repair map backup is in Saved/Backups.
+
+2026-11-05: rogue-effect-icons-horizontal-v5-20261105 — rogue-hud PASS (24 checks). Course Settings01/Combust01 textures, neutral icon tint, compact horizontal enemy strip above HP, asynchronous texture loading, stacking/expiry/GC and teardown verified in PIE. Das.UI.SetRoot registers widget variable GUIDs and removes detached entries before compilation; no engine ensures in the passing run.
+
+
 ## Idiomatic code refactor: effects, player HUD, animation and attributes
 
 2026-11-05: PASS. Shared effects reconciliation now serves player and enemy UI,
@@ -1239,6 +1368,7 @@ Combat and attribute/coin fixtures read the real HUD. Combat isolates its firing
 lane and removes Burning only from the controlled incoming test projectile, so
 periodic damage cannot contaminate the separate manual-damage check. Production
 projectile effect defaults are unchanged.
+
 
 2026-11-05: rogue-tag-accessors-20261105 — PASS: attributes (12), course animation
 (11), runtime and teardown. rogue_tags.das centralizes all 13 Action/StatusEffect/

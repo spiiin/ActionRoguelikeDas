@@ -95,12 +95,14 @@ class RogueCoinPickupSubsystem : WorldSubsystem {
         for (location in locations) { push(transforms, ue_transform(location+offset, UE_ROTATOR_ZERO, scale)) }
         let ids <- ue_ism_add_instances(self.WorldISM, transforms)
         if (length(ids) != length(locations)) { return false }
+        var addedValue = 0l
         for (location, amount, id in locations, amounts, ids) {
             push(coin_locations, location)
             push(coin_amounts, amount)
             push(coin_mesh_ids, id)
-            self.RemainingValue += int64(amount)
+            addedValue += int64(amount)
         }
+        self.RemainingValue += addedValue
         self.CoinCount = length(coin_locations)
         self.BatchesAdded += 1
         return true

@@ -388,8 +388,8 @@ CDO CharacterMovement показывает 600, но BeginPlay использу�
    DataTable, seed, bot limit, EQS spawn, async MonsterData, deferred spawn и выдача
    Actions; GameInstance.AliveMonsters и очистка при смене мира. DeveloperSettings
    с soft mesh/sound и их async загрузкой для монет.
-10. **Blueprint-only окружение и итоговая карта.** Отдельно разобрать BP_Lever и
-    BP_ProjectileSpammer. Собрать единый игровой сценарий с NavMesh, противниками,
+10. **Blueprint-only окружение и итоговая карта.** BP_Lever и BP_ProjectileSpammer уже
+    перенесены на DAS (EnvironmentTest, 9 проверок). Собрать единый игровой сценарий с NavMesh, противниками,
     спавном, UI и способностями; ChestTest/PatrolTest/BarrelTest пока проверяют срезы.
 
 Осознанные отличия, которые не следует автоматически считать дефектами: защита
@@ -453,7 +453,8 @@ Anim Blueprint уже закрыты. Burning также закрыт; подт�
 2. MonsterData: класс, действия и DropLoot закрыты; HealthWidgetClass подключён к новому HUD.
 3. HUD/мировые widgets закрыты: HP/Rage, int64-монеты, прицел, эффекты/иконки, DPI-проекция; 16 PIE-проверок.
 4. Director реализован: бюджет, таблицы/веса, seed, native EQS, async MonsterData, общий лимит и отмена запросов. 14 PIE-проверок и чистое завершение прошли; подробности — VALIDATION.md.
-5. Blueprint-only окружение (Lever/ProjectileSpammer) и единая игровая карта.
+5. Lever/ProjectileSpammer перенесены на DAS и проверены: 9 PIE-проверок, EnvironmentTest.
+   Единая карта с планировкой оригинала перенесена; 8 PIE-проверок прошли 5 ноября.
 6. Проверка standalone/packaged, смены карт и работы без внешних ресурсов.
 
 
@@ -463,5 +464,4 @@ BehaviorTest использует native BT/EQS с DAS-задачами, сер�
 контекстом. Generic Pawn/Character передают native perception команду контроллера;
 новый BT-контроллер воспринимает только противников. World-owned EQS context
 обрабатывается отдельно от настоящего CDO в общем object adapter. Тесты и точные
-границы проверки перечислены в VALIDATION.md. HUD и health widgets теперь также проверены в PIE. Director/волны реализованы следующим этапом. Далее — Blueprint-only окружение
-Lever/ProjectileSpammer и единая карта с игровым циклом.
+границы проверки перечислены в VALIDATION.md. HUD и health widgets теперь также проверены в PIE. Director/волны реализованы следующим этапом. Lever/ProjectileSpammer также закрыты в EnvironmentTest. Единая карта с оригинальной расстановкой также проверена. Далее — standalone/packaged и проверка внешних ресурсов.

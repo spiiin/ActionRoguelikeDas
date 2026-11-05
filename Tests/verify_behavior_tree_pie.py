@@ -17,8 +17,10 @@ pawn.set_actor_location(unreal.Vector(600,-1500,96),False,True)
 pawn.get_editor_property('character_movement').disable_movement()
 point_kind=unreal.load_class(None,'/Game/DasRogue/AI/BP_RoguePatrolPoint.BP_RoguePatrolPoint_C')
 points=list(unreal.GameplayStatics.get_all_actors_of_class(world,point_kind))
-assert len(points)==4
-for point in points:assert point.call_method('RebuildConnections',args=(points,))
+assert len(points)==5
+blocked=next(p for p in points if p.get_actor_label()=='Unreachable patrol point')
+route_points=[p for p in points if p!=blocked]
+# Never initialize the graph here: the gameplay task must do it itself.
 low_kind=unreal.load_class(None,'/Game/DasRogue/AI/BT/BP_RogueBTLowHealth.BP_RogueBTLowHealth_C')
 brain=controller.get_editor_property('brain_component')
 assert brain and brain.get_class().get_name()=='BehaviorTreeComponent'
@@ -72,6 +74,13 @@ def tick(delta):
             if (enemy.get_actor_location()-s['origin']).length()<80:
                 assert age<5,'Native BT patrol task did not move';return
             assert board.get_value_as_object('CurrentPatrolPoint') in points
+            assert all(prop(p,'ConnectionsReady') for p in points)
+            assert all(len(prop(p,'NearbyPatrolPoints'))>0 for p in route_points)
+            assert len(prop(blocked,'NearbyPatrolPoints'))==0
+            assert all(blocked not in prop(p,'NearbyPatrolPoints') for p in route_points)
+            assert board.get_value_as_object('CurrentPatrolPoint')!=blocked
+            check('patrol_graph_initializes_in_gameplay_without_test_bootstrap')
+            check('unreachable_point_does_not_block_valid_routes')
             check('DAS_FindPatrol_and_native_MoveTo_on_Recast')
             # Clear route, enter an unobstructed native sight corridor.
             enemy.set_actor_location(unreal.Vector(4400,600,96),False,True)

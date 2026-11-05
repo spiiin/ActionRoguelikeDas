@@ -5,6 +5,7 @@ require rogue_attribute_component public
 require rogue_hit_flash_component public
 require rogue_action_system_component public
 require rogue_presentation public
+require rogue_action_sprint public
 require rogue_animation_component public
 require math
 require ue_vector_math public
@@ -106,7 +107,12 @@ class RogueCharacter : Character {
         }
         self.ActionSystem.SetBaseMoveSpeed(self.WalkSpeed)
         if (ue_class_valid(self.SprintActionClass)) {
-            self.ActionSystem.GrantAction(self.SprintActionClass)
+            let granted = self.ActionSystem.GrantAction(self.SprintActionClass)
+            if (ue_is_valid(granted) && ue_is_valid(self.Presentation)) {
+                let sprint = ue_ref(type<RogueActionSprintRef>, granted.handle)
+                sprint.SprintEffect = self.Presentation.SprintEffect
+                sprint.SprintSound = self.Presentation.SprintSound
+            }
         }
         if (ue_class_valid(self.AttackActionClass)) {
             let action = self.ActionSystem.GrantAction(self.AttackActionClass)

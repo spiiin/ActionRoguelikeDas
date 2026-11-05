@@ -2,24 +2,6 @@
 	"schema_version": 3,
 	"classes": [
 		{
-			"id": "rogue.RogueAICharacter",
-			"name": "RogueAICharacter",
-			"script": "rogue/rogue_ai_character.das",
-			"reference": "RogueAICharacterRef"
-		},
-		{
-			"id": "rogue.RogueAIController",
-			"name": "RogueAIController",
-			"script": "rogue/rogue_ai_controller.das",
-			"reference": "RogueAIControllerRef"
-		},
-		{
-			"id": "rogue.RogueAIProjectileAttack",
-			"name": "RogueAIProjectileAttack",
-			"script": "rogue/rogue_ai_projectile_attack.das",
-			"reference": "RogueAIProjectileAttackRef"
-		},
-		{
 			"id": "rogue.RogueAction",
 			"name": "RogueAction",
 			"script": "rogue/rogue_action.das",
@@ -86,6 +68,24 @@
 			"reference": "RogueActionTeleportRef"
 		},
 		{
+			"id": "rogue.RogueAICharacter",
+			"name": "RogueAICharacter",
+			"script": "rogue/rogue_ai_character.das",
+			"reference": "RogueAICharacterRef"
+		},
+		{
+			"id": "rogue.RogueAIController",
+			"name": "RogueAIController",
+			"script": "rogue/rogue_ai_controller.das",
+			"reference": "RogueAIControllerRef"
+		},
+		{
+			"id": "rogue.RogueAIProjectileAttack",
+			"name": "RogueAIProjectileAttack",
+			"script": "rogue/rogue_ai_projectile_attack.das",
+			"reference": "RogueAIProjectileAttackRef"
+		},
+		{
 			"id": "rogue.RogueAnimationComponent",
 			"name": "RogueAnimationComponent",
 			"script": "rogue/rogue_animation_component.das",
@@ -102,6 +102,12 @@
 			"name": "RogueAttributeSet",
 			"script": "rogue/rogue_attribute_set.das",
 			"reference": "RogueAttributeSetRef"
+		},
+		{
+			"id": "rogue.RogueBehaviorController",
+			"name": "RogueBehaviorController",
+			"script": "rogue/rogue_behavior_controller.das",
+			"reference": "RogueBehaviorControllerRef"
 		},
 		{
 			"id": "rogue.RogueBTCheckRange",
@@ -134,12 +140,6 @@
 			"reference": "RogueBTRangedAttackRef"
 		},
 		{
-			"id": "rogue.RogueBehaviorController",
-			"name": "RogueBehaviorController",
-			"script": "rogue/rogue_behavior_controller.das",
-			"reference": "RogueBehaviorControllerRef"
-		},
-		{
 			"id": "rogue.RogueCharacter",
 			"name": "RogueCharacter",
 			"script": "rogue/rogue_character.das",
@@ -164,6 +164,12 @@
 			"reference": "RogueDirectorSlotRef"
 		},
 		{
+			"id": "rogue.RogueEQSAlivePlayers",
+			"name": "RogueEQSAlivePlayers",
+			"script": "rogue/rogue_eqs_alive_players.das",
+			"reference": "RogueEQSAlivePlayersRef"
+		},
+		{
 			"id": "rogue.RogueEQSTarget",
 			"name": "RogueEQSTarget",
 			"script": "rogue/rogue_bt_tasks.das",
@@ -174,12 +180,6 @@
 			"name": "RogueExplosiveBarrel",
 			"script": "rogue/rogue_explosive_barrel.das",
 			"reference": "RogueExplosiveBarrelRef"
-		},
-		{
-			"id": "rogue.RogueHUDComponent",
-			"name": "RogueHUDComponent",
-			"script": "rogue/rogue_hud_component.das",
-			"reference": "RogueHUDComponentRef"
 		},
 		{
 			"id": "rogue.RogueHealthAttributeSet",
@@ -206,6 +206,12 @@
 			"reference": "RogueHitFlashComponentRef"
 		},
 		{
+			"id": "rogue.RogueHUDComponent",
+			"name": "RogueHUDComponent",
+			"script": "rogue/rogue_hud_component.das",
+			"reference": "RogueHUDComponentRef"
+		},
+		{
 			"id": "rogue.RogueInteractionComponent",
 			"name": "RogueInteractionComponent",
 			"script": "rogue/rogue_interaction_component.das",
@@ -216,6 +222,12 @@
 			"name": "RogueItemChest",
 			"script": "rogue/rogue_item_chest.das",
 			"reference": "RogueItemChestRef"
+		},
+		{
+			"id": "rogue.RogueLever",
+			"name": "RogueLever",
+			"script": "rogue/rogue_lever.das",
+			"reference": "RogueLeverRef"
 		},
 		{
 			"id": "rogue.RogueMagicProjectile",
@@ -296,6 +308,12 @@
 			"reference": "RogueProjectileBlackholeRef"
 		},
 		{
+			"id": "rogue.RogueProjectileSpammer",
+			"name": "RogueProjectileSpammer",
+			"script": "rogue/rogue_projectile_spammer.das",
+			"reference": "RogueProjectileSpammerRef"
+		},
+		{
 			"id": "rogue.RogueProjectileTeleport",
 			"name": "RogueProjectileTeleport",
 			"script": "rogue/rogue_projectile_teleport.das",
@@ -344,6 +362,24 @@
 			"reference": "RogueCombatTargetRef"
 		},
 		{
+			"id": "roguedemo.RogueCourseChest",
+			"name": "RogueCourseChest",
+			"script": "roguedemo/rogue_course_chest.das",
+			"reference": "RogueCourseChestRef"
+		},
+		{
+			"id": "roguedemo.RogueCourseStunZone",
+			"name": "RogueCourseStunZone",
+			"script": "roguedemo/rogue_course_stun_zone.das",
+			"reference": "RogueCourseStunZoneRef"
+		},
+		{
+			"id": "roguedemo.RogueCourseWorld",
+			"name": "RogueCourseWorld",
+			"script": "roguedemo/rogue_course_world.das",
+			"reference": "RogueCourseWorldRef"
+		},
+		{
 			"id": "roguedemo.RogueHealthPickupDemo",
 			"name": "RogueHealthPickupDemo",
 			"script": "roguedemo/rogue_health_pickup_demo.das",
@@ -360,6 +396,18 @@
 			"name": "RogueInteractiveChestHinged",
 			"script": "roguedemo/rogue_hinged_chest.das",
 			"reference": "RogueInteractiveChestHingedRef"
+		},
+		{
+			"id": "roguedemo.RogueLeverDemo",
+			"name": "RogueLeverDemo",
+			"script": "roguedemo/rogue_lever_demo.das",
+			"reference": "RogueLeverDemoRef"
+		},
+		{
+			"id": "roguedemo.RogueLeverSpammerDemo",
+			"name": "RogueLeverSpammerDemo",
+			"script": "roguedemo/rogue_lever_spammer_demo.das",
+			"reference": "RogueLeverSpammerDemoRef"
 		},
 		{
 			"id": "roguedemo.RogueMagicProjectileDemo",
@@ -392,6 +440,12 @@
 			"reference": "CombatProbeRef"
 		},
 		{
+			"id": "roguetest.RogueActionProbe",
+			"name": "RogueActionProbe",
+			"script": "roguetest/rogue_action_probe.das",
+			"reference": "RogueActionProbeRef"
+		},
+		{
 			"id": "roguetest.RogueAIMissingPresentation",
 			"name": "RogueAIMissingPresentation",
 			"script": "roguetest/rogue_ai_missing_presentation.das",
@@ -410,12 +464,6 @@
 			"reference": "RogueAIVisualTestCharacterRef"
 		},
 		{
-			"id": "roguetest.RogueActionProbe",
-			"name": "RogueActionProbe",
-			"script": "roguetest/rogue_action_probe.das",
-			"reference": "RogueActionProbeRef"
-		},
-		{
 			"id": "roguetest.RogueAttributeProbe",
 			"name": "RogueAttributeProbe",
 			"script": "roguetest/rogue_attribute_probe.das",
@@ -432,6 +480,12 @@
 			"name": "RogueBlackholeProbe",
 			"script": "roguetest/rogue_blackhole_probe.das",
 			"reference": "RogueBlackholeProbeRef"
+		},
+		{
+			"id": "roguetest.RogueBulkWorldProbe",
+			"name": "RogueBulkWorldProbe",
+			"script": "roguetest/rogue_bulk_world_probe.das",
+			"reference": "RogueBulkWorldProbeRef"
 		},
 		{
 			"id": "roguetest.RogueBurningTarget",

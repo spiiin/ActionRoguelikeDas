@@ -27,11 +27,12 @@ class RogueCoinTestActor : Actor {
         let origin = ue_self_actor().K2_GetActorLocation()
         var locations : array<UEVector>
         var amounts : array<int>
-        for (index in range(count)) {
-            let point = ue_navigation_random_point(origin, max(self.SpawnRadius, 0.0f))
-            push(locations, point.Found ? point.Location : origin)
-            push(amounts, 10)
+        let radius = max(self.SpawnRadius, 0.0f)
+        with_ue_navigation() $(navigation : NavigationSystemRef) {
+            locations <- ue_navigation_random_points(navigation, origin, radius, count)
         }
+        resize(amounts, count)
+        for (index in range(count)) { amounts[index] = 10 }
         return coins.AddCoinPickups(locations, amounts)
     }
 }

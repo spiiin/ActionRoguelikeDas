@@ -15,7 +15,8 @@
     "tharlevfx_tutorials",
     "SanderAudio",
     "Troy",
-    "ExampleContent"
+    "ExampleContent",
+    "LevelPrototyping"
   ],
   "excluded_assets": [
     "GideonManny_AnimBlueprint",
@@ -25,7 +26,8 @@
     "Content/ControlRig",
     "Content/Characters",
     "Content/tharlevfx_tutorials/CharacterFX",
-    "Content/SanderAudio"
+    "Content/SanderAudio",
+    "Content/ExampleContent/UI/Texture"
   ],
   "assets": {
     "CharacterMesh": "/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Manny_Simple",
@@ -35,15 +37,19 @@
   },
   "course_effects": {
     "CastEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Portal_Cast",
-    "CastSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Cast-001",
+    "CastSound": "/Game/SanderAudio/Sources/Player/Combat/MSS_Combat_Abilities_Primary_Cast",
     "ProjectileEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_Projectile",
-    "ProjectileSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Loop",
+    "ProjectileSound": "/Game/SanderAudio/Sources/Player/Combat/MSS_Combat_Abilities_Primary_Loop",
     "ImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Primary_HitWorld",
-    "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Primary_Impact-001",
+    "ImpactSound": "/Game/SanderAudio/Sources/Player/Combat/MSS_Combat_Abilities_Primary_Impact",
     "BlackholeEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_Ultimate",
-    "BlackholeSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_Secondary_Loop",
+    "BlackholeSound": "/Game/SanderAudio/Sources/Player/Combat/MSS_Combat_Abilities_Secondary_Loop",
     "TeleportImpactEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Portal_Entrance_Close",
-    "TeleportImpactSound": "/Game/SanderAudio/Sources/Player/Combat/S_Combat_Abilities_DashProj_Impact-001"
+    "TeleportImpactSound": "/Game/SanderAudio/Sources/Player/Combat/MSS_Combat_Abilities_Dash_Impact",
+    "SprintEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Gideon_TravelMode_Hands",
+    "SprintSound": "/Game/SanderAudio/Sources/Player/Locomotion/MSS_PlayerLocomotion_Hover",
+    "StunSound": "/Game/SanderAudio/Sources/Player/Status_Effects/MSS_Player_StatusEffects_Stunned",
+    "StunMix": "/Game/SanderAudio/SoundClasses/SoundclassMixes/SCM_Stunned"
   },
   "ai_download_folders": [
     "Content/ParagonMinions",
@@ -61,5 +67,29 @@
     "source_blueprint": "/Game/ControlRig/Characters/Mannequins/Animations/Gideon/GideonManny_AnimBlueprint",
     "adapted_blueprint": "/Game/DasRogueExternal/ABP_CoursePlayer",
     "CharacterMesh": "/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Manny"
+  },
+  "course_world": {
+    "source_map": "/Game/ActionRoguelike/Maps/P_OpenWorldTestMap",
+    "target_map": "/Game/DasRogueExternal/Maps/P_OpenWorldTestMap_Das",
+    "export_script": "Scripts/export_original_world.py",
+    "installer": "Scripts/install_course_world.py",
+    "prepare_script": "Scripts/prepare_course_world.py",
+    "geometry": "Original terrain and placements; one persistent level; World Partition streaming is not migrated"
+  },
+  "course_coins": {
+    "CoinMesh": "/Game/ExampleContent/Meshes/SM_Pickup_Coin.SM_Pickup_Coin",
+    "CoinSound": "/Game/SanderAudio/Sources/Interactables/MSS_Interactables_CurrencyPickup.MSS_Interactables_CurrencyPickup",
+    "PickupTrigger": "CoinPickedUp"
+  },
+  "course_world_effects": {
+    "BurningEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Flames.NS_Flames",
+    "BurningSound": "/Game/SanderAudio/Sources/Environment/MSS_Environmental_BarrelAftermath.MSS_Environmental_BarrelAftermath",
+    "ExplosionEffect": "/Game/tharlevfx_tutorials/CharacterFX/ParagonSourceAssets/Niagara/NS_Explosion.NS_Explosion",
+    "ExplosionSound": "/Game/SanderAudio/Sources/Environment/MSS_Environmental_BarrelExplode.MSS_Environmental_BarrelExplode",
+    "PickupSound": "/Game/SanderAudio/Sources/Interactables/MSS_Consumables_HealthPotion.MSS_Consumables_HealthPotion"
+  },
+  "course_ui": {
+    "DefaultEffectIcon": "/Game/ExampleContent/UI/Texture/T_UI_Icon_Settings01",
+    "BurningIcon": "/Game/ExampleContent/UI/Texture/T_UI_Skill_Combust01"
   }
 }

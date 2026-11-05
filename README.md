@@ -8,6 +8,38 @@
 
 Вся игровая логика находится в daScript. C++ тест в репозитории DasForUE импортирует и проверяет классы; он не является реализацией игровой логики. Разрешение автора на публикацию и лицензия производного порта уточняются; MIT-лицензия DasForUE не переносится автоматически на этот пример. Ассеты курса сюда не скопированы.
 
+## Quick start
+
+A daScript gameplay port of [Tom Looman's ActionRoguelike](https://github.com/tomlooman/ActionRoguelike),
+built with [DasForUE](https://github.com/spiiin/DasForUE) and tested with Unreal Engine 5.8.3 on Windows.
+Use DasForUE commit [`d2d51e5`](https://github.com/spiiin/DasForUE/commit/d2d51e55caaef5261dded01535fe514c087a5e88) or newer.
+
+[![Gameplay video](https://img.youtube.com/vi/8hW55RqJcgQ/hqdefault.jpg)](https://www.youtube.com/watch?v=8hW55RqJcgQ)
+
+1. Clone this project and DasForUE into sibling folders named `ActionRoguelikeDas` and `DasForUE`.
+   Follow the [DasForUE installation guide](https://github.com/spiiin/DasForUE/blob/main/Docs/Guide/GettingStarted/Install.md)
+   to install its dependencies and build the plugin for your engine.
+2. Open `ActionRoguelikeDas.uproject`. The published project locates the plugin in
+   `../DasForUE/Plugins`; adjust `AdditionalPluginDirectories` if you use another folder layout.
+3. Start with `/Game/DasRogue/Maps/ChestTest`. Press Play, click the viewport, use WASD/mouse
+   to move/look, **E** to interact, **LMB** to fire, **Shift** to sprint and **F/Q** for abilities.
+   Other resource-independent maps are under `/Game/DasRogue/Maps`.
+4. Course/Paragon presentation and the original course world are optional local integrations.
+   Acquire the resources separately under their publishers' terms; `ExternalAssets.json` and
+   `Scripts/setup_external_assets.py --help` describe installation from an existing source project.
+   The exact course animation profile needs the course's retargeted assets; the raw Fab pack
+   alone does not provide all of them. World import additionally needs an export from the
+   original project (`Scripts/export_original_world.py`), then `Scripts/install_course_world.py`
+   and editor setup described below.
+
+Gameplay lives in `Content/Das/Scripts/rogue`; `roguedemo` contains demo presentation and
+`Tests` contains verification. Licensed assets, original map exports, generated external
+presentation assets, binaries and caches are excluded from Git. The course world shown in
+parts of the video is generated locally rather than included in the clone.
+
+Attribution and the pending derivative-code license clarification above apply to this example;
+DasForUE's MIT license does not grant rights to the course or third-party resources.
+
 ## Первые классы
 
 Content/Das/Scripts/rogue/rogue_interaction_interface.das объявляет настоящий UE Blueprint Interface с методом Interact без параметров.
@@ -620,7 +652,7 @@ Instigator and damage causer intentionally remain empty, matching the original
 Blueprint's unwired pins. Damage therefore goes through normal native damage
 events and the existing Health/Rage policy; it is not a direct Health assignment.
 The source effect has no ActionName/GrantTags/BlockedTags and does not start VFX
-or audio. Its optional icon belongs to the later HUD/presentation stage.
+or audio. Its course icon is loaded asynchronously by the HUD/presentation layer.
 
 The playable `RogueMagicProjectileDemo` now defaults EffectOnHit to Burning, as
 the original BP_MagicProjectile does. The generic RogueMagicProjectile remains
@@ -686,9 +718,16 @@ HealthWidgetClass выбирает UMG-макет полоски здоровь�
 персонажа и показывает HP, Rage, монеты int64 и прицел. Список активных эффектов
 показывает DisplayName (либо ActionName), StackCount и оставшуюся длительность.
 `IconPath` — необязательный путь к Texture2D: загрузка асинхронная при создании
-строки, каждый кадр ресурс не загружается. Пустой путь допустим.
+строки, каждый кадр ресурс не загружается. Пустой путь сохраняет стандартную
+иконку `T_UI_Icon_Settings01` из оригинального `EffectSlot_WBP`; Burning использует
+`T_UI_Skill_Combust01`. Обе текстуры устанавливаются локально через
+`setup_external_assets.py --with-course-effects` или `install_course_world.py`
+и остаются вне Git. Без стандартной текстуры её место скрыто. Эффекты врага
+расположены над HP компактным горизонтальным рядом слева направо;
+имя, стаки и длительность доступны во всплывающей подсказке.
 
-В `Content/DasRogue/UI` лежат `WBP_RogueHUD`, `WBP_RogueHealth`, `WBP_RogueEffect`.
+В `Content/DasRogue/UI` лежат `WBP_RogueHUD`, `WBP_RogueHealth`,
+компактный `WBP_RogueEffect` и текстовый `WBP_RogueHUDEffect`.
 Это только UMG-макеты; игровая логика и подписки находятся в DAS.
 Игрок и враги используют общие `rogue_ui_refresh_effects` / `rogue_ui_clear_effects`;
 массивы действий и виджетов остаются сильными отражёнными ссылками в компонентах.
@@ -746,3 +785,88 @@ Suite для PIE: `rogue-director` в общей очереди DasForUE.
 
 Проверено: 14 сценариев PIE, включая GC, общий лимит, seed, отмену EQS,
 возврат бюджета и удаление директора; журнал и завершение игры прошли проверку.
+
+
+### Рычаг и пусковая установка
+
+`/Game/DasRogue/Maps/EnvironmentTest` — отдельная арена. Подойди к рычагу
+перед точкой старта и нажми **E**: установка справа начнёт стрелять в стену
+раз в 0,5 секунды. Повторное E повторяет событие и оставляет установку включённой.
+Это поведение оригинального BP_Lever/BP_ProjectileSpammer 992f860: в рычаге нет
+анимации, latch или toggle. Его публичное событие — `OnHandlePulled`.
+
+`rogue/rogue_lever.das` реализует интерфейс взаимодействия и типизированный
+multicast. `rogue/rogue_projectile_spammer.das` наследуется от Pawn: native tick
+по умолчанию выключен, `StartSpawning` включает его. Настройки: `ProjectileClass`
+и `SpawnInterval` (0,5). Трансформа компонента `Arrow` задаёт позицию, поворот и
+масштаб создаваемого снаряда; instigator — сам спаммер, Owner не назначается.
+Режим коллизии Undefined сохраняет настройку выбранного класса снаряда.
+`StopSpawning` — добавленная возможность для ручной остановки и повторного запуска.
+
+В `roguedemo` вынесены простые engine-меши рычага и `RogueLeverSpammerDemo`,
+связывающий событие с `StartSpawning` через `+=`/`-=`. В reusable-классах нет
+ссылок на конкретный рычаг, уровень или подписчика. Оригинальные switch-меши
+из ExampleContent не требуются и не копируются в публичный репозиторий.
+`Scripts/prepare_environment.py` воспроизводит расстановку на открытой
+EnvironmentTest. Blueprint-графы окружения не используются для игровой логики.
+
+Suite: `rogue-environment`; подготовка оригинальной сверки —
+`rogue-environment-reference`. Полные локальные графы сохраняются только
+в игнорируемом `Saved/Tests/original_environment`.
+
+Проверка окружения: все 9 сценариев PIE прошли вместе с проверкой лога и EndPIE;
+подробности и границы проверки — в `VALIDATION.md`.
+
+
+### Оригинальная игровая карта курса
+
+Локальный уровень `/Game/DasRogueExternal/Maps/P_OpenWorldTestMap_Das`
+воспроизводит P_OpenWorldTestMap из курса (ревизия 992f860).
+Геометрия, 64 секции Landscape, освещение и расстановка берутся из оригинала.
+Игровые акторы заменяются классами daScript; исходный C++ модуль не требуется.
+Сейчас это один persistent level: потоковая загрузка World Partition не перенесена.
+
+Ресурсы и зависимая карта остаются в игнорируемых локальных каталогах.
+Пользователь получает исходные ресурсы отдельно. После экспорта оригинала через
+`Scripts/export_original_world.py` установщик
+`python Scripts/install_course_world.py --source-content C:/path/to/ActionRoguelike/Content`
+копирует разрешённые локальные зависимости и готовит файлы импорта.
+`Scripts/prepare_course_world.py` выполняется в редакторе на новом уровне
+P_OpenWorldTestMap_Das. Полный воспроизводимый запуск — suite `rogue-course-world`
+в общей очереди DasForUE; получение исходной расстановки — `rogue-world-reference`.
+JSON и T3D нужны только подготовке редактора. В игре используются uasset и типизированные ссылки.
+
+Начальная позиция — оригинальный PlayerStart (-1220, 480, 102).
+У рычага (1000, -670, 155) **E** запускает ProjectileSpammer.
+Второй рычаг (1000, -220, 155) создаёт 1000 монет, как исходный Level Blueprint.
+Сундуки, зелья, бочка, миньон и патрульные точки сохраняют исходные позиции.
+`RogueCourseWorld` содержит обе подписки; `RogueCourseStunZone` выдаёт действие оглушения.
+Директор сохраняет seed 5847634, две конфигурации, оригинальные строки таблицы
+и нативные кривые дохода. Волны изначально выключены, как в исходной игре;
+их включает `SpawnWaves` у актора Course Level Blueprint - daScript.
+
+
+Монеты на итоговой карте используют оригинальный `SM_Pickup_Coin` и его
+`M_Pickup_Coin`: золотая монета с U-логотипом, вращением и покачиванием в
+World Position Offset материала. Масштаб экземпляров — (1,1,1), смещение вверх —
+50 см, как в C++. Экземпляры остаются в одном ISM; daScript не обновляет каждый
+трансформ ради анимации. Звук — `MSS_Interactables_CurrencyPickup`, trigger
+`CoinPickedUp`. Локальные ресурсы устанавливает `install_course_world.py` из
+раздела `course_coins` ExternalAssets.json. На уровне их назначает
+RogueCourseWorld; публичные defaults подсистемы сохраняют engine-ресурсы.
+
+
+### Высоты Landscape при импорте карты курса
+
+Импортёр использует итоговые карты высот оригинала. История двух edit layers
+остаётся в локальном исходном экспорте; игровая карта получает один нативный
+слой с уже сведённой поверхностью. Это предотвращает повторное сложение
+`Flat Middle` после автоматической конвертации текстовых Landscape-прокси UE.
+Установка создаёт контрольные высоты для всех 256 компонентов. PIE-проверка
+сравнивает с ними коллизию, а не только позиции акторов.
+
+Для существующей локальной карты нужно заново выполнить `install_course_world.py`,
+затем в редакторе без PIE — `Scripts/repair_course_landscape.py`. Скрипт сохраняет
+резервную копию umap и заменяет только Landscape. После этого нужно перестроить
+навигацию и сохранить уровень. Обычная подготовка новой карты использует версию
+геометрии 6 автоматически.

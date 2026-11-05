@@ -41,7 +41,6 @@ class RogueProjectileTeleport : RogueProjectile {
         ue_projectile_movement_stop(self.ProjectileMovementComponent)
         ue_ref(type<ActorComponentRef>, self.LoopedNiagaraComponent.handle).Deactivate()
         self.LoopedAudioComponent.Stop()
-        self.SetActorHiddenInGame(true)
         self.SetActorEnableCollision(false)
         ue_timer_start("Teleport", self.TeleportSecondaryDelay, self.HandleTeleportation, false)
     }

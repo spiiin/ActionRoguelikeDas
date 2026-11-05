@@ -36,6 +36,7 @@ def install(source,with_effects=False,with_minions=False,with_course_animation=F
     allowed=set(config['allowed_roots'])
     ignored=set(config['excluded_assets'])
     todo=list(assets.values())+list(ai_assets.values())
+    if with_effects:todo.extend(config.get('course_ui',{}).values())
     if with_course_animation:todo.append(config['course_animation']['source_blueprint'])
     visited=set(); files=[]; missing=[]
     while todo:

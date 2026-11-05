@@ -4,6 +4,8 @@ require ue_animation public
 require ue_effects public
 require ue_vector_math public
 
+typedef RogueSoundMixRef = UENativeObjectRef("/Script/Engine.SoundMix")
+
 typedef RogueSkeletalMeshRef = UENativeObjectRef("/Script/Engine.SkeletalMesh")
 
 // Instances with licensed third-party references are generated locally, outside Git.
@@ -29,6 +31,10 @@ class RoguePresentationProfile : DataAsset {
         var BlackholeSound : SoundBaseRef
         var TeleportImpactEffect : NiagaraSystemRef
         var TeleportImpactSound : SoundBaseRef
+        var SprintEffect : NiagaraSystemRef
+        var SprintSound : SoundBaseRef
+        var StunSound : SoundBaseRef
+        var StunMix : RogueSoundMixRef
         var MuzzleSocket : string = "Muzzle_01"
         var MeshLocation : UEVector = ue_vector(0.0lf, 0.0lf, -90.0lf)
         var MeshRotation : UERotator = ue_rotator(0.0lf, -90.0lf, 0.0lf)

@@ -61,7 +61,7 @@ else:
     profile=unreal.find_object(None,profile_path)
 assert profile
 profile.modify(True)
-if loaded.get('ProjectileSound'):
+if loaded.get('ProjectileSound') and loaded['ProjectileSound'].get_class().get_name()=='SoundWave':
     loaded['ProjectileSound'].set_editor_property('looping',True)
 for name,value in loaded.items():
     if name!='Locomotion':profile.set_editor_property(name,value)
@@ -71,7 +71,7 @@ profile.set_editor_property('MeshLocation',unreal.Vector(0,0,-90))
 profile.set_editor_property('MeshRotation',unreal.Rotator(pitch=0,yaw=-90,roll=0))
 profile.set_editor_property('MuzzleSocket','Muzzle_01')
 packages=[profile.get_outer(),anim.get_outer(),loaded['DeathMontage'].get_outer(),unreal.load_asset('/Game/DasRogue/Types/BP_RoguePresentationProfile').get_outer()]
-if loaded.get('ProjectileSound'):packages.append(loaded['ProjectileSound'].get_outer())
+if loaded.get('ProjectileSound') and loaded['ProjectileSound'].get_class().get_name()=='SoundWave':packages.append(loaded['ProjectileSound'].get_outer())
 assert unreal.EditorLoadingAndSavingUtils.save_packages(packages,False)
 result={'profile':profile.get_path_name(),'mesh':mesh.get_path_name(),'animation_class':anim.generated_class().get_path_name(),'montage_slot':str(slot),'course_animation':course_animation,'assets':receipt['assets']}
 dest=ROOT/'Saved/ExternalAssets/prepared.json';dest.write_text(json.dumps(result,indent=2))

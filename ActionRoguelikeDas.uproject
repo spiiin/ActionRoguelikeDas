@@ -3,7 +3,7 @@
   "Category": "Samples",
   "Description": "ActionRoguelike gameplay port to daScript",
   "AdditionalPluginDirectories": [
-    "C:/src/DasForUE2-main/Plugins"
+    "../DasForUE/Plugins"
   ],
   "Plugins": [
     {
@@ -40,6 +40,10 @@
     },
     {
       "Name": "PropertyAccessNode",
+      "Enabled": true
+    },
+    {
+      "Name": "Metasound",
       "Enabled": true
     }
   ],

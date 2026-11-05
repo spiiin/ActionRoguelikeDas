@@ -3,6 +3,9 @@ from pathlib import Path
 import runpy
 import unreal
 ROOT=Path(__file__).resolve().parents[1]
+actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+for actor in actors.get_all_level_actors():
+    if actor.get_actor_label().startswith('Unreachable patrol point'):actors.destroy_actor(actor)
 # Core game assets are versioned; only this stage's changed dependency needs reimport.
 setup_world=unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
 unreal.SystemLibrary.execute_console_command(setup_world,'Das.DSL.Reimport /Game/DasRogue/Actions/BP_RogueActionProjectileAttack')
@@ -37,6 +40,9 @@ map_path='/Game/DasRogue/Maps/BehaviorTest'
 if not assets.does_asset_exist(map_path): assert level.new_level_from_template(map_path,'/Game/DasRogue/Maps/PatrolTest')
 else: assert level.load_level(map_path)
 actors=unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+# Repair fixtures saved by an interrupted/older test before saving this map again.
+for actor in list(actors.get_all_level_actors()):
+    if actor.get_actor_label().startswith('Unreachable patrol point'):actors.destroy_actor(actor)
 point_kind=unreal.load_class(None,'/Game/DasRogue/AI/BP_RoguePatrolPoint.BP_RoguePatrolPoint_C')
 kind=unreal.load_class(None,'/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol.BP_RogueBTFindPatrol_C')
 unreal.load_asset('/Game/DasRogue/AI/BT/BP_RogueBTFindPatrol').modify(True)
@@ -46,6 +52,13 @@ for actor in actors.get_all_level_actors():
         actor.set_editor_property('ai_controller_class',controller)
         actor.set_actor_label('daScript Minion - native BT and EQS')
 unreal.EditorLoadingAndSavingUtils.save_dirty_packages(True,True)
+# An off-mesh point inside the obstacle must not prevent the usable graph from building.
+# Spawn it after saving so it remains a transient regression fixture.
+blocked=actors.spawn_actor_from_class(point_kind,unreal.Vector(3800,0,150))
+assert blocked
+blocked.set_actor_label('Unreachable patrol point')
+blocked.set_editor_property('MaxPathLength',2300.0)
+
 # The persistent patrol template intentionally contains no test probe.
 probe_kind=unreal.load_class(None,'/Game/DasRogue/Tests/BP_RogueActionProbe.BP_RogueActionProbe_C')
 assert probe_kind

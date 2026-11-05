@@ -77,18 +77,18 @@ def tick(delta):
             return
         if STATE['phase'] == 'wait_navigation':
             world=editor.get_editor_world()
-            assert world and world.get_name() in ('PatrolTest','BehaviorTest','DirectorTest')
+            assert world and world.get_name() in globals().get('NAVIGATION_MAPS',('PatrolTest','BehaviorTest','DirectorTest'))
             STATE.setdefault('nav_started',time.perf_counter())
             nav_age=time.perf_counter()-STATE['nav_started']
-            if nav_age>1.0 and not STATE.get('nav_rebuild_requested'):
+            if nav_age>1.0 and nav_age-STATE.get('nav_rebuild_at',-10)>5.0:
                 # Allow the new Recast actor to register before requesting the build.
                 unreal.SystemLibrary.execute_console_command(world,'RebuildNavigation')
-                STATE['nav_rebuild_requested']=True
-            assert nav_age<60,'Recast navigation did not produce a complete editor path'
-            path=unreal.NavigationSystemV1.find_path_to_location_synchronously(world,unreal.Vector(3200,0,10),unreal.Vector(4400,0,10))
+                STATE['nav_rebuild_at']=nav_age
+            assert nav_age<globals().get('NAVIGATION_TIMEOUT',60),'Recast navigation did not produce a complete editor path'
+            path=unreal.NavigationSystemV1.find_path_to_location_synchronously(world,unreal.Vector(*globals().get('NAVIGATION_FROM',(3200,0,10))),unreal.Vector(*globals().get('NAVIGATION_TO',(4400,0,10))))
             if not path or not path.is_valid() or path.is_partial():
                 return
-            assert path.get_path_length()>1250,'NavMesh path did not detour around obstacle'
+            assert path.get_path_length()>globals().get('NAVIGATION_MIN_LENGTH',1250),'NavMesh path did not detour around obstacle'
             level.save_current_level()
             STATE['navigation_ready']=True
             STATE['phase']='wait_startup'
@@ -175,7 +175,9 @@ def tick(delta):
                     unreal.log_error('DAS_ROGUE_TEARDOWN '+traceback.format_exc())
             actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
             for actor in list(actors.get_all_level_actors()):
-                if actor.get_class().get_name() in ('BP_RogueActionProbe_C','BP_RogueAttributeProbe_C'):
+                if actor.get_class().get_name() in ('BP_RogueActionProbe_C','BP_RogueAttributeProbe_C','BP_RogueBulkWorldProbe_C','BP_RogueTeleportProbe_C'):
+                    actors.destroy_actor(actor)
+                elif actor.get_actor_label()=='Teleport effect test wall' or actor.get_actor_label().startswith('Unreachable patrol point'):
                     actors.destroy_actor(actor)
             unreal.EditorLoadingAndSavingUtils.save_dirty_packages(True, True)
             unreal.unregister_slate_post_tick_callback(STATE['handle'])

@@ -37,7 +37,11 @@ class RogueItemChest : Actor {
     def Interact() : void {
         let actor = ue_ref(type<ActorRef>, ue_self_object())
         actor.SetActorTickEnabled(true)
+        self.ChestInteractionStarted()
     }
+
+    [ue_function(BlueprintEvent, Category="Interaction")]
+    def ChestInteractionStarted() : void {}
 
     def Tick(delta : float) : void {
         // FInterpConstantTo semantics, including signed movement and no overshoot.

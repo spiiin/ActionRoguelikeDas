@@ -40,8 +40,7 @@ for source, path, identity in [
     apply(source, path, identity)
 
 runpy.run_path(str(Path(__file__).with_name('prepare_character.py')))
-# Optional licensed presentation stays in the ignored local profile. Keep the
-# native MetaSound graphs out of the dependency set; use the acquired waves.
+# Optional licensed presentation uses original MetaSound graphs in the ignored local profile.
 root = Path(__file__).resolve().parents[1]
 profile_path = '/Game/DasRogueExternal/DA_Presentation'
 if assets.does_asset_exist(profile_path):

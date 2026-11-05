@@ -79,19 +79,30 @@ class RogueBTFindPatrol : BTTask {
     [ue_function(BlueprintEvent)]
     def ReceiveExecuteAI(OwnerController:AIControllerRef; ControlledPawn:NativePawnRef):void {
         if (!ue_class_valid(self.PatrolPointClass)) { ue_bt_finish(false); return }
+        var points:array<ActorRef>
+        let actors <- ue_static(GameplayStatics.GetAllActorsOfClass,self.PatrolPointClass)
+        for (actor in actors) { push(points,ue_ref(type<ActorRef>,actor.handle)) }
+        // Build lazily from the real task, after runtime navigation is available.
+        // Unready points retry on the next execution; one isolated point cannot block the graph.
+        for (actor in points) {
+            let point=ue_ref(type<RoguePatrolPointRef>,actor.handle)
+            if (!point.ConnectionsReady) { point.RebuildConnections(points) }
+        }
         let board=ue_ai_blackboard(OwnerController)
         var current=ue_ref(type<RoguePatrolPointRef>,ue_blackboard_object(board,"CurrentPatrolPoint").handle)
-        if (!ue_is_valid(current)) {
+        if (!ue_is_valid(current) || empty(current.GetConnections())) {
+            current=default<RoguePatrolPointRef>
             let origin=ue_ref(type<ActorRef>,ControlledPawn.handle).K2_GetActorLocation()
-            let points <- ue_static(GameplayStatics.GetAllActorsOfClass,self.PatrolPointClass)
             var nearest=1.0e30lf
-            for (point in points) {
+            for (actor in points) {
+                let point=ue_ref(type<RoguePatrolPointRef>,actor.handle)
+                if (!point.ConnectionsReady || empty(point.GetConnections())) { continue }
                 let distance=length_sq(point.K2_GetActorLocation()-origin)
-                if (distance<nearest) { current=ue_ref(type<RoguePatrolPointRef>,point.handle); nearest=distance }
+                if (distance<nearest) { current=point; nearest=distance }
             }
         }
         if (!ue_is_valid(current)) { ue_bt_finish(false); return }
-        var choices := current.NearbyPatrolPoints
+        var choices <- current.GetConnections()
         let previous=ue_blackboard_object(board,"PreviousPatrolPoint")
         var valid:array<ActorRef>
         for (point in choices) {
