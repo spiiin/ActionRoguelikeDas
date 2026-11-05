@@ -539,7 +539,9 @@ Scripts/prepare_hit_flash.py создаёт наш материал M_HitFlash, 
 и Ragdoll на 10 секунд; для skeletal ragdoll нужны установленные локальные ресурсы.
 
 Suite: `test-suite combat-parity-local rogue-combat-parity repo=C:/src/DasForUE2-main`.
-Временное project-local отключение дискового кэша компиляции описано в MODULE_CACHE_REPRO.md.
+Дисковый кеш компиляции включён (`das.EditorModuleCache=1`). История прежнего сбоя и проверки повторного включения описаны в MODULE_CACHE_REPRO.md.
+
+Каталог `roguetest` исключён из автоматической компиляции через `[DasForUE.EditorPreparation] ExcludedDirectories` в `Config/DefaultGame.ini`. Явный запуск тестов, подключение через `require` и списки программ тестовых карт продолжают компилировать нужные проверки.
 
 ## Дополнительные атаки
 

@@ -60,7 +60,7 @@ def finish(error=None):
                 c=actor.get_controller()
                 if c:c.destroy_actor()
             actor.destroy_actor()
-    (root/'Saved/Tests/rogue_combat_parity_pie.json').write_text(json.dumps({'passed':error is None,'error':error,'checks':s['checks'],'reference':reference},indent=2))
+    (root/'Saved/Tests/rogue_combat_parity_pie.json').write_text(json.dumps({'passed':error is None,'error':error,'checks':s['checks'],'reference':reference,'overlay':s.get('overlay'),'isolated_effects':s.get('isolated_effects',[])},indent=2))
 def tick(delta):
     if s['done'] or s.get('busy'):return
     s['busy']=True
@@ -114,6 +114,16 @@ def tick(delta):
             assert set(perceived)==set(s['damage_sources'])
             s['checks'].append('friendly_damage_does_not_publish_damage_stimulus')
             probe.call_method('FreezeBrain',args=(enemy,pawn))
+            # The pending-shot check above fires a real projectile, which can
+            # apply Burning. Its periodic damage must not restart the unrelated
+            # overlay timer while this fixture measures two controlled hits.
+            for shot in unreal.GameplayStatics.get_all_actors_of_class(w,projectile_kind):
+                shot.destroy_actor()
+            s['isolated_effects']=[]
+            for effect in list(pawn.get_editor_property('ActionSystem').get_editor_property('Actions')):
+                if effect.call_method('IsEffect') and effect.call_method('IsRunning'):
+                    s['isolated_effects'].append(effect.get_class().get_name())
+                    effect.call_method('StopAction')
             unreal.GameplayStatics.apply_damage(pawn,1.0,controller,enemy,None)
             assert player_flash.get_editor_property('Visible')
             phase('repeat');return
@@ -121,6 +131,7 @@ def tick(delta):
             if age<.6:return
             unreal.GameplayStatics.apply_damage(pawn,1.0,controller,enemy,None)
             s['last_hit']=now()
+            s['expected_flashes']=player_flash.get_editor_property('Flashes')
             phase('old_timeout');return
         if state=='old_timeout':
             if age<.6:return
@@ -129,7 +140,18 @@ def tick(delta):
             phase('hidden');return
         if state=='hidden':
             if now()-s['last_hit']<1.1:return
-            assert not player_flash.get_editor_property('Visible')
+            s['overlay']={'now':now(),'requested_hit':s['last_hit'],
+                'actual_hit':player_flash.get_editor_property('LastHitTime'),
+                'flashes':player_flash.get_editor_property('Flashes'),'expected':s['expected_flashes'],
+                'visible':player_flash.get_editor_property('Visible'),
+                'same_component':pawn.get_editor_property('HitFlash')==player_flash,
+                'controller':controller.get_class().get_name()}
+            assert s['overlay']['flashes']==s['overlay']['expected'], 'Unexpected damage in overlay fixture: '+str(s['overlay'])
+            assert not player_flash.get_editor_property('Visible'), (
+                f"overlay still visible: now={now()}, requested_hit={s['last_hit']}, "
+                f"actual_hit={player_flash.get_editor_property('LastHitTime')}, "
+                f"flashes={player_flash.get_editor_property('Flashes')}, expected={s['expected_flashes']}, "
+                f"controller={controller.get_class().get_name()}")
             assert pawn.get_editor_property('mesh').get_editor_property('overlay_material_max_draw_distance')==1
             s['checks'].append('overlay_hides_one_second_after_last_hit')
             # Fire a real player attack, freeze its projectile and sweep its owner through it.
