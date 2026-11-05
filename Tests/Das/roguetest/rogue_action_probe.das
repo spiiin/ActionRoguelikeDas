@@ -3,6 +3,9 @@ module rogue_action_probe public
 require ue_vector_math public
 require ue_native_gameplay public
 require rogue_action public
+require ue_call_scope
+require daslib/rtti
+require strings
 require rogue_attribute_component public
 
 typedef ProbeAIClassRef = UEObjectRef("rogue.RogueAICharacter")
@@ -14,6 +17,34 @@ var watched : UObjectHandle
 class RogueActionProbe : Actor {
 
     def BeginPlay() : void { ue_self_actor().SetActorTickEnabled(false) }
+
+    [ue_function(BlueprintCallable)]
+    def CheckCallScope(early : bool) : bool {
+        var saved : UCallHandle
+        with_ue_call(ue_self_object(), "K2_GetActorLocation") $(call) {
+            saved = call
+            if (early) { return }
+            ue_invoke_call(call)
+        }
+        var released = false
+        try { ue_invoke_call(saved) } recover { released = true }
+        return released
+    }
+
+    [ue_function(BlueprintCallable)]
+    def CheckFailedCallScope() : bool {
+        var saved : UCallHandle
+        var caught = false
+        try {
+            with_ue_call(ue_self_object(), "K2_GetActorLocation") $(call) {
+                saved = call
+                panic("Expected scope failure")
+            }
+        } recover { caught = rtrim(this_context().last_exception) == "Expected scope failure" }
+        var released = false
+        try { ue_invoke_call(saved) } recover { released = true }
+        return caught && released
+    }
 
     // Change live state through runtime property access, without editor reconstruction.
     [ue_function(BlueprintCallable)]

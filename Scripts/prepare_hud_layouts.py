@@ -7,7 +7,15 @@ tree_kind=unreal.load_class(None,'/Script/UMG.WidgetTree')
 font_asset=unreal.load_asset('/Engine/EngineFonts/Roboto')
 
 def widget(tree,kind,name):
-    return unreal.find_object(tree,name) or unreal.new_object(kind,outer=tree,name=name)
+    existing=unreal.find_object(tree,name)
+    if existing and not isinstance(existing,kind):
+        existing.remove_from_parent()
+        index=1
+        while unreal.find_object(tree,f'{name}_Previous{index}'):index+=1
+        assert existing.rename(f'{name}_Previous{index}',tree)
+        existing=None
+    result=existing or unreal.new_object(kind,outer=tree,name=name)
+    return result
 
 def blueprint(name):
     path='/Game/DasRogue/UI/'+name
@@ -55,24 +63,37 @@ canvas_child(root,text(tree,'CoinsText','COINS  0',20,(1,.82,.32,1)),-32,32,anch
 canvas_child(root,text(tree,'Crosshair','+',25),0,0,anchor=(.5,.5),alignment=(.5,.5),auto=True)
 canvas_child(root,text(tree,'ControlsText','LMB  FIRE     E  INTERACT     SHIFT  SPRINT     F / Q  ABILITIES',13,(.7,.76,.83,1)),32,30,auto=True)
 canvas_child(root,widget(tree,unreal.VerticalBox,'Effects'),-32,92,260,300,anchor=(1,0),alignment=(1,0),auto=True)
+unreal.SystemLibrary.execute_console_command(world,'Das.UI.SetRoot '+bp.get_path_name().split('.')[0]+' '+('EffectSize' if unreal.find_object(tree,'EffectSize') else 'MainCanvasPanel'))
 unreal.BlueprintEditorLibrary.compile_blueprint(bp)
 
 bp,tree=blueprint('WBP_RogueHealth');root=root_for(bp,tree)
-canvas_child(root,text(tree,'HealthText','100 / 100',13),78,0,alignment=(.5,0),auto=True)
-canvas_child(root,progress(tree,'HealthBar',(.95,.25,.17,1)),0,24,156,7)
+canvas_child(root,text(tree,'HealthText','100 / 100',13),122,0,alignment=(.5,0),auto=True)
+canvas_child(root,progress(tree,'HealthBar',(.95,.25,.17,1)),44,24,156,7)
+# A compact left-to-right icon strip above both the HP label and bar.
+canvas_child(root,widget(tree,unreal.HorizontalBox,'Effects'),44,-8,156,40,alignment=(0,1),auto=True)
+unreal.SystemLibrary.execute_console_command(world,'Das.UI.SetRoot '+bp.get_path_name().split('.')[0]+' '+('EffectSize' if unreal.find_object(tree,'EffectSize') else 'MainCanvasPanel'))
 unreal.BlueprintEditorLibrary.compile_blueprint(bp)
 
-bp,tree=blueprint('WBP_RogueEffect');root=root_for(bp,tree)
-icon=widget(tree,unreal.Image,'Icon')
-icon.set_color_and_opacity(unreal.LinearColor(1,.5,.16,1))
-canvas_child(root,icon,0,4,34,34)
-canvas_child(root,text(tree,'EffectName','EFFECT',16),46,1,auto=True)
-canvas_child(root,text(tree,'Details','x1  3s',13,(.72,.78,.86,1)),46,25,auto=True)
-size=widget(tree,unreal.SizeBox,'EffectSize')
-size.set_width_override(244)
-size.set_height_override(48)
-if root.get_parent()!=size:size.set_content(root)
-unreal.SystemLibrary.execute_console_command(world,'Das.UI.SetRoot '+bp.get_path_name().split('.')[0]+' EffectSize')
-unreal.BlueprintEditorLibrary.compile_blueprint(bp)
-unreal.EditorLoadingAndSavingUtils.save_dirty_packages(True,True)
+for name,compact in [('WBP_RogueHUDEffect',False),('WBP_RogueEffect',True)]:
+    bp,tree=blueprint(name);root=root_for(bp,tree)
+    icon=widget(tree,unreal.Image,'Icon')
+    # Runtime applies optional course icons through soft references. Keep the
+    # public widget free of licensed texture dependencies, including on reimport.
+    icon.set_brush(unreal.SlateBrush())
+    icon.set_color_and_opacity(unreal.LinearColor(1,1,1,1))
+    icon.set_visibility(unreal.SlateVisibility.COLLAPSED)
+    canvas_child(root,icon,0,0 if compact else 4,34,34)
+    canvas_child(root,text(tree,'EffectName','EFFECT',16),46,1,auto=True)
+    canvas_child(root,text(tree,'Details','x1  3s',13,(.72,.78,.86,1)),46,25,auto=True)
+    if compact:
+        for field in ('EffectName','Details'):unreal.find_object(tree,field).set_visibility(unreal.SlateVisibility.COLLAPSED)
+    size=widget(tree,unreal.SizeBox,'EffectSize')
+    size.set_width_override(40 if compact else 244)
+    size.set_height_override(40 if compact else 48)
+    if root.get_parent()!=size:size.set_content(root)
+    unreal.SystemLibrary.execute_console_command(world,'Das.UI.SetRoot '+bp.get_path_name().split('.')[0]+' EffectSize')
+    unreal.BlueprintEditorLibrary.compile_blueprint(bp)
+packages=[unreal.load_asset('/Game/DasRogue/UI/'+name).get_outer()
+          for name in ('WBP_RogueHUD','WBP_RogueHealth','WBP_RogueEffect','WBP_RogueHUDEffect')]
+assert unreal.EditorLoadingAndSavingUtils.save_packages(packages,False)
 print('DAS_HUD_LAYOUTS PASS')

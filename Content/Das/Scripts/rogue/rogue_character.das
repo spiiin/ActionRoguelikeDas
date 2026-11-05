@@ -33,9 +33,6 @@ class RogueCharacter : Character {
     AnimationState : RogueAnimationComponentRef
 
     @ue_component
-    HealthLabel : TextRenderComponentRef
-
-    @ue_component
     ActionSystem : RogueActionSystemComponentRef
 
     settings = ue_properties(EditAnywhere, BlueprintReadWrite, Category = "Input") {
@@ -83,8 +80,6 @@ class RogueCharacter : Character {
         self.SecondaryAttackClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionBlackhole.BP_RogueActionBlackhole_C")
         self.SpecialAttackClass = ue_class_default("/Game/DasRogue/Actions/BP_RogueActionTeleport.BP_RogueActionTeleport_C")
         self.Input_TestDamage = ue_asset_default("/Game/DasRogue/Input/IA_TestDamage.IA_TestDamage")
-        self.HealthLabel.RelativeLocation = ue_vector(0.0lf, 0.0lf, 120.0lf)
-        self.HealthLabel.WorldSize = 20.0f
         self.bUseControllerRotationYaw = true
         self.bUseControllerRotationPitch = false
         self.bUseControllerRotationRoll = false
@@ -99,6 +94,7 @@ class RogueCharacter : Character {
     }
 
     def BeginPlay() : void {
+        self.SetActorTickEnabled(false)
         self.ActionSystem.ConfigureAttributeSet(self.DefaultAttributeSetClass)
         if (self.UseExternalPresentation) { self.Presentation = rogue_load_presentation(self.PresentationProfilePath) ?? default<RoguePresentationProfileRef> }
         if (ue_is_valid(self.Presentation) && ue_is_valid(self.Presentation.CharacterMesh)) {
@@ -133,11 +129,6 @@ class RogueCharacter : Character {
         self.Visual.SetCollisionProfileName(ue_name_value("NoCollision"), true)
         // The placeholder visual has no skeletal hit mesh; use the capsule.
         self.CapsuleComponent.SetCollisionResponseToChannel(ECollisionChannel.ECC_GameTraceChannel2, ECollisionResponse.ECR_Block)
-        self.RefreshHealth()
-    }
-
-    def Tick(delta : float) : void {
-        self.FaceHealthLabel()
     }
 
     [ue_function(BlueprintEvent)]
@@ -221,25 +212,16 @@ class RogueCharacter : Character {
 
     def BindEvents() : void {
         self.Attributes.OnHealthChanged += self.HandleHealthChanged
-        self.ActionSystem.OnAttributeChanged += self.HandleAttributeChanged
-        self.ActionSystem.OnCoinsChanged += self.HandleCoinsChanged
     }
 
-    def HandleCoinsChanged(balance : int64) : void { self.RefreshHealth() }
-
-    def HandleAttributeChanged(tag : GameplayTag; value : float; oldValue : float; instigator : ActorRef) : void {
-        let name = ue_tag_name(tag)
-        if (name == "Attribute.Rage" || name == "Attribute.HealthMax") { self.RefreshHealth() }
-    }
-
-    def HandleHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
+    // BindEvents requires an unannotated handler; keep the public Blueprint entry point.
+    def HandleHealthChanged(instigator : ActorRef; health, delta : float) : void {
         self.OnHealthChanged(instigator, health, delta)
     }
 
     [ue_function(BlueprintCallable)]
     def OnHealthChanged(instigator : ActorRef; health : float; delta : float) : void {
         if (health <= 0.0f && !self.Dead) { self.HandleDeath() }
-        self.RefreshHealth()
     }
 
     def HandleDeath() : void {
@@ -261,20 +243,4 @@ class RogueCharacter : Character {
         }
     }
 
-    def RefreshHealth() : void {
-        if (self.Dead) { self.HealthLabel.K2_SetText(ue_text_invariant("DEAD - restart Play")) }
-        else {
-            let coins = self.ActionSystem.Coins
-            let rage = self.ActionSystem.GetAttributeValue(ue_tag("Attribute.Rage"))
-            self.HealthLabel.K2_SetText(ue_text_invariant("HP: {int(self.Attributes.Health)} / {int(self.Attributes.HealthMax)} | Rage: {rage} | Coins: {coins}"))
-        }
-    }
-
-    def FaceHealthLabel() : void {
-        let location = self.HealthLabel.K2_GetComponentLocation()
-        let camera = self.CameraComponent.K2_GetComponentLocation()
-        let rotation = ue_direction_rotation(camera - location)
-        ue_scene_set_world_transform(ue_ref(type<SceneComponentRef>, self.HealthLabel.handle),
-            ue_transform(location, rotation, UE_VECTOR_ONE))
-    }
 }

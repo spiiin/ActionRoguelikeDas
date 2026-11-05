@@ -84,8 +84,10 @@ class RogueAttributeSet : ScriptObject {
 
     [ue_function(BlueprintCallable)]
     def ModifyAttribute(tag : GameplayTag; amount : float; kind : RogueAttributeModifyType; instigator : ActorRef) : bool {
-        if (!is_finite(amount) || !self.HasAttribute(tag)) { return false }
-        var attribute = self.TryGetAttribute(tag) ?? RogueAttribute()
+        if (!is_finite(amount)) { return false }
+        let found = self.TryGetAttribute(tag)
+        if (is_none(found)) { return false }
+        var attribute = unwrap(found)
         let oldValue = attribute.Base + attribute.Modifier
         let healthTag = ue_tag("Attribute.Health")
         let oldHealth = self.GetValue(healthTag)

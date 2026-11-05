@@ -18,7 +18,8 @@ for name,source in [('RogueHUDComponent','rogue_hud_component'),('RogueHealthWid
     command='Das.DSL.Reimport '+path if assets.does_asset_exist(path) else 'Das.DSL.Apply '+source+'.das '+path+' rogue.'+name
     unreal.SystemLibrary.execute_console_command(world,command)
     assert unreal.load_class(None,path+'.BP_'+name+'_C'),name+' failed import'
-for path in ['/Game/DasRogue/BP_RoguePlayerController','/Game/DasRogue/AI/BP_RogueAICharacter']:
+# HUD preparation does not migrate independent AI gameplay sources.
+for path in ['/Game/DasRogue/BP_RoguePlayerController']:
     unreal.SystemLibrary.execute_console_command(world,'Das.DSL.Reimport '+path)
 data=unreal.load_asset('/Game/DasRogue/AI/DA_RangedMinion')
 assert data

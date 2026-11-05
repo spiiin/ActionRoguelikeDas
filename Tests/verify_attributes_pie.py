@@ -10,6 +10,13 @@ system=p.get_editor_property('ActionSystem')
 health=p.get_editor_property('Attributes')
 probe=next(a for a in unreal.GameplayStatics.get_all_actors_of_class(w,unreal.Actor) if a.get_class().get_name()=='BP_RogueAttributeProbe_C')
 
+def hud_text(player,name):
+    hud=player.get_editor_property('HUD')
+    widget=hud.get_editor_property('HUD')
+    assert widget and widget.is_in_viewport()
+    tree=next(t for t in unreal.ObjectIterator(unreal.load_class(None,'/Script/UMG.WidgetTree')) if t.get_outer()==widget)
+    return str(unreal.find_object(tree,name).get_text())
+
 def tag(name):
     value=unreal.GameplayTag()
     assert value.import_text('Attribute.'+name)
@@ -98,7 +105,7 @@ def tick(delta):
             phase('maximum_ui');return
         if state=='maximum_ui':
             near(value('Health'),80)
-            assert '150' in str(p.get_editor_property('HealthLabel').get_editor_property('text'))
+            assert '150' in hud_text(pc,'HealthText')
             s['checks'].append({'max_only_changes_refresh_health_ui':True})
             change('OverrideBase','HealthMax',100)
             health.call_method('ApplyHealthChange',args=(p,100.0))
@@ -110,7 +117,7 @@ def tick(delta):
             near(value('Health'),75);near(base('Rage'),0);near(modifier('Rage'),18.75)
             assert probe.get_editor_property('HealthEvents')==1 and probe.get_editor_property('RageEvents')==1
             assert probe.get_editor_property('LastInstigator')==probe
-            assert '18.75' in str(p.get_editor_property('HealthLabel').get_editor_property('text'))
+            assert '18 / 100' in hud_text(pc,'RageText')
             s['checks'].append({'native_damage_grants_75_percent_rage_with_source_and_ui_update':True})
             health.call_method('ApplyHealthChange',args=(p,10.0))
             phase('healing');return

@@ -1,7 +1,7 @@
 options gen2
 module rogue_animation_component public
 require rogue_action_system_component public
-require ue_animation public
+require rogue_animation_bridge public
 
 // The original Anim Blueprint owns pose calculation. This component replaces only
 // RogueAnimInstance's gameplay-tag subscription, on the game thread.
@@ -36,18 +36,11 @@ class RogueAnimationComponent : ActorComponent {
     [ue_function(BlueprintCallable)]
     def RefreshState() : void {
         if (!self.Enabled || !ue_is_valid(self.Mesh) || !ue_is_valid(self.ActionSystem)) { return }
-        let instanceCall = ue_begin_call(self.Mesh.handle, "GetAnimInstance")
-        ue_invoke_call(instanceCall)
-        let instance = ue_result_object(instanceCall, "ReturnValue")
-        ue_release_call(instanceCall)
-        if (!ue_object_valid(instance)) { return }
+        let instance = ue_mesh_anim_instance(self.Mesh)
+        if (!ue_is_valid(instance)) { return }
         let tags = self.ActionSystem.GetActiveTags()
-        // A small generated Blueprint method is the boundary to the external asset.
-        let call = ue_begin_call(instance, "SetGameplayAnimationState")
-        ue_arg(call, "Sprinting", ue_tags_has(tags, ue_tag("StatusEffect.Sprinting")))
-        ue_arg(call, "Stunned", ue_tags_has(tags, ue_tag("StatusEffect.Stunned")))
-        ue_invoke_call(call)
-        ue_release_call(call)
+        rogue_set_animation_state(instance, ue_tags_has(tags, ue_tag("StatusEffect.Sprinting")),
+            ue_tags_has(tags, ue_tag("StatusEffect.Stunned")))
         self.StateUpdates += 1
     }
 }

@@ -1,11 +1,7 @@
 options gen2
 module rogue_hud_component public
 require rogue_ui public
-require rogue_action_effect public
-
-typedef RogueActionEffectRef = UEObjectRef("rogue.RogueActionEffect")
-
-typedef RogueEffectTexture = $UESoftObject<ue_api_umg_input::Texture2D>
+require rogue_effect_ui public
 
 // The Widget Blueprint owns only layout. State, subscriptions and lifetime are DAS.
 [ue_class(module_id="rogue", Blueprintable)]
@@ -31,7 +27,7 @@ class RogueHUDComponent : ActorComponent {
 
     defaults = ue_defaults() {
         self.HUDClass = ue_class_default("/Game/DasRogue/UI/WBP_RogueHUD.WBP_RogueHUD_C")
-        self.EffectClass = ue_class_default("/Game/DasRogue/UI/WBP_RogueEffect.WBP_RogueEffect_C")
+        self.EffectClass = ue_class_default("/Game/DasRogue/UI/WBP_RogueHUDEffect.WBP_RogueHUDEffect_C")
     }
 
     def Tick(delta : float) : void {
@@ -114,58 +110,21 @@ class RogueHUDComponent : ActorComponent {
         if (!ue_widget_visible(self.HUD)) { return }
         if (!ue_class_valid(self.EffectClass)) { self.ClearEffects(); return }
         let view = ue_widget_view(type<RogueHUDView>, self.HUD)
-        var active : array<RogueActionRef>
-        if (ue_is_valid(self.System)) {
-            for (action in self.System.Actions) {
-                if (ue_is_valid(action) && action.IsEffect() && action.IsRunning()) { push(active, action) }
-            }
-        }
-        var nextWidgets : array<UserWidgetRef>
-        var oldActions := self.EffectActions
-        var oldWidgets := self.EffectWidgets
-        for (i in range(length(oldActions))) {
-            var retained = false
-            for (action in active) { if (ue_same_object(action, oldActions[i])) { retained = true; break } }
-            if (!retained && ue_is_valid(oldWidgets[i])) {
-                ue_widget_remove(oldWidgets[i])
-                self.EffectsRemoved += 1
-            }
-        }
-        for (action in active) {
-            var item : UserWidgetRef
-            for (i in range(length(oldActions))) {
-                if (ue_same_object(action, oldActions[i])) { item = oldWidgets[i]; break }
-            }
-            if (!ue_is_valid(item)) {
-                if (!ue_class_valid(self.EffectClass)) { continue }
-                let player = ue_ref(type<PlayerControllerRef>, ue_component_owner(ue_self_object()))
-                item = ue_widget_create(self.EffectClass, player)
-                ue_panel_AddChild(ue_ref(type<PanelWidget>, view.Effects.handle), ue_ref(type<Widget>, item.handle))
-                let iconView = ue_widget_view(type<RogueEffectView>, item)
-                let icon = ue_soft(type<RogueEffectTexture>, action.IconPath)
-                ue_image_SetBrushFromSoftTexture(iconView.Icon, icon, false)
-                self.EffectsCreated += 1
-            }
-            let effectView = ue_widget_view(type<RogueEffectView>, item)
-            let effect = ue_ref(type<RogueActionEffectRef>, action.handle)
-            let effectName = action.DisplayName != "" ? action.DisplayName : ue_tag_name(action.ActionName)
-            ue_widget_set_text(effectView.EffectName, ue_text_invariant(effectName))
-            let remaining = effect.Duration > 0.0f ? max(0, int(ceil(effect.GetDurationRemaining()))) : -1
-            let duration = remaining >= 0 ? "{remaining}s" : ""
-            ue_widget_set_text(effectView.Details, ue_text_invariant("x{effect.StackCount}  {duration}"))
-            push(nextWidgets, item)
-        }
-        // Only retain entries for widgets actually created; the normal configured class covers all entries.
-        self.EffectActions := active
-        self.EffectWidgets := nextWidgets
+        let player = ue_ref(type<PlayerControllerRef>, ue_component_owner(ue_self_object()))
+        var actions := self.EffectActions
+        var widgets := self.EffectWidgets
+        let counts = rogue_ui_refresh_effects(self.System, player, self.EffectClass,
+            ue_ref(type<PanelWidget>, view.Effects.handle), actions, widgets)
+        self.EffectActions := actions
+        self.EffectWidgets := widgets
+        self.EffectsCreated += counts.x
+        self.EffectsRemoved += counts.y
     }
 
     def ClearEffects() : void {
-        for (widget in self.EffectWidgets) {
-            if (ue_is_valid(widget)) { ue_widget_remove(widget); self.EffectsRemoved += 1 }
-        }
-        var actions : array<RogueActionRef>
-        var widgets : array<UserWidgetRef>
+        var actions := self.EffectActions
+        var widgets := self.EffectWidgets
+        self.EffectsRemoved += rogue_ui_clear_effects(actions, widgets)
         self.EffectActions := actions
         self.EffectWidgets := widgets
     }

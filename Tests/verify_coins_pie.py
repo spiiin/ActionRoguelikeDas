@@ -22,6 +22,13 @@ for enemy in unreal.GameplayStatics.get_all_actors_of_class(world,enemy_kind):
     enemy.destroy_actor()
 extras=[]
 
+def hud_text(player,name):
+    hud=player.get_editor_property('HUD')
+    widget=hud.get_editor_property('HUD')
+    assert widget and widget.is_in_viewport()
+    tree=next(t for t in unreal.ObjectIterator(unreal.load_class(None,'/Script/UMG.WidgetTree')) if t.get_outer()==widget)
+    return str(unreal.find_object(tree,name).get_text())
+
 def is_live(obj):
     try:
         return unreal.SystemLibrary.is_valid(obj)
@@ -230,7 +237,7 @@ def tick(delta):
             phase('wallet_hud');return
         if state=='wallet_hud':
             if age<.2:return
-            text=str(prop(prop(pawn,'HealthLabel'),'text'))
+            text=hud_text(player,'CoinsText')
             assert str(currency()) in text,text
             s['checks'].append('int64_balance_event_refreshes_HUD_without_rounding')
             finish()

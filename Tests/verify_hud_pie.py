@@ -39,6 +39,7 @@ def tick(delta):
             widget=prop(hud,'HUD');assert widget and widget.is_in_viewport()
             assert prop(hud,'Pawn')==pawn and prop(hud,'System')==system
             s['widget']=widget
+            assert not any(c.get_name()=='HealthLabel' for c in pawn.get_components_by_class(unreal.TextRenderComponent))
             check('local_HUD_created_and_bound_to_possessed_pawn')
             probe.call_method('ConfigureHealth',args=(attributes,100.0))
             change('Attribute.Health',-25)
@@ -104,6 +105,11 @@ def tick(delta):
             s['health']=prop(enemy,'HealthWidget');s['enemy_attributes']=prop(enemy,'Attributes')
             assert not valid(prop(s['health'],'Widget'))
             check('MonsterData_selects_health_layout_hidden_before_first_damage')
+            enemy_system=prop(enemy,'ActionSystem')
+            stun_kind=unreal.load_class(None,'/Game/DasRogue/Actions/BP_RogueActionEffectStun.BP_RogueActionEffectStun_C')
+            s['enemy_stun']=enemy_system.call_method('GrantAction',args=(stun_kind,))
+            assert s['enemy_stun'] and not valid(prop(s['health'],'Widget'))
+            check('enemy_effect_before_first_damage_preserves_hidden_health_policy')
             prop(enemy,'ActionSystem').call_method('ApplyAttributeChange',args=(tag('Attribute.Health'),-20.0))
             phase('health');return
         if s['phase']=='health':
@@ -114,6 +120,58 @@ def tick(delta):
             attr=s['enemy_attributes']
             assert abs(child(widget,'HealthBar').get_editor_property('percent')-prop(attr,'Health')/prop(attr,'HealthMax'))<.001
             check('first_nonlethal_damage_creates_and_projects_health_widget')
+            rows=list(prop(health,'EffectWidgets'));assert len(rows)==1
+            assert text(rows[0],'EffectName')=='Stunned' and 'x1' in text(rows[0],'Details')
+            assert child(widget,'Effects').get_children_count()==1
+            check('enemy_existing_effect_appears_with_first_health_widget')
+            enemy_system=prop(s['enemy'],'ActionSystem')
+            created=prop(health,'EffectsCreated')
+            assert enemy_system.call_method('GrantAction',args=(s['enemy_stun'].get_class(),))==s['enemy_stun']
+            health.call_method('RefreshEffects')
+            assert prop(health,'EffectsCreated')==created and 'x2' in text(rows[0],'Details')
+            check('enemy_stack_updates_existing_row_without_duplicates')
+            burning_kind=unreal.load_class(None,'/Game/DasRogue/Actions/BP_RogueActionEffectBurning.BP_RogueActionEffectBurning_C')
+            s['enemy_burning']=enemy_system.call_method('GrantAction',args=(burning_kind,))
+            assert s['enemy_burning']
+            phase('enemy_effects');return
+        if s['phase']=='enemy_effects':
+            if age<.2:return
+            health=s['health'];widget=prop(health,'Widget')
+            rows=list(prop(health,'EffectWidgets'));assert len(rows)==2
+            assert {text(row,'EffectName') for row in rows}=={'Stunned','Burning'}
+            assert all('s' in text(row,'Details') for row in rows)
+            unreal.SystemLibrary.collect_garbage()
+            assert all(valid(row) for row in rows)
+            s['enemy_rows']=rows
+            check('enemy_multiple_effects_show_names_stacks_duration_and_survive_GC')
+            effects=child(widget,'Effects')
+            assert effects.slot.get_alignment().y==1 and effects.slot.get_position().y<0
+            assert effects.slot.get_auto_size() and effects.slot.get_position().y < child(widget,'HealthText').slot.get_position().y
+            assert effects.slot.get_position().y < child(widget,'HealthBar').slot.get_position().y
+            assert effects.get_class().get_name()=='HorizontalBox'
+            assert all(row.get_desired_size().x<=40 for row in rows)
+            assert all(child(row,'EffectName').get_visibility()==unreal.SlateVisibility.COLLAPSED for row in rows)
+            check('enemy_compact_effect_icons_flow_left_to_right_above_health')
+            for row in rows:
+                image=child(row,'Icon')
+                tint=image.get_editor_property('color_and_opacity')
+                assert tint.r==1 and tint.g==1 and tint.b==1
+                path=('/Game/ExampleContent/UI/Texture/T_UI_Skill_Combust01.T_UI_Skill_Combust01'
+                      if text(row,'EffectName')=='Burning' else '/Game/ExampleContent/UI/Texture/T_UI_Icon_Settings01.T_UI_Icon_Settings01')
+                if unreal.load_asset(path):
+                    texture=image.get_editor_property('brush').get_editor_property('resource_object')
+                    assert texture and texture.get_path_name()==path,str(texture)
+            check('course_effect_icons_preserve_original_texture_colors')
+            unreal.SystemLibrary.execute_console_command(world,'Shot showui nosuffix filename='+str(Path(unreal.Paths.project_saved_dir())/'Tests/rogue_enemy_effects_ui.png'))
+            s['enemy_expiry_at']=now()+max(effect.call_method('GetDurationRemaining') for effect in [s['enemy_stun'],s['enemy_burning']])+.3
+            phase('enemy_expiry');return
+        if s['phase']=='enemy_expiry':
+            if now()<s['enemy_expiry_at']:return
+            health=s['health'];widget=prop(health,'Widget')
+            assert len(prop(health,'EffectWidgets'))==0
+            assert child(widget,'Effects').get_children_count()==0
+            assert all(not valid(row) or not row.get_parent() for row in s['enemy_rows'])
+            check('enemy_expired_effects_remove_all_rows_automatically')
             position=s['enemy'].get_actor_location()
             expected=unreal.WidgetLayoutLibrary.project_world_location_to_widget_position(player,position+prop(health,'AnchorOffset'),True)
             actual=prop(health,'LastScreenPosition')
@@ -130,7 +188,12 @@ def tick(delta):
             prop(s['enemy'],'ActionSystem').call_method('ApplyAttributeChange',args=(tag('Attribute.Health'),5.0))
             assert prop(health,'WidgetCreations')==1
             check('healing_updates_existing_world_health_widget')
-            prop(s['enemy'],'ActionSystem').call_method('ApplyAttributeChange',args=(tag('Attribute.Health'),-10000.0))
+            enemy_system=prop(s['enemy'],'ActionSystem')
+            assert enemy_system.call_method('GrantAction',args=(s['enemy_stun'].get_class(),))
+            assert len(prop(health,'EffectWidgets'))==1
+            enemy_system.call_method('ApplyAttributeChange',args=(tag('Attribute.Health'),-10000.0))
+            assert len(prop(health,'EffectWidgets'))==0
+            check('enemy_death_clears_effect_rows_with_health_widget')
             assert not valid(prop(health,'Widget')) and not widget.is_in_viewport()
             check('death_removes_world_widget')
             assert prop(s['enemy'],'LastLootCoins')==unreal.load_asset('/Game/DasRogue/AI/DA_RangedMinion').get_editor_property('LootCoins')

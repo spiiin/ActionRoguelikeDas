@@ -1211,3 +1211,31 @@ This is single-player PIE coverage. It does not claim multiplayer replication,
 packaged builds, cross-map persistence, or a forced missing-profile/asset-load
 failure. Runtime policy and weighted selection remain DAS; editor CSV/Python
 preparation is not used by gameplay.
+
+## Idiomatic code refactor: effects, player HUD, animation and attributes
+
+2026-11-05: PASS. Shared effects reconciliation now serves player and enemy UI,
+with reflected strong ownership retained by each component. RogueCharacter no
+longer contains the obsolete HealthLabel component, its refresh subscriptions,
+or its billboard tick. The animation bridge uses AnimInstanceRef and
+with_ue_call; call-frame cleanup is verified on normal return, early block
+return and VM panic, including propagation of the original error message.
+ModifyAttribute performs one Option lookup and preserves validation/events.
+
+Queue receipts:
+- rogue-idioms-v8-20261105: hidden callbacks (25), widget layouts (31) PASS.
+- rogue-idioms-v11-20261105: character combat (7), coins (15), attributes (12) PASS.
+- rogue-idioms-animation-v14-20261105: course animation (11) PASS.
+- rogue-idioms-hud-v15-20261105: HUD/effects (24) PASS.
+
+Saved Blueprint migration restores and validates old event callback frames before
+reading the prior model. Private widget layout metadata can move between helper
+modules without migrating unrelated owners; actual assigned widget types still
+undergo layout validation. Public effect widgets contain no hard licensed icon
+references; the shared helper applies course fallback icons asynchronously.
+The course dependency audit passes.
+
+Combat and attribute/coin fixtures read the real HUD. Combat isolates its firing
+lane and removes Burning only from the controlled incoming test projectile, so
+periodic damage cannot contaminate the separate manual-damage check. Production
+projectile effect defaults are unchanged.

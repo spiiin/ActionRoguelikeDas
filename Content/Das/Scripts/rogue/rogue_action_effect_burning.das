@@ -20,6 +20,7 @@ class RogueActionEffectBurning : RogueActionEffect {
 
     defaults = ue_defaults() {
         self.DisplayName = "Burning"
+        self.IconPath = "/Game/ExampleContent/UI/Texture/T_UI_Skill_Combust01.T_UI_Skill_Combust01"
         self.Duration = 3.0f
         self.Period = 1.0f
         self.ResetDurationOnStackIncrease = true
