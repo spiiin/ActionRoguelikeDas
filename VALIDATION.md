@@ -1239,3 +1239,9 @@ Combat and attribute/coin fixtures read the real HUD. Combat isolates its firing
 lane and removes Burning only from the controlled incoming test projectile, so
 periodic damage cannot contaminate the separate manual-damage check. Production
 projectile effect defaults are unchanged.
+
+2026-11-05: rogue-tag-accessors-20261105 — PASS: attributes (12), course animation
+(11), runtime and teardown. rogue_tags.das centralizes all 13 Action/StatusEffect/
+Attribute paths used by the 17 core gameplay modules. Typed accessors resolve
+tags on use rather than in global runtime-owned value initializers. Exact
+attribute comparisons and hierarchical status matches retain their prior policy.

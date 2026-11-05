@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_drop_loot public
+require rogue_tags public
 require rogue_action public
 require rogue_coin_pickup_subsystem public
 require ue_navigation public
@@ -25,7 +26,7 @@ class RogueActionDropLoot : RogueAction {
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override Setup() : void {
         Super.Setup()
-        if (!ue_tag_valid(self.ActionName)) { self.ActionName = ue_tag("Action.DropLoot") }
+        if (!ue_tag_valid(self.ActionName)) { self.ActionName = rogue_tag_drop_loot() }
     }
 
     [ue_function(BlueprintCallable, BlueprintEvent)]

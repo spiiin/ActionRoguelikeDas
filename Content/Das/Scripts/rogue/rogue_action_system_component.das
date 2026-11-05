@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_system_component public
+require rogue_tags public
 require rogue_action public
 require rogue_action_events public
 require rogue_attribute_component public
@@ -214,9 +215,9 @@ class RogueActionSystemComponent : ActorComponent {
 
     def RefreshAttributeViews() : void {
         let attributes = self.AttributeSet
-        if (attributes.HasAttribute(ue_tag("Attribute.MoveSpeed"))) {
-            self.BaseMoveSpeed = attributes.GetBaseValue(ue_tag("Attribute.MoveSpeed"))
-            self.MoveSpeedMultiplier = attributes.GetValue(ue_tag("Attribute.MoveSpeedMultiplier"))
+        if (attributes.HasAttribute(rogue_tag_move_speed())) {
+            self.BaseMoveSpeed = attributes.GetBaseValue(rogue_tag_move_speed())
+            self.MoveSpeedMultiplier = attributes.GetValue(rogue_tag_move_speed_multiplier())
         }
         var resources : table<string; float>
         var bases := attributes.BaseValues
@@ -251,7 +252,7 @@ class RogueActionSystemComponent : ActorComponent {
 
     [ue_function(BlueprintCallable)]
     def SetBaseMoveSpeed(value : float) : void {
-        self.ModifyAttribute(ue_tag("Attribute.MoveSpeed"), value, RogueAttributeModifyType.OverrideBase)
+        self.ModifyAttribute(rogue_tag_move_speed(), value, RogueAttributeModifyType.OverrideBase)
     }
 
     def ApplyMoveSpeed() : void { self.GetAttributeSet().Reconcile() }

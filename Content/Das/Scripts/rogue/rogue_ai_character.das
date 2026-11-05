@@ -1,5 +1,6 @@
 options gen2
 module rogue_ai_character public
+require rogue_tags public
 require rogue_attribute_component public
 require rogue_hit_flash_component public
 require rogue_action_system_component public
@@ -160,14 +161,14 @@ class RogueAICharacter : Character {
     }
 
     def DropLoot() : void {
-        var action = self.ActionSystem.FindAction(ue_tag("Action.DropLoot"))
+        var action = self.ActionSystem.FindAction(rogue_tag_drop_loot())
         if (!ue_is_valid(action) && ue_class_valid(self.DropLootActionClass)) {
             action = self.ActionSystem.GrantAction(self.DropLootActionClass)
         }
         if (!ue_is_valid(action)) { return }
         let loot = ue_ref(type<RogueActionDropLootRef>, action.handle)
         loot.CreditsToDrop = ue_is_valid(self.MonsterData) ? max(self.MonsterData.LootCoins, 0) : 10
-        if (self.ActionSystem.StartAction(ue_tag("Action.DropLoot")) && loot.HasDropped) {
+        if (self.ActionSystem.StartAction(rogue_tag_drop_loot()) && loot.HasDropped) {
             self.LootDrops += 1
             self.LastLootCoins = loot.DroppedCredits
         }
@@ -188,7 +189,7 @@ class RogueAICharacter : Character {
     def OnStatusChanged(tag:GameplayTag; count:int) : void {
         if (self.Dead) { return }
         let wasStunned = self.Stunned
-        self.Stunned = ue_tags_has(self.ActionSystem.GetActiveTags(),ue_tag("StatusEffect.Stunned"))
+        self.Stunned = ue_tags_has(self.ActionSystem.GetActiveTags(),rogue_tag_stunned())
         // Attribute changes may refresh speed during stun; the movement mode remains disabled.
         if (self.Stunned != wasStunned) {
             if (self.Stunned) {

@@ -1,5 +1,6 @@
 options gen2
 module rogue_ai_controller public
+require rogue_tags public
 require rogue_ai_character public
 require ue_perception public
 require math
@@ -89,7 +90,7 @@ class RogueAIController : AIController {
         let origin = ue_ref(type<ActorRef>,pawn.handle).K2_GetActorLocation()
         let distance = length(target.K2_GetActorLocation()-origin)
         let visible = distance <= double(self.LoseSightRadius) && ue_ai_line_of_sight(ai,target)
-        if (!visible) { enemy.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack")) }
+        if (!visible) { enemy.ActionSystem.StopAction(rogue_tag_primary_attack()) }
         if (visible) {
             self.LastSensedAt = ue_world_seconds()
             self.LastKnownLocation = target.K2_GetActorLocation()
@@ -100,7 +101,7 @@ class RogueAIController : AIController {
         if (visible && distance <= double(self.AttackRange)) {
             ue_ai_move_cancel("Chase")
             ue_ai_set_focus(ai,target)
-            if (enemy.ActionSystem.StartAction(ue_tag("Action.PrimaryAttack"))) { self.AttackRequests += 1 }
+            if (enemy.ActionSystem.StartAction(rogue_tag_primary_attack())) { self.AttackRequests += 1 }
         } elif (!ue_ai_move_active("Chase")) {
             ue_ai_set_focus(ai,visible ? target : default<ActorRef>)
             if (visible) {
@@ -120,7 +121,7 @@ class RogueAIController : AIController {
         let pawn = ue_ai_pawn(ai)
         if (ue_is_valid(pawn)) {
             let enemy = ue_ref(type<RogueAICharacterRef>,pawn.handle)
-            enemy.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
+            enemy.ActionSystem.StopAction(rogue_tag_primary_attack())
             enemy.Target = default<ActorRef>
         }
         self.CurrentTarget = default<ActorRef>

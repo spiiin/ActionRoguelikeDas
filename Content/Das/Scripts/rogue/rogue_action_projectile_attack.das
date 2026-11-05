@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_projectile_attack public
+require rogue_tags public
 require rogue_action public
 require ue_animation public
 require ue_effects public
@@ -40,10 +41,10 @@ class RogueActionProjectileAttack : RogueAction {
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override Setup() : void {
         Super.Setup()
-        if (!ue_tag_valid(self.ActionName)) { self.ActionName = ue_tag("Action.PrimaryAttack") }
-        if (ue_tags_count(self.GrantTags) == 0) { self.GrantTags = ue_tags(ue_tag("StatusEffect.Attacking")) }
+        if (!ue_tag_valid(self.ActionName)) { self.ActionName = rogue_tag_primary_attack() }
+        if (ue_tags_count(self.GrantTags) == 0) { self.GrantTags = ue_tags(rogue_tag_attacking()) }
         if (ue_tags_count(self.BlockedTags) == 0) {
-            var blocked <- [ue_tag("StatusEffect.Attacking"), ue_tag("StatusEffect.Sprinting"), ue_tag("StatusEffect.Stunned")]
+            var blocked <- [rogue_tag_attacking(), rogue_tag_sprinting(), rogue_tag_stunned()]
             self.BlockedTags = ue_tags(blocked)
         }
     }

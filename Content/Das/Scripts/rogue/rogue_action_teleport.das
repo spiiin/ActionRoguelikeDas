@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_teleport public
+require rogue_tags public
 require rogue_action_projectile_attack public
 
 [ue_class(module_id="rogue", Blueprintable)]
@@ -11,6 +12,6 @@ class RogueActionTeleport : RogueActionProjectileAttack {
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override Setup() : void {
         Super.Setup()
-        self.ActionName = ue_tag("Action.SpecialAttack")
+        self.ActionName = rogue_tag_special_attack()
     }
 }

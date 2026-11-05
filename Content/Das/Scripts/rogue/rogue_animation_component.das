@@ -1,5 +1,6 @@
 options gen2
 module rogue_animation_component public
+require rogue_tags public
 require rogue_action_system_component public
 require rogue_animation_bridge public
 
@@ -29,8 +30,8 @@ class RogueAnimationComponent : ActorComponent {
 
     [ue_function]
     def OnTagUpdated(tag : GameplayTag; count : int) : void {
-        if (ue_tag_matches(tag, ue_tag("StatusEffect.Sprinting"), false) ||
-            ue_tag_matches(tag, ue_tag("StatusEffect.Stunned"), false)) { self.RefreshState() }
+        if (ue_tag_matches(tag, rogue_tag_sprinting()) ||
+            ue_tag_matches(tag, rogue_tag_stunned())) { self.RefreshState() }
     }
 
     [ue_function(BlueprintCallable)]
@@ -39,8 +40,8 @@ class RogueAnimationComponent : ActorComponent {
         let instance = ue_mesh_anim_instance(self.Mesh)
         if (!ue_is_valid(instance)) { return }
         let tags = self.ActionSystem.GetActiveTags()
-        rogue_set_animation_state(instance, ue_tags_has(tags, ue_tag("StatusEffect.Sprinting")),
-            ue_tags_has(tags, ue_tag("StatusEffect.Stunned")))
+        rogue_set_animation_state(instance, ue_tags_has(tags, rogue_tag_sprinting()),
+            ue_tags_has(tags, rogue_tag_stunned()))
         self.StateUpdates += 1
     }
 }

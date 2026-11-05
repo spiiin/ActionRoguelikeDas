@@ -1,5 +1,6 @@
 options gen2
 module rogue_bt_tasks public
+require rogue_tags public
 require rogue_ai_character public
 require rogue_patrol_point public
 require ue_behavior_tree public
@@ -16,7 +17,7 @@ class RogueBTHealSelf : BTTask {
     def ReceiveExecuteAI(OwnerController:AIControllerRef; ControlledPawn:NativePawnRef):void {
         let system=ue_component_find(type<RogueActionSystemComponentRef>,ue_ref(type<ActorRef>,ControlledPawn.handle))
         if (ue_is_valid(system) && system.IsActionOwnerAlive()) {
-            system.ApplyAttributeChange(ue_tag("Attribute.Health"),self.HealAmount)
+            system.ApplyAttributeChange(rogue_tag_health(),self.HealAmount)
             ue_bt_finish(true)
         } else { ue_bt_finish(false) }
     }
@@ -61,7 +62,7 @@ class RogueBTRangedAttack : BTTask {
         let target=ue_blackboard_object(ue_ai_blackboard(OwnerController),"TargetActor")
         if (enemy.Dead || !ue_is_valid(target)) { ue_bt_finish(false); return }
         enemy.Target=target
-        let action=enemy.ActionSystem.FindAction(ue_tag("Action.PrimaryAttack"))
+        let action=enemy.ActionSystem.FindAction(rogue_tag_primary_attack())
         if (!ue_is_valid(action)) { ue_bt_finish(false); return }
         let attack=ue_ref(type<RogueProjectileAttackRef>,action.handle)
         let before=attack.ProjectilesFired

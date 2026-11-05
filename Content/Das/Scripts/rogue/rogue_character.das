@@ -1,5 +1,6 @@
 options gen2
 module rogue_character public
+require rogue_tags public
 require rogue_attribute_component public
 require rogue_hit_flash_component public
 require rogue_action_system_component public
@@ -149,10 +150,10 @@ class RogueCharacter : Character {
     [ue_function(BlueprintEvent)]
     def TeardownPlayerInputComponent() : void {
         if (!self.ControlsBound) { return }
-        self.ActionSystem.StopAction(ue_tag("Action.Sprint"))
-        self.ActionSystem.StopAction(ue_tag("Action.PrimaryAttack"))
-        self.ActionSystem.StopAction(ue_tag("Action.SecondaryAttack"))
-        self.ActionSystem.StopAction(ue_tag("Action.SpecialAttack"))
+        self.ActionSystem.StopAction(rogue_tag_sprint())
+        self.ActionSystem.StopAction(rogue_tag_primary_attack())
+        self.ActionSystem.StopAction(rogue_tag_secondary_attack())
+        self.ActionSystem.StopAction(rogue_tag_special_attack())
         self.StopJumping()
         self.CharacterMovement.StopMovementImmediately()
         ue_unbind_inputs()
@@ -164,8 +165,8 @@ class RogueCharacter : Character {
     [ue_input(action="Input_Sprint", Started, Completed, Canceled)]
     def OnSprint(value : bool) : void {
         if (self.Dead) { return }
-        if (value) { self.ActionSystem.StartAction(ue_tag("Action.Sprint")) }
-        else { self.ActionSystem.StopAction(ue_tag("Action.Sprint")) }
+        if (value) { self.ActionSystem.StartAction(rogue_tag_sprint()) }
+        else { self.ActionSystem.StopAction(rogue_tag_sprint()) }
     }
 
     [ue_input(action="Input_Move", Triggered)]

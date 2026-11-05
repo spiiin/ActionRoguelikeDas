@@ -1,5 +1,6 @@
 options gen2
 module rogue_hud_component public
+require rogue_tags public
 require rogue_ui public
 require rogue_effect_ui public
 
@@ -80,8 +81,9 @@ class RogueHUDComponent : ActorComponent {
     }
 
     def OnAttributeChanged(tag : GameplayTag; value, previous : float; instigator : ActorRef) : void {
-        let name = ue_tag_name(tag)
-        if (name == "Attribute.Health" || name == "Attribute.HealthMax" || name == "Attribute.Rage") { self.RefreshVitals() }
+        if (ue_tag_matches(tag, rogue_tag_health(), true) ||
+            ue_tag_matches(tag, rogue_tag_health_max(), true) ||
+            ue_tag_matches(tag, rogue_tag_rage(), true)) { self.RefreshVitals() }
     }
 
     def OnCoinsChanged(balance : int64) : void { self.RefreshVitals() }
@@ -93,9 +95,9 @@ class RogueHUDComponent : ActorComponent {
         if (!ue_widget_visible(self.HUD)) { return }
         let view = ue_widget_view(type<RogueHUDView>, self.HUD)
         let bound = ue_is_valid(self.System)
-        let health = bound ? self.System.GetAttributeValue(ue_tag("Attribute.Health")) : 0.0f
-        let maximum = bound ? self.System.GetAttributeValue(ue_tag("Attribute.HealthMax")) : 0.0f
-        let rage = bound ? self.System.GetAttributeValue(ue_tag("Attribute.Rage")) : 0.0f
+        let health = bound ? self.System.GetAttributeValue(rogue_tag_health()) : 0.0f
+        let maximum = bound ? self.System.GetAttributeValue(rogue_tag_health_max()) : 0.0f
+        let rage = bound ? self.System.GetAttributeValue(rogue_tag_rage()) : 0.0f
         let coins = bound ? self.System.Coins : 0l
         ue_progress_SetPercent(view.HealthBar, rogue_ui_fraction(health, maximum))
         ue_progress_SetPercent(view.RageBar, rogue_ui_fraction(rage, self.RageMaximum))

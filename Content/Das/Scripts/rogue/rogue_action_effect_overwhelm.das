@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_effect_overwhelm public
+require rogue_tags public
 require rogue_action_effect public
 require rogue_attribute_component public
 require rogue_effect_helpers public
@@ -63,7 +64,7 @@ class RogueActionEffectOverwhelm : RogueActionEffect {
     def OnHealthChanged(instigator : ActorRef; newHealth : float; delta : float) : void {
         if (!self.bIsRunning || !self.Listening) { return }
         if (!self.Host.IsActionOwnerAlive() || newHealth <= 0.0f || delta >= 0.0f) { return }
-        if (ue_tags_has(self.Host.GetActiveTags(), ue_tag("StatusEffect.Stunned"))) { return }
+        if (ue_tags_has(self.Host.GetActiveTags(), rogue_tag_stunned())) { return }
         self.DamageEvents += 1
 
         let damage = -delta

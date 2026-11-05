@@ -1,5 +1,6 @@
 options gen2
 module rogue_attribute_component public
+require rogue_tags public
 require rogue_attribute_set public
 require math
 
@@ -60,8 +61,8 @@ class RogueAttributeComponent : ActorComponent {
             for (name, value in keys(oldBases), values(oldBases)) { if (key_exists(bases, name)) { bases[name] = value } }
             for (name, value in keys(oldModifiers), values(oldModifiers)) { if (key_exists(bases, name)) { modifiers[name] = value } }
         } else {
-            bases["Attribute.HealthMax"] = max(self.HealthMax, 0.0f)
-            bases["Attribute.Health"] = clamp(self.Health, 0.0f, bases["Attribute.HealthMax"])
+            bases[ue_tag_name(rogue_tag_health_max())] = max(self.HealthMax, 0.0f)
+            bases[ue_tag_name(rogue_tag_health())] = clamp(self.Health, 0.0f, bases[ue_tag_name(rogue_tag_health_max())])
         }
         next.BaseValues := bases
         next.Modifiers := modifiers
@@ -78,14 +79,14 @@ class RogueAttributeComponent : ActorComponent {
     }
 
     def RefreshHealthViews() : void {
-        self.Health = self.AttributeSet.GetValue(ue_tag("Attribute.Health"))
-        self.HealthMax = self.AttributeSet.GetValue(ue_tag("Attribute.HealthMax"))
+        self.Health = self.AttributeSet.GetValue(rogue_tag_health())
+        self.HealthMax = self.AttributeSet.GetValue(rogue_tag_health_max())
     }
 
     def HandleAttributeChanged(tag : GameplayTag; value : float; oldValue : float; instigator : ActorRef) : void {
         self.RefreshHealthViews()
         self.OnAttributeChanged.Broadcast(tag, value, oldValue, instigator)
-        if (ue_tag_name(tag) == "Attribute.Health" && value != oldValue) {
+        if (ue_tag_matches(tag, rogue_tag_health(), true) && value != oldValue) {
             self.LastInstigator = instigator
             self.HealthChanges += 1
             self.OnHealthChanged.Broadcast(instigator, value, value - oldValue)
@@ -104,7 +105,7 @@ class RogueAttributeComponent : ActorComponent {
 
     [ue_function(BlueprintCallable, Category="Attributes")]
     def ApplyHealthChange(instigator : ActorRef; delta : float) : bool {
-        return self.ModifyAttribute(ue_tag("Attribute.Health"), delta, RogueAttributeModifyType.Base, instigator)
+        return self.ModifyAttribute(rogue_tag_health(), delta, RogueAttributeModifyType.Base, instigator)
     }
 
     [ue_event(source=owner, source_type=ActorRef, name=OnTakeAnyDamage)]
@@ -113,7 +114,7 @@ class RogueAttributeComponent : ActorComponent {
         let instigator = self.ResolveDamageInstigator(source)
         self.ApplyHealthChange(instigator, -amount)
         let attributes = self.GetAttributeSet()
-        let rage = ue_tag("Attribute.Rage")
+        let rage = rogue_tag_rage()
         if (attributes.HasAttribute(rage)) {
             self.ModifyAttribute(rage, amount * 0.75f, RogueAttributeModifyType.Modifier, instigator)
         }

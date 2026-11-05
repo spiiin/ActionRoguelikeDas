@@ -1,5 +1,6 @@
 options gen2
 module rogue_action_blackhole public
+require rogue_tags public
 require rogue_action_projectile_attack public
 
 [ue_class(module_id="rogue", Blueprintable)]
@@ -11,10 +12,10 @@ class RogueActionBlackhole : RogueActionProjectileAttack {
     [ue_function(BlueprintCallable, BlueprintEvent)]
     def override Setup() : void {
         Super.Setup()
-        self.ActionName = ue_tag("Action.SecondaryAttack")
+        self.ActionName = rogue_tag_secondary_attack()
         var costs := self.ActivationCost
         if (length(costs) == 0) {
-            costs["Attribute.Rage"] = 25.0f
+            costs[ue_tag_name(rogue_tag_rage())] = 25.0f
             self.ActivationCost := costs
         }
     }

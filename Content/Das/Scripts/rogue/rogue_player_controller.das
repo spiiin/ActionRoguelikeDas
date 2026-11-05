@@ -1,5 +1,6 @@
 options gen2
 module rogue_player_controller public
+require rogue_tags public
 require ue_native_gameplay public
 require rogue_interaction_component public
 require rogue_action_system_component public
@@ -63,17 +64,17 @@ class RoguePlayerController : PlayerController {
     [ue_input(action="Input_Fire", Triggered)]
     def OnFire(value : bool) : void {
         if (!value) { return }
-        self.StartAttack(ue_tag("Action.PrimaryAttack"))
+        self.StartAttack(rogue_tag_primary_attack())
     }
 
     [ue_input(action="Input_SecondaryAttack", Triggered)]
     def OnSecondaryAttack(value : bool) : void {
-        if (value) { self.StartAttack(ue_tag("Action.SecondaryAttack")) }
+        if (value) { self.StartAttack(rogue_tag_secondary_attack()) }
     }
 
     [ue_input(action="Input_SpecialAttack", Triggered)]
     def OnSpecialAttack(value : bool) : void {
-        if (value) { self.StartAttack(ue_tag("Action.SpecialAttack")) }
+        if (value) { self.StartAttack(rogue_tag_special_attack()) }
     }
 
     def StartAttack(name : GameplayTag) : void {

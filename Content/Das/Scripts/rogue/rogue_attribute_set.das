@@ -1,5 +1,6 @@
 options gen2
 module rogue_attribute_set public
+require rogue_tags public
 require rogue_attribute_types public
 require rogue_attribute_events public
 require daslib/option public
@@ -89,7 +90,7 @@ class RogueAttributeSet : ScriptObject {
         if (is_none(found)) { return false }
         var attribute = unwrap(found)
         let oldValue = attribute.Base + attribute.Modifier
-        let healthTag = ue_tag("Attribute.Health")
+        let healthTag = rogue_tag_health()
         let oldHealth = self.GetValue(healthTag)
         match (kind) {
             if (RogueAttributeModifyType.Base) { attribute.Base += amount }
@@ -99,7 +100,7 @@ class RogueAttributeSet : ScriptObject {
         }
         if (!is_finite(attribute.Base) || !is_finite(attribute.Modifier) || !is_finite(attribute.Base + attribute.Modifier)) { return false }
         let name = ue_tag_name(tag)
-        if (name == "Attribute.HealthMax" && attribute.Base + attribute.Modifier < 0.0f) { return false }
+        if (ue_tag_matches(tag, rogue_tag_health_max(), true) && attribute.Base + attribute.Modifier < 0.0f) { return false }
         self.BaseValues[name] = attribute.Base
         self.Modifiers[name] = attribute.Modifier
         self.Reconcile()
@@ -107,7 +108,7 @@ class RogueAttributeSet : ScriptObject {
         let health = self.GetValue(healthTag)
         // Capture every affected value before notifying observers; callbacks may re-enter.
         if (newValue != oldValue) { self.OnAttributeChanged.Broadcast(tag, newValue, oldValue, instigator) }
-        if (name != "Attribute.Health" && health != oldHealth) {
+        if (!ue_tag_matches(tag, rogue_tag_health(), true) && health != oldHealth) {
             self.OnAttributeChanged.Broadcast(healthTag, health, oldHealth, instigator)
         }
         return newValue != oldValue
@@ -119,15 +120,15 @@ class RogueHealthAttributeSet : RogueAttributeSet {
     [ue_function(BlueprintEvent)]
     def override DefineDefaults() : void {
         Super.DefineDefaults()
-        self.DefineAttribute(ue_tag("Attribute.Health"), 100.0f)
-        self.DefineAttribute(ue_tag("Attribute.HealthMax"), 100.0f)
+        self.DefineAttribute(rogue_tag_health(), 100.0f)
+        self.DefineAttribute(rogue_tag_health_max(), 100.0f)
     }
 
     [ue_function(BlueprintEvent)]
     def override Reconcile() : void {
         Super.Reconcile()
-        let maximum = max(self.GetValue(ue_tag("Attribute.HealthMax")), 0.0f)
-        self.BaseValues["Attribute.Health"] = clamp(self.GetBaseValue(ue_tag("Attribute.Health")), 0.0f, maximum)
+        let maximum = max(self.GetValue(rogue_tag_health_max()), 0.0f)
+        self.BaseValues[ue_tag_name(rogue_tag_health())] = clamp(self.GetBaseValue(rogue_tag_health()), 0.0f, maximum)
     }
 }
 
@@ -140,8 +141,8 @@ class RoguePawnAttributeSet : RogueHealthAttributeSet {
     [ue_function(BlueprintEvent)]
     def override DefineDefaults() : void {
         Super.DefineDefaults()
-        self.DefineAttribute(ue_tag("Attribute.MoveSpeed"), self.DefaultMoveSpeed)
-        self.DefineAttribute(ue_tag("Attribute.MoveSpeedMultiplier"), 1.0f)
+        self.DefineAttribute(rogue_tag_move_speed(), self.DefaultMoveSpeed)
+        self.DefineAttribute(rogue_tag_move_speed_multiplier(), 1.0f)
     }
 
     [ue_function(BlueprintEvent)]
@@ -149,7 +150,7 @@ class RoguePawnAttributeSet : RogueHealthAttributeSet {
         Super.Reconcile()
         let owner = ue_component_owner(ue_object_outer(ue_self_object()))
         if (!ue_object_valid(owner) || !ue_object_is_a(owner, "/Script/Engine.Character")) { return }
-        let speed = self.GetValue(ue_tag("Attribute.MoveSpeed")) * self.GetValue(ue_tag("Attribute.MoveSpeedMultiplier"))
+        let speed = self.GetValue(rogue_tag_move_speed()) * self.GetValue(rogue_tag_move_speed_multiplier())
         let character = ue_ref(type<CharacterRef>, owner)
         character.CharacterMovement.MaxWalkSpeed = max(speed, 0.0f)
     }
@@ -160,7 +161,7 @@ class RoguePlayerAttributeSet : RoguePawnAttributeSet {
     [ue_function(BlueprintEvent)]
     def override DefineDefaults() : void {
         Super.DefineDefaults()
-        self.DefineAttribute(ue_tag("Attribute.Rage"), 0.0f)
+        self.DefineAttribute(rogue_tag_rage(), 0.0f)
     }
 }
 
